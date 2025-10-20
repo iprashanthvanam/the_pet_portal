@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .content-container {
+            max-width: 800px;
+            padding: 20px;
+            margin-top: 50px;
+            text-align: center;
+        }
+        .content-container h1 {
+            color: #1e3a8a;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        .content-container h2 {
+            color: #3b82f6;
+            font-size: 1.75rem;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .content-container p {
+            color: #4b5563;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Global Navigation Bar -->
+    <ul style="list-style-type: none; display: flex; padding: left;">
+    <li style="margin-right: 15px;"><a href="{% url 'home' %}">home</a></li>
+    <li style="margin-right: 15px;"><a href="{% url 'about' %}">about</a></li>
+    <li style="margin-right: 15px;"><a href="{% url 'service' %}">services</a></li>
+    <li style="margin-right: 15px;"><a href="{% url 'contact' %}">contact</a></li>
+</ul>
+
+    <div class="content-container">
+        <h1>Our Mission and Values</h1>
+        <p>Founded on the principle of integrating technology and sustainability, our team is dedicated to providing cutting-edge solutions that drive positive change.</p>
+
+        <h2>Who We Are</h2>
+        <p>We are a passionate group of engineers, environmental scientists, and data analysts committed to making complex challenges manageable through smart, AI-driven applications. Our goal is to empower users to make informed decisions for a sustainable future.</p>
+        
+        <h2>Our Core Values</h2>
+        <ul style="list-style-type: none; padding: 0; max-width: 600px; margin: 0 auto; text-align: left;">
+            <li style="margin-bottom: 10px; color: #1e3a8a;"><strong>Innovation:</strong> Constantly seeking new ways to solve old problems.</li>
+            <li style="margin-bottom: 10px; color: #1e3a8a;"><strong>Integrity:</strong> Upholding the highest standards of ethics and transparency.</li>
+            <li style="margin-bottom: 10px; color: #1e3a8a;"><strong>Impact:</strong> Focusing on solutions that deliver measurable environmental and economic benefits.</li>
+        </ul>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,201 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8;
+    color: #333;
+}
+
+/* Header/Navigation */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.logo img {
+    margin-right: 10px;
+}
+
+.tagline {
+    font-size: 0.8em;
+    font-weight: normal;
+    margin-left: 10px;
+}
+
+header button {
+    padding: 8px 15px;
+    margin-left: 10px;
+    border: none;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+}
+
+header button:hover {
+    background-color: #0056b3;
+}
+
+/* Main Content Layout */
+main {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.pets-hero-img {
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+}
+
+.view {
+    padding-bottom: 50px; /* Space above footer */
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Forms */
+.form-container {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: white;
+}
+
+.form-container label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.form-container input[type="text"],
+.form-container input[type="password"],
+.form-container input[type="email"],
+.form-container input[type="number"],
+.form-container input[type="date"],
+.form-container textarea,
+.form-container select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-container button[type="submit"], .form-container button[type="button"] {
+    width: auto;
+    padding: 10px 20px;
+    margin-top: 20px;
+    margin-right: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.form-container button:hover {
+    opacity: 0.9;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+/* Pet Listings */
+#pets-list-container {
+    margin-top: 20px;
+}
+.pet-listing h3 {
+    margin-bottom: 5px;
+    color: #0056b3;
+}
+.pet-listing p {
+    margin: 0 0 5px 0;
+}
+.pet-listing {
+    border-bottom: 1px dashed #ccc;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+/* Admin Dashboard Styling (Dark Theme from Screenshot) */
+.admin-dashboard-content {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.admin-dashboard-content h2 {
+    color: #00a2ff;
+    border-bottom: 2px solid #00a2ff;
+    padding-bottom: 10px;
+}
+
+.admin-groups {
+    display: flex;
+    flex-direction: column;
+}
+
+.group {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #222;
+    border-radius: 4px;
+}
+
+.group h3 {
+    color: #ccc;
+    font-size: 1.1em;
+    border-bottom: 1px solid #444;
+    padding-bottom: 5px;
+}
+
+.model-item {
+    padding: 5px 0;
+    color: #eee;
+}
+
+.model-item a {
+    color: #4CAF50; /* Green links for Add/Change */
+    text-decoration: none;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.model-item a:hover {
+    text-decoration: underline;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 15px;
+    background-color: #333;
+    color: white;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}

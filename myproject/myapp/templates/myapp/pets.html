@@ -1,0 +1,230 @@
+<!-- {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Pet Portal | Pet Details</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/pets.css' %}">
+    
+</head>
+<body class="min-h-screen flex flex-col">
+    <header>
+        <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+            <li><a href="{% url 'home' %}">Logout</a></li>
+        </ul>
+    </header>
+
+    <div class="image-section">
+        {% load static %}
+        <img src="{% static '/images/banner2.png' %}" alt="A collection of various happy pets including a dog, cat, and birds">
+    </div>
+    <section class="pet-details-section">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-2">Pet Profiles</h2>
+
+        <div class="pet-detail-item">
+            <img src="{% static '/images/dog.jpeg' %}" alt="Pepe the Rabbit" onerror="this.onerror=null;this.src='https://placehold.co/150x150/94a3b8/e2e8f0?text=Rabbit+Image+Failed';">
+            <div class="pet-content">
+                <h3 class="pet-name">momo</h3>
+                <p class="pet-species">Species: Rabbit (Breed: Cinnamon Rabbit)</p>
+                <div class="details text-base text-gray-600 space-y-2">
+                    <p><strong>Age:</strong> 1 Year | <strong>Location:</strong> b nagar, Hyderabad</p>
+                    <p><strong>Temperament:</strong> Energetic and playful. Pepe is very curious and loves to explore enclosed spaces. He is litter trained and friendly with older children.</p>
+                    <p class="mt-4 border-t pt-2">
+                        **Adoption Note:** Pepe is looking for a home with space for him to hop around and a caregiver experienced with exotic pets.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="pet-detail-item">
+            <img src="{% static '/images/cat.jpg' %}" alt="Scooter the Hedgehog" onerror="this.onerror=null;this.src='https://placehold.co/150x150/94a3b8/e2e8f0?text=Hedgehog+Image+Failed';">
+            <div class="pet-content">
+                <h3 class="pet-name">billi</h3>
+                <p class="pet-species">Species: Hedgehog (Breed: White-bellied)</p>
+                <div class="details text-base text-gray-600 space-y-2">
+                    <p><strong>Age:</strong> 8 Months | <strong>Location:</strong> Meerpet, Hyderabad</p>
+                    <p><strong>Temperament:</strong> Shy at first, but very sweet once he unrolls. Loves his running wheel and is primarily nocturnal.</p>
+                    <p class="mt-4 border-t pt-2">
+                        **Adoption Note:** Requires a quiet environment and temperature-controlled habitat.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-800 text-white p-6 mt-10">
+        <div class="container mx-auto max-w-4xl text-xs text-center">
+            <p class="mb-1 text-gray-400">
+                The Pet Portal - Your trusted gateway to safe, ethical, and loving pet adoption and care. We connect pet lovers with responsible breeders and verified sellers, ensuring every pet finds a happy, healthy home.
+            </p>
+            <p class="text-gray-500 mt-2">&copy; 2025 The Pet Portal. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'javascript/login.js' %}"></script>
+</body>
+</html> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Pet Portal | Pet Details</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/pets.css' %}">
+</head>
+<body class="min-h-screen flex flex-col">
+    <header>
+        <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </header>
+
+    <div class="image-section">
+        {% load static %}
+        <img src="{% static '/images/banner2.png' %}" alt="A collection of various happy pets including a dog, cat, and birds">
+    </div>
+    <section class="pet-details-section">
+        <h2>Pet Profiles</h2>
+        {% for pet in pets %}
+            <div class="pet-detail-item">
+                <img src="{% static '/images/dog.jpeg' %}" alt="{{ pet.name }}" onerror="this.onerror=null;this.src='https://placehold.co/150x150/94a3b8/e2e8f0?text={{ pet.name }} Image Failed';">
+                <div class="pet-content">
+                    <h3 class="pet-name">{{ pet.name }}</h3>
+                    <p class="pet-species">Species: {{ pet.species }}</p>
+                    <div class="details text-base text-gray-600 space-y-2">
+                        <p><strong>Description:</strong> {{ pet.description|default:"No description available" }}</p>
+                        <p><strong>Date Added:</strong> {{ pet.date_added }}</p>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>No pets available.</p>
+        {% endfor %}
+    </section>
+
+    <footer>
+        <p>The Pet Portal - Your trusted gateway to safe, ethical, and loving pet adoption and care. We connect pet lovers with responsible breeders and verified sellers, ensuring every pet finds a happy, healthy home.</p>
+        <p>&copy; 2025 The Pet Portal. All rights reserved.</p>
+    </footer>
+
+    <script src="{% static 'javascript/login.js' %}"></script>
+</body>
+</html> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Pet Portal | Pet Details</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/pets.css' %}">
+</head>
+<body class="min-h-screen flex flex-col">
+    <header>
+        <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+            {% if user.is_authenticated %}
+                {% if user.is_superuser or user.is_staff %}
+                    <li><a href="/admin/" class="admin-dashboard">Admin Dashboard</a></li>
+                {% endif %}
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            {% else %}
+                <li><a href="{% url 'login' %}">Login</a></li>
+            {% endif %}
+        </ul>
+    </header>
+
+    <div class="image-section">
+        {% load static %}
+        <img src="{% static '/images/banner2.png' %}" alt="A collection of various happy pets including a dog, cat, and birds">
+    </div>
+    <section class="pet-details-section">
+        <h2>Pet Profiles</h2>
+        {% for pet in pets %}
+            <div class="pet-detail-item">
+                {% if pet.image %}
+                    <img src="{{ pet.image.url }}" alt="{{ pet.name }}" onerror="this.onerror=null;this.src='https://placehold.co/150x150/94a3b8/e2e8f0?text={{ pet.name }} Image Failed';">
+                {% else %}
+                    <img src="https://placehold.co/150x150/94a3b8/e2e8f0?text={{ pet.name }} Image Missing" alt="{{ pet.name }}">
+                {% endif %}
+                <div class="pet-content">
+                    <h3 class="pet-name">{{ pet.name }}</h3>
+                    <p class="pet-species">Species: {{ pet.species }}</p>
+                    <div class="details text-base text-gray-600 space-y-2">
+                        <p><strong>Description:</strong> {{ pet.description|default:"No description available" }}</p>
+                        <p><strong>Date Added:</strong> {{ pet.date_added }}</p>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>No pets available.</p>
+        {% endfor %}
+    </section>
+
+    <footer>
+        <p>The Pet Portal - Your trusted gateway to safe, ethical, and loving pet adoption and care. We connect pet lovers with responsible breeders and verified sellers, ensuring every pet finds a happy, healthy home.</p>
+        <p>&copy; 2025 The Pet Portal. All rights reserved.</p>
+    </footer>
+
+    <script src="{% static 'javascript/login.js' %}"></script>
+</body>
+</html>

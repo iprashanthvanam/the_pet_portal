@@ -1,0 +1,161 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background: #ffffff; /* Light blue-gray background */
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: #2c3e50; /* Dark slate blue for text */
+}
+
+/* Header / Navigation Styling */
+header {
+    padding: 2rem 0rem 2rem 0rem;
+    background: linear-gradient(to left, #27ae60, #1a252f);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+header ul {
+    list-style-type: none;
+    display: flex;
+    padding: 0;
+    margin: 0;
+    justify-content: flex-end;
+}
+header ul li {
+    margin-left: 1.5rem;
+}
+header ul li a {
+    text-decoration: none;
+    color: #ffffff; /* White text for buttons */
+    font-weight: 600;
+    font-size: 1.05rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+header ul li a:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Light hover effect */
+    transform: translateY(-2px);
+}
+
+/* Login Container Styling */
+.registration-container {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    max-width: 1350px;
+    margin: 3rem auto;
+    width: 100%;
+    text-align: center;
+    animation: fadeIn 1.2s ease-in-out;
+}
+.registration-container h1 {
+    color: #27ae60; /* Dark green for heading */
+    font-size: 2.3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+/* Form Styling */
+.form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+.form-group label {
+    display: block;
+    color: #34495e; /* Medium slate blue for labels */
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+.form-group input {
+    width: 100%;
+    padding: 0.85rem;
+    font-size: 1rem;
+    border: 1px solid #bdc3c7; /* Light gray border */
+    border-radius: 10px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.form-group input:focus {
+    outline: none;
+    border-color: #27ae60; /* Green focus border */
+    box-shadow: 0 0 6px rgba(39, 174, 96, 0.3);
+}
+
+/* Button Styling */
+button {
+    width: 100%;
+    padding: 0.9rem;
+    background: linear-gradient(135deg, #27ae60, #2ecc71); /* Green gradient for button */
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+}
+
+/* Signup Link below button */
+.login-link {
+    margin-top: 1.2rem;
+    color: #34495e; /* Medium slate blue for link text */
+    font-size: 0.95rem;
+}
+.login-link a {
+    color: #27ae60; /* Green for link */
+    font-weight: 600;
+    text-decoration: none;
+}
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+/* Image Section */
+.image-section {
+    padding: 2rem 0;
+    width: 100%;
+    text-align: center;
+    background: #ffffff;
+}
+.image-section img {
+    max-width: 85%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+/* Footer Styling */
+footer {
+    background: linear-gradient(to right, #27ae60, #1a252f); /* Green to dark blue gradient */
+    color: #ecf0f1; /* Light gray for footer text */
+    padding: 1.5rem;
+    text-align: center;
+    margin-top: auto;
+}
+footer p {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    color: #d5dbe0; /* Slightly darker light gray */
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}

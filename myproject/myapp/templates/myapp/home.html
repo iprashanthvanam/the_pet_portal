@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Welcome</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/css/home.css' %}">
+   
+</head>
+<body class="min-h-screen">
+   
+    <header>
+        <ul>
+            <li><a href="{% url 'register' %}">Register</a></li>
+            <li><a href="{% url 'login' %}">Login</a></li>
+            <!-- <li><a href="{% url 'pets' %}">Pets</a></li> -->
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+        </ul>
+    </header>
+
+    <main>
+        <section class="image-section">
+            {% load static %}
+            <img src="{% static '/images/banner2.png' %}" alt="A collection of various happy pets including a dog, cat, and birds">
+        </section>
+
+        <section class="content-section">
+            <h1>The Pet Portal</h1>
+            <p>Welcome to The Pet Portal - Your Trusted Gateway to Pets. At The Pet Portal, we believe finding your perfect companion should be safe, simple, and full of joy. Our platform connects <strong>responsible pet owners</strong> and <strong>ethical breeders</strong> in one centralized, trustworthy marketplace.<br><br>
+            No more endless scrolling through unverified ads or worrying about scams &mdash; we ensure every listing goes through careful checks so you can focus on what truly matters: welcoming a healthy, happy pet into your family.<br><br>
+            Whether you're searching for a playful pup, a cuddly kitten, or a unique companion, The Pet Portal makes it easy to explore, connect, and bring home your new best friend<br> &mdash; all while supporting ethical and responsible practices.
+            </p>
+            
+            <p class="font-semibold text-indigo-600">Safe. Ethical. Loving. That's the promise of The Pet Portal.</p>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>The Pet Portal - Your trusted gateway to safe, ethical, and loving pet adoption and care. We connect pet lovers with responsible breeders and verified sellers, ensuring every pet finds a happy, healthy home.</p>
+        <p>&copy; 2025 The Pet Portal. All rights reserved.</p>
+    </footer>
+</body>
+</html>
