@@ -1,0 +1,499 @@
+{% load static %}
+{% load socialaccount %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart | The Pet Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ================= Advanced CSS Variables (LOCKED) ================= */
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #ec4899;
+            --bg-body: #f3f4f6;
+            --bg-sidebar: #111827;
+            --bg-sidebar-hover: #1f2937;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --text-light: #f9fafb;
+            --gradient-tech: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-width: 280px;
+        }
+
+        /* ================= Reset & Typography (LOCKED) ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); overflow-x: hidden; display: flex; }
+        a { text-decoration: none; color: inherit; }
+
+        /* ================= Layout Structure (LOCKED) ================= */
+        .dashboard-container { display: flex; width: 100%; min-height: 100vh; }
+
+        /* ================= Sidebar Styles (LOCKED) ================= */
+        .sidebar {
+            width: var(--sidebar-width); background-color: var(--bg-sidebar); color: var(--text-light);
+            height: 100vh; position: fixed; left: 0; top: 0; display: flex; flex-direction: column;
+            transition: var(--transition); z-index: 1000; box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+        .sidebar-header { padding: 25px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-header i { font-size: 24px; background: var(--gradient-tech); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sidebar-header h2 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+        .sidebar-menu { flex: 1; padding: 20px 15px; overflow-y: auto; list-style: none; }
+        .sidebar-menu::-webkit-scrollbar { width: 4px; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        .menu-label { font-size: 12px; text-transform: uppercase; color: #9ca3af; letter-spacing: 1px; margin: 15px 0 10px 10px; font-weight: 600; }
+        .menu-item { display: flex; align-items: center; padding: 12px 15px; border-radius: 10px; margin-bottom: 5px; color: #d1d5db; transition: var(--transition); font-weight: 500; }
+        .menu-item i { width: 20px; margin-right: 15px; font-size: 18px; }
+        .menu-item:hover, .menu-item.active { background-color: var(--bg-sidebar-hover); color: #ffffff; transform: translateX(5px); }
+        .menu-item.active { border-left: 4px solid var(--primary); }
+        .badge-cart { background: var(--secondary); color: white; padding: 2px 8px; border-radius: 20px; font-size: 12px; margin-left: auto; }
+        .sidebar-auth { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); }
+        .auth-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; font-weight: 600; transition: var(--transition); cursor: pointer; border: none; text-decoration: none; }
+        .btn-login { background: transparent; border: 1px solid #4b5563; color: white; }
+        .btn-login:hover { background: #374151; }
+
+        /* ================= Main Content Styles (LOCKED) ================= */
+        .main-content { flex: 1; margin-left: var(--sidebar-width); display: flex; flex-direction: column; transition: var(--transition); }
+        .top-header { height: 80px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; }
+        .hamburger { display: none; font-size: 24px; cursor: pointer; color: var(--text-main); border: none; background: none; }
+
+        /* Profile Icon UI */
+        .profile-menu-container { position: relative; }
+        .profile-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-tech); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; text-decoration: none; overflow: hidden; border: 2px solid white; box-shadow: var(--shadow-sm); }
+        .profile-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ================= CART SPECIFIC CSS ================= */
+        .content-wrapper { padding: 40px 30px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .page-header { margin-bottom: 30px; }
+        .page-header h1 { font-size: 28px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+        .page-header p { color: var(--text-muted); font-size: 14px; margin-top: 5px; }
+
+        .cart-container { background: var(--bg-card); border-radius: 16px; box-shadow: var(--shadow-md); overflow: hidden; margin-bottom: 30px; }
+        
+        .table-responsive { overflow-x: auto; width: 100%; }
+        /* .cart-table { width: 100%; border-collapse: collapse; min-width: 700px; } */
+        .cart-table { width: 100%; border-collapse: collapse; }
+        .cart-table th { background: #f9fafb; padding: 15px 20px; text-align: left; font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e5e7eb; }
+        .cart-table td { padding: 20px; vertical-align: middle; border-bottom: 1px solid #f3f4f6; }
+        .cart-table tr:last-child td { border-bottom: none; }
+        .cart-table tr { transition: var(--transition); }
+        .cart-table tr:hover { background: #fcfcfd; }
+
+        .product-cell { display: flex; align-items: center; gap: 15px; }
+        .product-image { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; box-shadow: var(--shadow-sm); transition: var(--transition); border: 1px solid #e5e7eb; }
+        .product-image:hover { transform: scale(1.05); border-color: var(--primary); }
+        .product-info { display: flex; flex-direction: column; }
+        .product-name { font-weight: 600; color: var(--text-main); font-size: 15px; transition: var(--transition); }
+        .product-name:hover { color: var(--primary); }
+
+        .badge-type { font-size: 11px; padding: 4px 10px; border-radius: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-pet { background: #e0e7ff; color: #4338ca; }
+        .badge-food { background: #fce7f3; color: #be185d; }
+        .badge-accessory { background: #dcfce7; color: #166534; }
+
+        .price-text { font-weight: 600; color: var(--text-main); }
+        
+        /* Quantity Controls (Reused from locked UI) */
+        .qty-control { display: inline-flex; align-items: center; gap: 8px; background: var(--bg-body); padding: 4px; border-radius: 8px; border: 1px solid #e5e7eb; }
+        .qty-btn { width: 28px; height: 28px; border-radius: 6px; border: none; background: white; color: var(--text-main); font-weight: bold; cursor: pointer; box-shadow: var(--shadow-sm); transition: var(--transition); display: flex; align-items: center; justify-content: center; }
+        .qty-btn:hover:not(:disabled) { background: var(--primary); color: white; }
+        .qty-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .qty-val { font-size: 14px; font-weight: 600; width: 24px; text-align: center; }
+
+        /* Summary Section */
+        .cart-summary-wrapper { background: #f9fafb; padding: 30px; border-top: 1px solid #e5e7eb; display: flex; flex-direction: column; align-items: flex-end; gap: 20px; }
+        .summary-row { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 350px; font-size: 18px; font-weight: 700; color: var(--text-main); }
+        .total-price { font-size: 24px; color: var(--primary); }
+        
+        .action-buttons { display: flex; gap: 15px; width: 100%; max-width: 350px; }
+        .btn-outline { flex: 1; text-align: center; padding: 12px; border-radius: 10px; border: 1px solid #d1d5db; color: var(--text-main); font-weight: 600; transition: var(--transition); background: white; }
+        .btn-outline:hover { background: #f3f4f6; border-color: #9ca3af; }
+        .btn-checkout { flex: 1; text-align: center; padding: 12px; border-radius: 10px; background: var(--gradient-tech); color: white; font-weight: 600; border: none; transition: var(--transition); cursor: pointer; box-shadow: var(--shadow-sm); }
+        .btn-checkout:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+        /* Empty State */
+        .empty-state { background: var(--bg-card); border-radius: 16px; padding: 60px 20px; text-align: center; box-shadow: var(--shadow-md); }
+        .empty-icon { width: 80px; height: 80px; background: #e0e7ff; color: var(--primary); font-size: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        .empty-state h2 { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+        .empty-state p { color: var(--text-muted); margin-bottom: 25px; }
+        .btn-shop { display: inline-block; padding: 12px 30px; background: var(--primary); color: white; font-weight: 600; border-radius: 10px; transition: var(--transition); }
+        .btn-shop:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+        /* ================= Responsive Design (LOCKED) ================= */
+        @media (max-width: 850px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .hamburger { display: block; }
+            .action-buttons { flex-direction: column; max-width: 100%; }
+            .summary-row { max-width: 100%; }
+        }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(3px); }
+        .sidebar-overlay.active { display: block; }
+
+
+
+
+
+
+
+
+        @media (max-width: 850px) {
+
+    .cart-table thead {
+        display: none;
+    }
+
+    .cart-table tr {
+        display: block;
+        margin-bottom: 15px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: var(--shadow-sm);
+        padding: 15px;
+    }
+
+    .cart-table td {
+        display: block;
+        width: 100%;
+        text-align: right;
+        padding: 10px 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .cart-table td:last-child {
+        border-bottom: none;
+    }
+
+    .cart-table td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+
+    .product-cell {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .product-cell::before {
+        display: none;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-paw"></i>
+            <h2>PetPortal<span style="color: var(--secondary)">.</span></h2>
+        </div>
+
+        <ul class="sidebar-menu">
+            <div class="menu-label">Main Menu</div>
+            <a href="{% url 'pets' %}" class="menu-item">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+            
+            <div class="menu-label">Marketplace</div>
+            <a href="{% url 'pets' %}#pets-section" class="menu-item">
+                <i class="fa-solid fa-dog"></i> Adopt Pets
+            </a>
+            <a href="{% url 'pets' %}#food-section" class="menu-item">
+                <i class="fa-solid fa-bone"></i> Pet Food
+            </a>
+            <a href="{% url 'pets' %}#accessories-section" class="menu-item">
+                <i class="fa-solid fa-tag"></i> Accessories
+            </a>
+
+            <div class="menu-label">Services</div>
+            <a href="{% url 'consult_doctor' %}" class="menu-item">
+                <i class="fa-solid fa-user-doctor"></i> Consult Doctor
+            </a>
+            <a href="{% url 'pet_care' %}" class="menu-item">
+                <i class="fa-solid fa-heart-pulse"></i> Pet Care
+            </a>
+            <a href="{% url 'grooming' %}" class="menu-item">
+                <i class="fa-solid fa-scissors"></i> Grooming
+            </a>
+
+            <div class="menu-label">Account</div>
+            <a href="{% url 'cart_detail' %}" class="menu-item active">
+                <i class="fa-solid fa-cart-shopping"></i> Cart 
+                <span class="badge-cart" id="cartBadge" style="{% if cart_count == 0 %}display:none;{% endif %}">{{ cart_count }}</span>
+            </a>
+            <a href="{% url 'order_history' %}" class="menu-item">
+                <i class="fa-solid fa-box-open"></i> My Orders
+            </a>
+            <a href="{% url 'contact_us' %}" class="menu-item">
+                <i class="fa-solid fa-headset"></i> Contact Support
+            </a>
+        </ul>
+
+        <div class="sidebar-auth">
+            <a href="{% url 'logout' %}" class="auth-btn btn-login">
+                <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        
+        <header class="top-header">
+            <button class="hamburger" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div style="flex: 1;"></div>
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa-regular fa-bell" style="font-size: 20px; color: var(--text-muted); cursor: pointer;"></i>
+                
+                <div class="profile-menu-container">
+                    <a href="{% url 'profile' %}" class="profile-icon">
+                        {% if user.profile.profile_image %}
+                            <img src="{{ user.profile.profile_image.url }}" alt="Profile">
+                        {% else %}
+                            <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=6366f1&color=fff" alt="Profile">
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            
+            <div class="page-header">
+                <h1><i class="fa-solid fa-basket-shopping" style="color: var(--primary);"></i> Your Cart</h1>
+                <p>Review your items before proceeding to checkout.</p>
+            </div>
+
+            {% if cart %}
+                <div class="cart-container">
+                    <div class="table-responsive">
+                        <table class="cart-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th style="text-align: right;">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <!-- <tbody>
+                                {% for key, item in cart.items %}
+                                <tr id="row-{{ item.id }}-{{ item.type }}" data-id="{{ item.id }}" data-type="{{ item.type }}">
+                                    
+                                    <td class="product-cell">
+                                        <a href="{% if item.type == 'pet' %}{% url 'pet_detail' item.id %}{% elif item.type == 'food' %}{% url 'food_detail' item.id %}{% elif item.type == 'accessory' %}{% url 'accessory_detail' item.id %}{% else %}#{% endif %}">
+                                            <img src="{{ item.image_url|default:'https://ui-avatars.com/api/?name='|add:item.name|add:'&background=f3f4f6&color=6366f1' }}" alt="{{ item.name }}" class="product-image">
+                                        </a>
+                                        <div class="product-info">
+                                            <a href="{% if item.type == 'pet' %}{% url 'pet_detail' item.id %}{% elif item.type == 'food' %}{% url 'food_detail' item.id %}{% elif item.type == 'accessory' %}{% url 'accessory_detail' item.id %}{% else %}#{% endif %}" class="product-name">
+                                                {{ item.name }}
+                                            </a>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <span class="badge-type badge-{{ item.type }}">{{ item.type|title }}</span>
+                                    </td>
+
+                                    <td class="price-text">₹{{ item.price }}</td>
+
+                                    <td>
+                                        <div class="qty-control">
+                                            <button class="qty-btn minus" {% if item.quantity == 0 %}disabled{% endif %}>
+                                                <i class="fa-solid fa-minus" style="font-size: 10px;"></i>
+                                            </button>
+                                            <span class="qty-val">{{ item.quantity }}</span>
+                                            <button class="qty-btn plus" {% if item.quantity >= 1 and item.type == 'pet' %}disabled{% endif %}>
+                                                <i class="fa-solid fa-plus" style="font-size: 10px;"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+
+                                    <td class="price-text" style="text-align: right; color: var(--primary);">
+                                        ₹<span class="item-total">{{ item.total }}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody> -->
+                            <tbody>
+{% for key, item in cart.items %}
+<tr id="row-{{ item.id }}-{{ item.type }}" 
+    data-id="{{ item.id }}" 
+    data-type="{{ item.type }}">
+
+    <td class="product-cell" data-label="Product">
+        <div class="product-info">
+            <span class="product-name">{{ item.name }}</span>
+        </div>
+    </td>
+
+    <td data-label="Category">
+        <span class="badge-type badge-{{ item.type }}">
+            {{ item.type|title }}
+        </span>
+    </td>
+
+    <td class="price-text" data-label="Price">
+        ₹{{ item.price }}
+    </td>
+
+    <td data-label="Quantity">
+        <div class="qty-control">
+            <button class="qty-btn minus">−</button>
+            <span class="qty-val">{{ item.quantity }}</span>
+            <button class="qty-btn plus"
+                {% if item.quantity >= 1 and item.type == 'pet' %}disabled{% endif %}>
+                +
+            </button>
+        </div>
+    </td>
+
+    <td class="price-text" 
+        data-label="Subtotal"
+        style="color: var(--primary);">
+        ₹<span class="item-total">{{ item.total }}</span>
+    </td>
+
+</tr>
+{% endfor %}
+</tbody>
+
+                        </table>
+                    </div>
+
+                    <div class="cart-summary-wrapper">
+                        <div class="summary-row">
+                            <span>Total Amount:</span>
+                            <span class="total-price">₹{{ total_price }}</span>
+                        </div>
+                        <div class="action-buttons">
+                            <a href="{% url 'pets' %}" class="btn-outline">Continue Shopping</a>
+                            <a href="{% url 'checkout' %}" class="btn-checkout">Proceed to Checkout</a>
+                        </div>
+                    </div>
+                </div>
+
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+                    <h2>Your cart is empty</h2>
+                    <p>It looks like you haven't added any furry friends or treats yet.</p>
+                    <a href="{% url 'pets' %}" class="btn-shop">Start Shopping</a>
+                </div>
+            {% endif %}
+
+        </div>
+    </main>
+
+</div>
+
+<script>
+    // --- Mobile Sidebar Toggle Logic ---
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+
+    // --- Cart Quantity AJAX Logic ---
+    document.addEventListener("DOMContentLoaded", function() {
+        const rows = document.querySelectorAll("tr[data-id]");
+
+        rows.forEach(row => {
+            const plusBtn = row.querySelector(".plus");
+            const minusBtn = row.querySelector(".minus");
+            const qtyEl = row.querySelector(".qty-val");
+            const itemTotalEl = row.querySelector(".item-total");
+            const cartTotalEl = document.querySelector(".total-price");
+
+            const itemId = row.dataset.id;
+            const itemType = row.dataset.type;
+
+            function updateCart(action) {
+                const csrfToken = '{{ csrf_token }}';
+
+                fetch("{% url 'update_cart_ajax' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrfToken
+                    },
+                    body: JSON.stringify({
+                        item_id: itemId,
+                        item_type: itemType,
+                        action: action
+                    })
+                })
+                .then(res => {
+                    if(!res.ok) throw new Error("Network response was not ok");
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.removed) {
+                        // Fade out and remove row
+                        row.style.opacity = '0';
+                        setTimeout(() => {
+                            row.remove();
+                            // Reload if empty to show the empty state UI
+                            if (document.querySelectorAll("tr[data-id]").length === 0) {
+                                location.reload();
+                            }
+                        }, 300);
+                    } else {
+                        // Update UI
+                        qtyEl.textContent = data.qty;
+                        itemTotalEl.textContent = data.item_subtotal;
+                        
+                        // Update Buttons
+                        minusBtn.disabled = (data.qty === 0);
+                        if (itemType === "pet") {
+                            plusBtn.disabled = (data.qty >= 1);
+                        }
+                    }
+
+                    // Update Total Price and Badge
+                    if(cartTotalEl) cartTotalEl.textContent = "₹" + data.cart_total;
+                    
+                    const badge = document.getElementById('cartBadge');
+                    if (badge) {
+                        badge.textContent = data.cart_count;
+                        badge.style.display = data.cart_count > 0 ? 'inline-block' : 'none';
+                    }
+                })
+                .catch(err => console.error("Error updating cart:", err));
+            }
+
+            // Attach Listeners
+            if(plusBtn) plusBtn.onclick = () => updateCart("add");
+            if(minusBtn) minusBtn.onclick = () => updateCart("remove");
+        });
+    });
+</script>
+</body>
+</html>

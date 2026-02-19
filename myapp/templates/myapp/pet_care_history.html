@@ -1,0 +1,374 @@
+{% load static %}
+{% load socialaccount %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Pet Care History | The Pet Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ================= Advanced CSS Variables (LOCKED) ================= */
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #ec4899;
+            --bg-body: #f3f4f6;
+            --bg-sidebar: #111827;
+            --bg-sidebar-hover: #1f2937;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --text-light: #f9fafb;
+            --gradient-tech: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-width: 280px;
+        }
+
+        /* ================= Reset & Typography (LOCKED) ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); overflow-x: hidden; display: flex; height: 100vh; }
+        a { text-decoration: none; color: inherit; }
+
+        /* ================= Layout Structure (LOCKED) ================= */
+        .dashboard-container { display: flex; width: 100%; min-height: 100vh; }
+
+        /* ================= Sidebar Styles (LOCKED) ================= */
+        .sidebar {
+            width: var(--sidebar-width); background-color: var(--bg-sidebar); color: var(--text-light);
+            height: 100vh; position: fixed; left: 0; top: 0; display: flex; flex-direction: column;
+            transition: var(--transition); z-index: 1000; box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+        .sidebar-header { padding: 25px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-header i { font-size: 24px; background: var(--gradient-tech); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sidebar-header h2 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+        .sidebar-menu { flex: 1; padding: 20px 15px; overflow-y: auto; list-style: none; }
+        .sidebar-menu::-webkit-scrollbar { width: 4px; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        .menu-label { font-size: 12px; text-transform: uppercase; color: #9ca3af; letter-spacing: 1px; margin: 15px 0 10px 10px; font-weight: 600; }
+        .menu-item { display: flex; align-items: center; padding: 12px 15px; border-radius: 10px; margin-bottom: 5px; color: #d1d5db; transition: var(--transition); font-weight: 500; }
+        .menu-item i { width: 20px; margin-right: 15px; font-size: 18px; }
+        .menu-item:hover, .menu-item.active { background-color: var(--bg-sidebar-hover); color: #ffffff; transform: translateX(5px); }
+        .menu-item.active { border-left: 4px solid var(--primary); }
+        .badge-cart { background: var(--secondary); color: white; padding: 2px 8px; border-radius: 20px; font-size: 12px; margin-left: auto; }
+        .sidebar-auth { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); }
+        .auth-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; font-weight: 600; transition: var(--transition); cursor: pointer; border: none; text-decoration: none; }
+        .btn-login { background: transparent; border: 1px solid #4b5563; color: white; }
+        .btn-login:hover { background: #374151; }
+
+        /* ================= Main Content Styles (LOCKED) ================= */
+        .main-content { flex: 1; margin-left: var(--sidebar-width); display: flex; flex-direction: column; transition: var(--transition); height: 100vh; overflow-y: auto; }
+        .top-header { height: 80px; min-height: 80px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; }
+        .hamburger { display: none; font-size: 24px; cursor: pointer; color: var(--text-main); border: none; background: none; }
+
+        /* Profile Icon UI */
+        .profile-menu-container { position: relative; }
+        .profile-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-tech); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; text-decoration: none; overflow: hidden; border: 2px solid white; box-shadow: var(--shadow-sm); }
+        .profile-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ================= PET CARE HISTORY SPECIFIC CSS ================= */
+        .content-wrapper { padding: 40px 30px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        
+        .page-header { margin-bottom: 30px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;}
+        .page-header-text h1 { font-size: 28px; font-weight: 700; color: var(--text-main); }
+        .page-header-text p { color: var(--text-muted); font-size: 14px; margin-top: 5px; }
+        
+        .btn-new-booking { background: var(--gradient-tech); color: white; padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: 14px; transition: var(--transition); box-shadow: var(--shadow-sm); display: inline-flex; align-items: center; gap: 8px; }
+        .btn-new-booking:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+        /* Django Messages */
+        .messages-container { margin-bottom: 25px; }
+        .message { padding: 12px 15px; border-radius: 8px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+        .message.error { background: #fef2f2; color: #dc2626; border: 1px solid #f87171; }
+        .message.success { background: #f0fdf4; color: #16a34a; border: 1px solid #4ade80; }
+
+        /* --- SaaS Summary Grid --- */
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .stat-card { background: var(--bg-card); border-radius: 16px; padding: 25px; display: flex; align-items: center; gap: 20px; box-shadow: var(--shadow-md); border: 1px solid #e5e7eb; transition: var(--transition); }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: #d1d5db; }
+        
+        .stat-icon { width: 60px; height: 60px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 24px; flex-shrink: 0; }
+        .icon-blue { background: #e0e7ff; color: #4338ca; }
+        .icon-green { background: #dcfce7; color: #16a34a; }
+        
+        .stat-info h4 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+        .stat-value { font-size: 24px; font-weight: 700; color: var(--text-main); }
+
+        /* --- Bookings Grid --- */
+        .booking-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        
+        .booking-card { background: var(--bg-card); border-radius: 16px; box-shadow: var(--shadow-md); padding: 25px; transition: var(--transition); border: 1px solid transparent; display: flex; flex-direction: column; }
+        .booking-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+
+        .booking-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px dashed #e5e7eb; padding-bottom: 15px; }
+        .booking-header h3 { font-size: 18px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px; margin-bottom: 5px;}
+        .booking-header h3 i { color: var(--primary); }
+        .species-tag { font-size: 11px; padding: 3px 8px; background: #f3f4f6; color: var(--text-muted); border-radius: 6px; font-weight: 600; text-transform: uppercase; margin-left: 5px; vertical-align: middle; }
+
+        /* Status Badges */
+        .status-badge { font-size: 11px; padding: 5px 12px; border-radius: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+        .status-pending { background: #fef3c7; color: #b45309; }
+        .status-confirmed { background: #e0e7ff; color: #4338ca; }
+        .status-active { background: #dcfce7; color: #166534; }
+        .status-completed { background: #f3f4f6; color: #374151; }
+        .status-cancelled { background: #fee2e2; color: #b91c1c; }
+
+        .booking-body { display: flex; flex-direction: column; gap: 15px; flex: 1; margin-bottom: 20px; }
+        
+        .info-item { font-size: 13px; color: var(--text-muted); display: flex; gap: 12px; }
+        .info-item i { color: var(--primary); font-size: 16px; margin-top: 2px; width: 16px; text-align: center; }
+        .info-content { display: flex; flex-direction: column; gap: 2px; }
+        .info-content strong { color: var(--text-main); font-weight: 600; font-size: 12px; text-transform: uppercase; }
+        
+        .date-flow { display: flex; flex-direction: column; gap: 4px; background: #f9fafb; padding: 10px 12px; border-radius: 8px; border: 1px solid #e5e7eb; margin-top: 4px; color: var(--text-main); font-weight: 500; }
+        .date-flow i { font-size: 12px; color: #9ca3af; align-self: center; margin: 2px 0; }
+        
+        .price-highlight { font-size: 18px; font-weight: 700; color: var(--text-main); }
+
+        .booking-footer { border-top: 1px solid #f3f4f6; padding-top: 15px; margin-top: auto; }
+        .btn-cancel { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; padding: 10px; border-radius: 8px; font-weight: 600; font-size: 13px; transition: var(--transition); cursor: pointer; }
+        .btn-cancel:hover { background: #fecaca; }
+
+        /* Empty State */
+        .empty-state { grid-column: 1 / -1; background: var(--bg-card); border-radius: 16px; padding: 60px 20px; text-align: center; box-shadow: var(--shadow-md); }
+        .empty-icon { width: 80px; height: 80px; background: #e0e7ff; color: var(--primary); font-size: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        .empty-state h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
+        .empty-state p { color: var(--text-muted); margin-bottom: 25px; }
+
+        /* ================= Responsive Design (LOCKED) ================= */
+        @media (max-width: 850px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .hamburger { display: block; }
+            .booking-list { grid-template-columns: 1fr; }
+        }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(3px); }
+        .sidebar-overlay.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-paw"></i>
+            <h2>PetPortal<span style="color: var(--secondary)">.</span></h2>
+        </div>
+
+        <ul class="sidebar-menu">
+            <div class="menu-label">Main Menu</div>
+            <a href="{% url 'pets' %}" class="menu-item">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+            
+            <div class="menu-label">Marketplace</div>
+            <a href="{% url 'pets' %}#pets-section" class="menu-item">
+                <i class="fa-solid fa-dog"></i> Adopt Pets
+            </a>
+            <a href="{% url 'pets' %}#food-section" class="menu-item">
+                <i class="fa-solid fa-bone"></i> Pet Food
+            </a>
+            <a href="{% url 'pets' %}#accessories-section" class="menu-item">
+                <i class="fa-solid fa-tag"></i> Accessories
+            </a>
+
+            <div class="menu-label">Services</div>
+            <a href="{% url 'consult_doctor' %}" class="menu-item">
+                <i class="fa-solid fa-user-doctor"></i> Consult Doctor
+            </a>
+            <a href="{% url 'pet_care' %}" class="menu-item">
+                <i class="fa-solid fa-heart-pulse"></i> Pet Care
+            </a>
+            <a href="{% url 'grooming' %}" class="menu-item">
+                <i class="fa-solid fa-scissors"></i> Grooming
+            </a>
+
+            <div class="menu-label">Account</div>
+            <a href="{% url 'cart_detail' %}" class="menu-item">
+                <i class="fa-solid fa-cart-shopping"></i> Cart 
+                <span class="badge-cart" id="cartBadge" style="{% if cart_count == 0 %}display:none;{% endif %}">{{ cart_count }}</span>
+            </a>
+            <a href="{% url 'order_history' %}" class="menu-item">
+                <i class="fa-solid fa-box-open"></i> My Orders
+            </a>
+            <a href="{% url 'contact_us' %}" class="menu-item">
+                <i class="fa-solid fa-headset"></i> Contact Support
+            </a>
+           
+        </ul>
+
+        <div class="sidebar-auth">
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="auth-btn btn-login">
+                    <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Logout
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="auth-btn btn-login">
+                    <i class="fa-solid fa-arrow-right-to-bracket" style="margin-right: 8px;"></i> Login
+                </a>
+            {% endif %}
+        </div>
+    </aside>
+
+    <main class="main-content">
+        
+        <header class="top-header">
+            <button class="hamburger" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div style="flex: 1;"></div>
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div class="profile-menu-container">
+                    <a href="{% if user.is_authenticated %}{% url 'profile' %}{% else %}{% url 'login' %}{% endif %}" class="profile-icon">
+                        {% if user.is_authenticated %}
+                            {% if user.profile.profile_image %}
+                                <img src="{{ user.profile.profile_image.url }}" alt="Profile">
+                            {% else %}
+                                <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=6366f1&color=fff" alt="Profile">
+                            {% endif %}
+                        {% else %}
+                            <i class="fa-solid fa-user"></i>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            
+            <div class="page-header">
+                <div class="page-header-text">
+                    <h1>🐾 My Pet Care History</h1>
+                    <p>Track your boarding history, active stays, and expenses.</p>
+                </div>
+                <a href="{% url 'pet_care' %}" class="btn-new-booking">
+                    <i class="fa-solid fa-plus"></i> Book New Stay
+                </a>
+            </div>
+
+            {% if messages %}
+                <div class="messages-container">
+                    {% for message in messages %}
+                        <p class="message {{ message.tags }}">
+                            {% if message.tags == 'error' %}<i class="fa-solid fa-circle-exclamation"></i>{% else %}<i class="fa-solid fa-circle-check"></i>{% endif %}
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="summary-grid">
+                <div class="stat-card">
+                    <div class="stat-icon icon-blue">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Total Bookings</h4>
+                        <span class="stat-value">{{ total_used }}</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon icon-green">
+                        <i class="fa-solid fa-indian-rupee-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Total Spent</h4>
+                        <span class="stat-value">₹{{ total_spent }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="booking-list">
+                
+                {% for booking in bookings %}
+                <div class="booking-card">
+                    
+                    <div class="booking-header">
+                        <div>
+                            <h3>
+                                <i class="fa-solid fa-paw"></i> {{ booking.pet_name }}
+                                <span class="species-tag">{{ booking.pet_species }}</span>
+                            </h3>
+                        </div>
+                        <span class="status-badge status-{{ booking.status|lower }}">
+                            {{ booking.status }}
+                        </span>
+                    </div>
+
+                    <div class="booking-body">
+                        
+                        <div class="info-item">
+                            <i class="fa-regular fa-clock"></i>
+                            <div class="info-content" style="width: 100%;">
+                                <strong>Stay Duration</strong>
+                                <div class="date-flow">
+                                    <span>{{ booking.start_datetime|date:"d M Y, h:i A" }}</span>
+                                    <i class="fa-solid fa-arrow-down"></i>
+                                    <span>{{ booking.end_datetime|date:"d M Y, h:i A" }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-item" style="margin-top: 5px;">
+                            <i class="fa-regular fa-sun"></i>
+                            <div class="info-content">
+                                <strong>Total Days</strong>
+                                <span style="font-size: 14px; color: var(--text-main);">{{ booking.total_days }} Days</span>
+                            </div>
+                        </div>
+
+                        <div class="info-item" style="margin-top: 5px;">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                            <div class="info-content">
+                                <strong>Total Price</strong>
+                                <span class="price-highlight">₹{{ booking.total_price }}</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {% if booking.status == "PENDING" or booking.status == "CONFIRMED" %}
+                    <div class="booking-footer">
+                        <a href="{% url 'cancel_pet_care' booking.id %}" class="btn-cancel" onclick="return confirm('Are you sure you want to cancel this pet boarding reservation?');">
+                            <i class="fa-solid fa-xmark"></i> Cancel Booking
+                        </a>
+                    </div>
+                    {% endif %}
+
+                </div>
+                {% empty %}
+                
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="fa-solid fa-house-chimney-crack"></i></div>
+                    <h3>No Boarding History</h3>
+                    <p>You haven't booked any pet care stays yet.</p>
+                    <a href="{% url 'pet_care' %}" class="btn-new-booking" style="margin-top: 15px;">
+                        Book Pet Boarding
+                    </a>
+                </div>
+                
+                {% endfor %}
+
+            </div>
+        </div>
+    </main>
+
+<script>
+    // Mobile menu toggle logic
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+</script>
+
+</body>
+</html>

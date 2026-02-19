@@ -1,0 +1,329 @@
+{% load static %}
+{% load socialaccount %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order | The Pet Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ================= Advanced CSS Variables (LOCKED) ================= */
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #ec4899;
+            --bg-body: #f3f4f6;
+            --bg-sidebar: #111827;
+            --bg-sidebar-hover: #1f2937;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --text-light: #f9fafb;
+            --gradient-tech: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-width: 280px;
+        }
+
+        /* ================= Reset & Typography (LOCKED) ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); overflow-x: hidden; display: flex; height: 100vh; }
+        a { text-decoration: none; color: inherit; }
+
+        /* ================= Layout Structure (LOCKED) ================= */
+        .dashboard-container { display: flex; width: 100%; min-height: 100vh; }
+
+        /* ================= Sidebar Styles (LOCKED) ================= */
+        .sidebar {
+            width: var(--sidebar-width); background-color: var(--bg-sidebar); color: var(--text-light);
+            height: 100vh; position: fixed; left: 0; top: 0; display: flex; flex-direction: column;
+            transition: var(--transition); z-index: 1000; box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+        .sidebar-header { padding: 25px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-header i { font-size: 24px; background: var(--gradient-tech); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sidebar-header h2 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+        .sidebar-menu { flex: 1; padding: 20px 15px; overflow-y: auto; list-style: none; }
+        .sidebar-menu::-webkit-scrollbar { width: 4px; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        .menu-label { font-size: 12px; text-transform: uppercase; color: #9ca3af; letter-spacing: 1px; margin: 15px 0 10px 10px; font-weight: 600; }
+        .menu-item { display: flex; align-items: center; padding: 12px 15px; border-radius: 10px; margin-bottom: 5px; color: #d1d5db; transition: var(--transition); font-weight: 500; }
+        .menu-item i { width: 20px; margin-right: 15px; font-size: 18px; }
+        .menu-item:hover, .menu-item.active { background-color: var(--bg-sidebar-hover); color: #ffffff; transform: translateX(5px); }
+        .menu-item.active { border-left: 4px solid var(--primary); }
+        .badge-cart { background: var(--secondary); color: white; padding: 2px 8px; border-radius: 20px; font-size: 12px; margin-left: auto; }
+        .sidebar-auth { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); }
+        .auth-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; font-weight: 600; transition: var(--transition); cursor: pointer; border: none; text-decoration: none; }
+        .btn-login { background: transparent; border: 1px solid #4b5563; color: white; }
+        .btn-login:hover { background: #374151; }
+
+        /* ================= Main Content Styles (LOCKED) ================= */
+        .main-content { flex: 1; margin-left: var(--sidebar-width); display: flex; flex-direction: column; transition: var(--transition); height: 100vh; overflow-y: auto; }
+        .top-header { height: 80px; min-height: 80px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; }
+        .hamburger { display: none; font-size: 24px; cursor: pointer; color: var(--text-main); border: none; background: none; }
+
+        /* Profile Icon UI */
+        .profile-menu-container { position: relative; }
+        .profile-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-tech); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; text-decoration: none; overflow: hidden; border: 2px solid white; box-shadow: var(--shadow-sm); }
+        .profile-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ================= TRACK ORDER SPECIFIC CSS ================= */
+        .content-wrapper { display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; min-height: calc(100vh - 80px); }
+        
+        .track-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .header-section { margin-bottom: 30px; }
+        .sub-title { text-transform: uppercase; letter-spacing: 2px; font-size: 12px; font-weight: 600; color: var(--primary); display: block; margin-bottom: 5px; }
+        .header-section h1 { font-size: 28px; font-weight: 700; color: var(--text-main); margin-bottom: 5px; }
+        .header-section p { color: var(--text-muted); font-size: 14px; }
+
+        /* Modern Input Group */
+        .search-box { position: relative; margin-bottom: 40px; }
+        .search-input {
+            width: 100%; padding: 18px 20px; border-radius: 14px; border: 2px solid #e5e7eb;
+            font-size: 15px; outline: none; transition: var(--transition); background: #f9fafb;
+            font-family: inherit; font-family: monospace; letter-spacing: 0.5px;
+            padding-right: 130px; /* Space for the button */
+        }
+        .search-input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+        
+        .track-btn {
+            position: absolute; right: 6px; top: 6px; bottom: 6px; padding: 0 25px;
+            border-radius: 10px; background: var(--gradient-tech); color: white;
+            font-weight: 600; font-size: 15px; border: none; cursor: pointer;
+            transition: var(--transition); box-shadow: var(--shadow-sm);
+        }
+        .track-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+        /* Django Messages */
+        .messages-container { margin-bottom: 20px; text-align: left; }
+        .message { padding: 12px 15px; border-radius: 8px; font-size: 13px; font-weight: 500; }
+        .message.error { background: #fef2f2; color: #dc2626; border: 1px solid #f87171; }
+        .message.success { background: #f0fdf4; color: #16a34a; border: 1px solid #4ade80; }
+
+        /* Cancelled Order Banner */
+        .cancelled-banner {
+            background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c;
+            padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 12px;
+            text-align: left; margin-bottom: 30px; font-size: 14px; font-weight: 500;
+        }
+        .cancelled-banner i { font-size: 24px; }
+
+        /* ================= VERTICAL TIMELINE UI ================= */
+        .status-timeline {
+            display: flex; flex-direction: column; gap: 30px;
+            position: relative; text-align: left; padding-left: 20px;
+        }
+        /* Vertical Connector Line */
+        .status-timeline::before {
+            content: ''; position: absolute; left: 35px; top: 10px; bottom: 10px;
+            width: 2px; background: #e5e7eb; z-index: 1;
+        }
+
+        .timeline-step { display: flex; gap: 20px; position: relative; z-index: 2; opacity: 0.5; transition: var(--transition); }
+        .timeline-step.completed, .timeline-step.active { opacity: 1; }
+        
+        .step-marker {
+            width: 32px; height: 32px; border-radius: 50%; background: white;
+            border: 2px solid #d1d5db; display: flex; align-items: center; justify-content: center;
+            font-size: 12px; color: transparent; transition: var(--transition); flex-shrink: 0;
+        }
+        
+        /* State specific styles */
+        .timeline-step.completed .step-marker { background: var(--primary); border-color: var(--primary); color: white; }
+        .timeline-step.active .step-marker { border-color: var(--primary); color: var(--primary); background: white; box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.15); }
+        .timeline-step.active .step-marker i { color: transparent; } /* Hide checkmark if active but not completed */
+        
+        .step-content { flex: 1; padding-top: 5px; }
+        .step-title { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 3px; }
+        .step-desc { font-size: 13px; color: var(--text-muted); line-height: 1.4; margin-bottom: 8px; }
+        .step-time { font-size: 12px; font-weight: 600; color: var(--primary); background: #e0e7ff; display: inline-block; padding: 4px 10px; border-radius: 6px; }
+
+        /* ================= Responsive Design (LOCKED) ================= */
+        @media (max-width: 850px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .hamburger { display: block; }
+            .search-input { padding-right: 20px; margin-bottom: 15px; border-radius: 12px; }
+            .track-btn { position: static; width: 100%; padding: 15px; border-radius: 12px; }
+            .search-box { flex-direction: column; }
+        }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(3px); }
+        .sidebar-overlay.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-paw"></i>
+            <h2>PetPortal<span style="color: var(--secondary)">.</span></h2>
+        </div>
+
+        <ul class="sidebar-menu">
+            <div class="menu-label">Main Menu</div>
+            <a href="{% url 'pets' %}" class="menu-item">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+            
+            <div class="menu-label">Marketplace</div>
+            <a href="{% url 'pets' %}#pets-section" class="menu-item">
+                <i class="fa-solid fa-dog"></i> Adopt Pets
+            </a>
+            <a href="{% url 'pets' %}#food-section" class="menu-item">
+                <i class="fa-solid fa-bone"></i> Pet Food
+            </a>
+            <a href="{% url 'pets' %}#accessories-section" class="menu-item">
+                <i class="fa-solid fa-tag"></i> Accessories
+            </a>
+
+            <div class="menu-label">Services</div>
+            <a href="{% url 'consult_doctor' %}" class="menu-item">
+                <i class="fa-solid fa-user-doctor"></i> Consult Doctor
+            </a>
+            <a href="{% url 'pet_care' %}" class="menu-item">
+                <i class="fa-solid fa-heart-pulse"></i> Pet Care
+            </a>
+            <a href="{% url 'grooming' %}" class="menu-item">
+                <i class="fa-solid fa-scissors"></i> Grooming
+            </a>
+
+            <div class="menu-label">Account</div>
+            <a href="{% url 'cart_detail' %}" class="menu-item">
+                <i class="fa-solid fa-cart-shopping"></i> Cart 
+            </a>
+            <a href="{% url 'order_history' %}" class="menu-item">
+                <i class="fa-solid fa-box-open"></i> My Orders
+            </a>
+            <a href="{% url 'contact_us' %}" class="menu-item">
+                <i class="fa-solid fa-headset"></i> Contact Support
+            </a>
+        </ul>
+
+        <div class="sidebar-auth">
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="auth-btn btn-login">
+                    <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Logout
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="auth-btn btn-login">
+                    <i class="fa-solid fa-arrow-right-to-bracket" style="margin-right: 8px;"></i> Login
+                </a>
+            {% endif %}
+        </div>
+    </aside>
+
+    <main class="main-content">
+        
+        <header class="top-header">
+            <button class="hamburger" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div style="flex: 1;"></div>
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div class="profile-menu-container">
+                    <a href="{% if user.is_authenticated %}{% url 'profile' %}{% else %}{% url 'login' %}{% endif %}" class="profile-icon">
+                        {% if user.is_authenticated %}
+                            {% if user.profile.profile_image %}
+                                <img src="{{ user.profile.profile_image.url }}" alt="Profile">
+                            {% else %}
+                                <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=6366f1&color=fff" alt="Profile">
+                            {% endif %}
+                        {% else %}
+                            <i class="fa-solid fa-user"></i>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            
+            <div class="track-card">
+                <div class="header-section">
+                    <span class="sub-title">Where is my furry friend? 🐾</span>
+                    <h1>Track Your Order</h1>
+                    <p>Enter your Order ID (UUID) to check the current status of your shipment.</p>
+                </div>
+
+                {% if messages %}
+                    <div class="messages-container">
+                        {% for message in messages %}
+                            <p class="message {{ message.tags }}">{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <form method="post" class="search-box">
+                    {% csrf_token %}
+                    <input type="text" name="order_id" class="search-input" placeholder="e.g. 550e8400-e29b..." required autocomplete="off">
+                    <button type="submit" class="track-btn"><i class="fa-solid fa-magnifying-glass" style="margin-right: 5px;"></i> Track</button>
+                </form>
+
+                {% if order %}
+                    
+                    {% if order.status == "CANCELLED" %}
+                        <div class="cancelled-banner">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            <div>
+                                <strong>Order Cancelled</strong><br>
+                                This order was cancelled. If you made a payment, please check your order history for refund details.
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="status-timeline">
+                            {% for step in timeline %}
+                                <div class="timeline-step 
+                                    {% if order.status == step.key %}active{% endif %}
+                                    {% if step.time < now and order.status != step.key %}completed{% endif %}
+                                ">
+                                    <div class="step-marker"><i class="fa-solid fa-check"></i></div>
+
+                                    <div class="step-content">
+                                        <h3 class="step-title">{{ step.label }}</h3>
+                                        <p class="step-desc">{{ step.desc }}</p>
+                                        
+                                        <div class="step-time">
+                                            <i class="fa-regular fa-calendar" style="margin-right: 3px;"></i> {{ step.time|date:"d M Y" }}
+                                            &nbsp;&nbsp;<i class="fa-regular fa-clock" style="margin-right: 3px;"></i> {{ step.time|date:"h:i A" }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
+
+        </div>
+    </main>
+
+<script>
+    // Mobile menu toggle logic
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Pet Portal | Contact Us</title>
+    <link rel="stylesheet" href="{% static 'css/contact.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <button class="mobile-menu-btn" aria-label="Toggle navigation" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="{% url 'home' %}" class="nav-btn">Home</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'logout' %}" class="nav-btn">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}" class="nav-btn">Login</a></li>
+                    <li><a href="{% url 'register' %}" class="nav-btn">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- <section class="hero-section">
+        <div class="image-wrapper">
+            <img src="{% static '/images/banner2.png' %}" 
+                 alt="Contact The Pet Portal" 
+                 loading="lazy">
+            <div class="hero-overlay"></div>
+        </div>
+    </section> -->
+
+    <main class="main-content">
+        
+        <div class="header-content">
+            <div class="title-wrapper">
+                <h1 class="app-title">Get in Touch</h1>
+                <svg class="paw-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path d="M226.5 92.9c14.3 42.9-.3 86.2-32.6 96.8s-70.1-15.6-84.4-58.5s.3-86.2 32.6-96.8s70.1 15.6 84.4 58.5zM100.4 198.6c18.9 32.4 14.3 70.1-10.2 84.1s-59.7-.9-78.5-33.3S-2.7 179.3 21.8 165.3s59.7 .9 78.5 33.3zM69.2 401.2C121.6 259.9 214.7 224 256 224s134.4 35.9 186.8 177.2c3.6 9.7 5.2 20.1 5.2 30.5v1.6c0 25.8-20.9 46.7-46.7 46.7c-11.5 0-22.9-1.4-34-4.2l-88-22c-15.3-3.8-31.3-3.8-46.6 0l-88 22c-11.1 2.8-22.5 4.2-34 4.2C84.9 480 64 459.1 64 433.3v-1.6c0-10.4 1.6-20.8 5.2-30.5zM421.8 282.7c-24.5-14-29.1-51.7-10.2-84.1s54-47.3 78.5-33.3s29.1 51.7 10.2 84.1s-54 47.3-78.5 33.3zM310.1 189.7c-32.3-10.6-46.9-53.9-32.6-96.8s52.1-69.1 84.4-58.5s46.9 53.9 32.6 96.8s-52.1 69.1-84.4 58.5z"/>
+                </svg>
+            </div>
+            <div class="title-underline"></div>
+            <p class="page-description">
+                Have questions about adoption, pet care, or our services? We're here to help! Reach out to us via phone, email, or the form below.
+            </p>
+        </div>
+
+        <div class="contact-wrapper">
+            
+            <div class="contact-card info-card">
+                <h2>Contact Information</h2>
+                <div class="info-item">
+                    <span class="label">Email:</span>
+                    <a href="mailto:thepetportal@gmail.com" class="info-link">thepetportal@gmail.com</a>
+                </div>
+                <div class="info-item">
+                    <span class="label">Phone:</span>
+                    <a href="tel:+917036142499" class="info-link">+91 7036 142 499</a>
+                </div>
+                <div class="info-item">
+                    <span class="label">Address:</span>
+                    <p class="info-text">The Pet Portal, Road no.2, Sadguru Nagar,<br>LB Nagar, 500074</p>
+                </div>
+                <div class="info-item">
+                    <span class="label">Support Hours:</span>
+                    <p class="info-text">Monday - Saturday<br>9:00 AM - 5:00 PM (IST)</p>
+                </div>
+            </div>
+
+            <div class="contact-card form-card">
+                <h2>Send Us a Message</h2>
+                <form action="#" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" name="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Your Email</label>
+                        <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" placeholder="How can we help you?" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">Send Message</button>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>The Pet Portal - Your trusted gateway to safe, ethical, and loving pet adoption.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <span class="separator">|</span>
+                <a href="#">Terms of Service</a>
+            </div>
+            <p class="copyright">&copy; {% now "Y" %} The Pet Portal. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/contact.js' %}"></script>
+</body>
+</html>

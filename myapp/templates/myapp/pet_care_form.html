@@ -1,0 +1,417 @@
+{% load static %}
+{% load socialaccount %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Care Booking | The Pet Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ================= Advanced CSS Variables (LOCKED) ================= */
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #ec4899;
+            --bg-body: #f3f4f6;
+            --bg-sidebar: #111827;
+            --bg-sidebar-hover: #1f2937;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --text-light: #f9fafb;
+            --gradient-tech: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-width: 280px;
+        }
+
+        /* ================= Reset & Typography (LOCKED) ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); overflow-x: hidden; display: flex; height: 100vh; }
+        a { text-decoration: none; color: inherit; }
+
+        /* ================= Layout Structure (LOCKED) ================= */
+        .dashboard-container { display: flex; width: 100%; min-height: 100vh; }
+
+        /* ================= Sidebar Styles (LOCKED) ================= */
+        .sidebar {
+            width: var(--sidebar-width); background-color: var(--bg-sidebar); color: var(--text-light);
+            height: 100vh; position: fixed; left: 0; top: 0; display: flex; flex-direction: column;
+            transition: var(--transition); z-index: 1000; box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+        .sidebar-header { padding: 25px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-header i { font-size: 24px; background: var(--gradient-tech); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sidebar-header h2 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+        .sidebar-menu { flex: 1; padding: 20px 15px; overflow-y: auto; list-style: none; }
+        .sidebar-menu::-webkit-scrollbar { width: 4px; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        .menu-label { font-size: 12px; text-transform: uppercase; color: #9ca3af; letter-spacing: 1px; margin: 15px 0 10px 10px; font-weight: 600; }
+        .menu-item { display: flex; align-items: center; padding: 12px 15px; border-radius: 10px; margin-bottom: 5px; color: #d1d5db; transition: var(--transition); font-weight: 500; }
+        .menu-item i { width: 20px; margin-right: 15px; font-size: 18px; }
+        .menu-item:hover, .menu-item.active { background-color: var(--bg-sidebar-hover); color: #ffffff; transform: translateX(5px); }
+        .menu-item.active { border-left: 4px solid var(--primary); }
+        .badge-cart { background: var(--secondary); color: white; padding: 2px 8px; border-radius: 20px; font-size: 12px; margin-left: auto; }
+        .sidebar-auth { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); }
+        .auth-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; font-weight: 600; transition: var(--transition); cursor: pointer; border: none; text-decoration: none; }
+        .btn-login { background: transparent; border: 1px solid #4b5563; color: white; }
+        .btn-login:hover { background: #374151; }
+
+        /* ================= Main Content Styles (LOCKED) ================= */
+        .main-content { flex: 1; margin-left: var(--sidebar-width); display: flex; flex-direction: column; transition: var(--transition); height: 100vh; overflow-y: auto; }
+        .top-header { height: 80px; min-height: 80px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; }
+        .hamburger { display: none; font-size: 24px; cursor: pointer; color: var(--text-main); border: none; background: none; }
+
+        /* Header History Link */
+        .header-history-link { font-size: 14px; font-weight: 600; color: var(--primary); text-decoration: none; transition: var(--transition); display: flex; align-items: center; gap: 6px; }
+        .header-history-link:hover { color: var(--primary-hover); transform: translateY(-1px); }
+
+        /* Profile Icon UI */
+        .profile-menu-container { position: relative; }
+        .profile-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-tech); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; text-decoration: none; overflow: hidden; border: 2px solid white; box-shadow: var(--shadow-sm); }
+        .profile-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ================= PET CARE FORM (SPLIT LAYOUT) ================= */
+        .content-wrapper { padding: 40px 30px; max-width: 1300px; margin: 0 auto; width: 100%; }
+        
+        .page-header { margin-bottom: 30px; }
+        .page-header h1 { font-size: 28px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 12px; }
+        .page-header p { color: var(--text-muted); font-size: 14px; margin-top: 5px; }
+
+        .care-layout {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* --- Left Card: The Form --- */
+        .care-form-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Django Messages */
+        .messages-container { margin-bottom: 25px; }
+        .message { padding: 12px 15px; border-radius: 8px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+        .message.error { background: #fef2f2; color: #dc2626; border: 1px solid #f87171; }
+        .message.success { background: #f0fdf4; color: #16a34a; border: 1px solid #4ade80; }
+
+        .section-title { font-size: 15px; font-weight: 700; color: var(--text-main); border-bottom: 2px solid #f3f4f6; padding-bottom: 8px; margin-top: 30px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        .section-title:first-of-type { margin-top: 0; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-control { width: 100%; padding: 14px 15px; border-radius: 10px; border: 1px solid #e5e7eb; background: #f9fafb; font-size: 14px; color: var(--text-main); font-family: inherit; outline: none; transition: var(--transition); }
+        .form-control:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+        textarea.form-control { resize: vertical; min-height: 100px; }
+
+        /* Checkbox Chips */
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+        .checkbox-chip { cursor: pointer; }
+        .checkbox-chip input[type="checkbox"] { display: none; }
+        .checkbox-chip span {
+            display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px;
+            background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 20px;
+            font-size: 13px; font-weight: 600; color: var(--text-muted); transition: var(--transition);
+        }
+        .checkbox-chip span i { font-size: 14px; }
+        .checkbox-chip input[type="checkbox"]:checked + span { background: var(--primary); color: white; border-color: var(--primary); box-shadow: var(--shadow-sm); }
+
+        .btn-book {
+            width: 100%; background: var(--gradient-tech); color: white; padding: 16px; border-radius: 12px; margin-top: 25px;
+            font-size: 16px; font-weight: 700; border: none; cursor: pointer; transition: var(--transition); box-shadow: var(--shadow-sm);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-book:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+        /* --- Right Card: The Sticky Pricing Chart --- */
+        .pricing-card {
+            background: #f9fafb;
+            border-radius: 20px;
+            padding: 35px;
+            border: 1px solid #e5e7eb;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 110px; 
+        }
+
+        .pricing-card h3 { font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .pricing-list { display: flex; flex-direction: column; }
+        .price-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px dashed #d1d5db; color: var(--text-muted); font-size: 14px; align-items: center; }
+        .price-item:last-child { border-bottom: none; }
+        .price-val { font-weight: 700; color: var(--text-main); font-size: 15px; }
+        .price-item i { color: var(--primary); width: 20px; }
+
+        /* ================= Responsive Design (LOCKED) ================= */
+        @media (max-width: 1024px) {
+            .care-layout { grid-template-columns: 1fr; }
+            .pricing-card { position: static; margin-top: 30px; } /* Disable sticky on tablet/mobile */
+        }
+        @media (max-width: 850px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .hamburger { display: block; }
+            .form-row { grid-template-columns: 1fr; gap: 15px; }
+            .care-form-card, .pricing-card { padding: 25px; }
+            .header-history-link span { display: none; } /* Hide text, keep icon on small screens */
+        }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(3px); }
+        .sidebar-overlay.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-paw"></i>
+            <h2>PetPortal<span style="color: var(--secondary)">.</span></h2>
+        </div>
+
+        <ul class="sidebar-menu">
+            <div class="menu-label">Main Menu</div>
+            <a href="{% url 'pets' %}" class="menu-item">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+            
+            <div class="menu-label">Marketplace</div>
+            <a href="{% url 'pets' %}#pets-section" class="menu-item">
+                <i class="fa-solid fa-dog"></i> Adopt Pets
+            </a>
+            <a href="{% url 'pets' %}#food-section" class="menu-item">
+                <i class="fa-solid fa-bone"></i> Pet Food
+            </a>
+            <a href="{% url 'pets' %}#accessories-section" class="menu-item">
+                <i class="fa-solid fa-tag"></i> Accessories
+            </a>
+
+            <div class="menu-label">Services</div>
+            <a href="{% url 'consult_doctor' %}" class="menu-item">
+                <i class="fa-solid fa-user-doctor"></i> Consult Doctor
+            </a>
+            <a href="{% url 'pet_care' %}" class="menu-item active">
+                <i class="fa-solid fa-heart-pulse"></i> Pet Care
+            </a>
+            <a href="{% url 'grooming' %}" class="menu-item">
+                <i class="fa-solid fa-scissors"></i> Grooming
+            </a>
+
+            <div class="menu-label">Account</div>
+            <a href="{% url 'cart_detail' %}" class="menu-item">
+                <i class="fa-solid fa-cart-shopping"></i> Cart 
+                <span class="badge-cart" id="cartBadge" style="{% if cart_count == 0 %}display:none;{% endif %}">{{ cart_count }}</span>
+            </a>
+            <a href="{% url 'order_history' %}" class="menu-item">
+                <i class="fa-solid fa-box-open"></i> My Orders
+            </a>
+            <a href="{% url 'contact_us' %}" class="menu-item">
+                <i class="fa-solid fa-headset"></i> Contact Support
+            </a>
+        </ul>
+
+        <div class="sidebar-auth">
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="auth-btn btn-login">
+                    <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Logout
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="auth-btn btn-login">
+                    <i class="fa-solid fa-arrow-right-to-bracket" style="margin-right: 8px;"></i> Login
+                </a>
+            {% endif %}
+        </div>
+    </aside>
+
+    <main class="main-content">
+        
+        <header class="top-header">
+            <button class="hamburger" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div style="flex: 1;"></div>
+
+            <div style="display: flex; align-items: center; gap: 20px;">
+                
+                <a href="{% url 'pet_care_history' %}" class="header-history-link">
+                    <i class="fa-solid fa-clock-rotate-left"></i> <span>View History</span>
+                </a>
+
+                <div class="profile-menu-container">
+                    <a href="{% if user.is_authenticated %}{% url 'profile' %}{% else %}{% url 'login' %}{% endif %}" class="profile-icon">
+                        {% if user.is_authenticated %}
+                            {% if user.profile.profile_image %}
+                                <img src="{{ user.profile.profile_image.url }}" alt="Profile">
+                            {% else %}
+                                <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=6366f1&color=fff" alt="Profile">
+                            {% endif %}
+                        {% else %}
+                            <i class="fa-solid fa-user"></i>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            
+            <div class="page-header">
+                <h1><i class="fa-solid fa-house-chimney-paw" style="color: var(--primary);"></i> Pet Boarding & Daycare</h1>
+                <p>Going on vacation or need a safe space for the day? We'll take care of your pet in our premium facilities.</p>
+            </div>
+
+            <div class="care-layout">
+                
+                <div class="care-form-card">
+                    
+                    {% if messages %}
+                        <div class="messages-container">
+                            {% for message in messages %}
+                                <p class="message {{ message.tags }}">
+                                    {% if message.tags == 'error' %}<i class="fa-solid fa-circle-exclamation"></i>{% else %}<i class="fa-solid fa-circle-check"></i>{% endif %}
+                                    {{ message }}
+                                </p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <h3 class="section-title"><i class="fa-solid fa-paw" style="color: var(--secondary);"></i> 1. Pet Information</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Pet Name</label>
+                                <input type="text" name="pet_name" class="form-control" placeholder="e.g. Max, Bella" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Pet Species / Breed</label>
+                                <input type="text" name="pet_species" class="form-control" placeholder="e.g. Golden Retriever, Siamese Cat" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Pet Age (Years)</label>
+                                <input type="number" name="pet_age" class="form-control" placeholder="e.g. 3" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Pet Gender</label>
+                                <select name="pet_gender" class="form-control" required>
+                                    <option value="" disabled selected>Select Gender...</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Health Notes / Behavior Instructions</label>
+                            <textarea name="health_notes" class="form-control" placeholder="Any allergies, behaviors, or special instructions our caretakers should know about?"></textarea>
+                        </div>
+
+                        <h3 class="section-title"><i class="fa-solid fa-list-check" style="color: var(--secondary);"></i> 2. Special Requirements</h3>
+                        <p style="font-size: 13px; color: var(--text-muted); margin-top: -10px; margin-bottom: 15px;">Select any specific needs your pet requires during their stay.</p>
+                        
+                        <div class="checkbox-group">
+                            <label class="checkbox-chip">
+                                <input type="checkbox" name="vaccinated">
+                                <span><i class="fa-solid fa-syringe"></i> Vaccinated</span>
+                            </label>
+                            <label class="checkbox-chip">
+                                <input type="checkbox" name="special_diet">
+                                <span><i class="fa-solid fa-bowl-food"></i> Special Diet</span>
+                            </label>
+                            <label class="checkbox-chip">
+                                <input type="checkbox" name="injection_required">
+                                <span><i class="fa-solid fa-prescription-bottle-medical"></i> Needs Daily Medication</span>
+                            </label>
+                            <label class="checkbox-chip">
+                                <input type="checkbox" name="vaccine_required">
+                                <span><i class="fa-solid fa-shield-cat"></i> Needs Vaccination Boost</span>
+                            </label>
+                            <label class="checkbox-chip">
+                                <input type="checkbox" name="extra_care">
+                                <span><i class="fa-solid fa-hand-holding-heart"></i> VIP Extra Care</span>
+                            </label>
+                        </div>
+
+                        <h3 class="section-title"><i class="fa-regular fa-calendar-check" style="color: var(--secondary);"></i> 3. Stay Duration</h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Drop-off Date & Time</label>
+                                <input type="datetime-local" name="start_datetime" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Pick-up Date & Time</label>
+                                <input type="datetime-local" name="end_datetime" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-book">
+                            <i class="fa-solid fa-check-double"></i> Confirm Booking Request
+                        </button>
+
+                    </form>
+                </div>
+
+                <div class="pricing-card">
+                    <h3><i class="fa-solid fa-tags" style="color: var(--primary);"></i> Transparent Pricing</h3>
+                    <div class="pricing-list">
+                        <div class="price-item">
+                            <span><i class="fa-regular fa-clock"></i> 1 Day (Base Boarding)</span>
+                            <span class="price-val">₹500</span>
+                        </div>
+                        <div class="price-item">
+                            <span><i class="fa-regular fa-calendar-days"></i> 2 Days Boarding</span>
+                            <span class="price-val">₹950</span>
+                        </div>
+                        <div class="price-item">
+                            <span><i class="fa-solid fa-plus"></i> Each Extra Day (After Day 2)</span>
+                            <span class="price-val">₹450 / day</span>
+                        </div>
+                        <div class="price-item">
+                            <span><i class="fa-solid fa-bowl-food"></i> Special Diet Prep.</span>
+                            <span class="price-val">+ ₹250</span>
+                        </div>
+                        <div class="price-item">
+                            <span><i class="fa-solid fa-pills"></i> Medication / Injection</span>
+                            <span class="price-val">+ ₹200</span>
+                        </div>
+                        <div class="price-item">
+                            <span><i class="fa-solid fa-shield-dog"></i> Vaccination Boost</span>
+                            <span class="price-val">+ ₹300</span>
+                        </div>
+                        <div class="price-item">
+                            <span><i class="fa-solid fa-star"></i> VIP Extra Care</span>
+                            <span class="price-val">+ ₹400</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            </div>
+    </main>
+
+<script>
+    // Mobile menu toggle logic
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+</script>
+
+</body>
+</html>

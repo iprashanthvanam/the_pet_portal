@@ -1,0 +1,461 @@
+{% load static %}
+{% load socialaccount %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | The Pet Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ================= Advanced CSS Variables (LOCKED) ================= */
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #ec4899;
+            --bg-body: #f3f4f6;
+            --bg-sidebar: #111827;
+            --bg-sidebar-hover: #1f2937;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --text-light: #f9fafb;
+            --gradient-tech: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-width: 280px;
+            /* Validation specific variables */
+            --success: #16a34a;
+            --error: #dc2626;
+        }
+
+        /* ================= Reset & Typography (LOCKED) ================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow-x: hidden;
+            display: flex;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ================= Layout Structure (LOCKED) ================= */
+        .dashboard-container { display: flex; width: 100%; min-height: 100vh; }
+
+        /* ================= Sidebar Styles (LOCKED) ================= */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            color: var(--text-light);
+            height: 100vh;
+            position: fixed;
+            left: 0; top: 0;
+            display: flex; flex-direction: column;
+            transition: var(--transition); z-index: 1000;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 25px 20px; display: flex; align-items: center; gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-header i { font-size: 24px; background: var(--gradient-tech); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sidebar-header h2 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+
+        .sidebar-menu { flex: 1; padding: 20px 15px; overflow-y: auto; list-style: none; }
+        .sidebar-menu::-webkit-scrollbar { width: 4px; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+
+        .menu-label { font-size: 12px; text-transform: uppercase; color: #9ca3af; letter-spacing: 1px; margin: 15px 0 10px 10px; font-weight: 600; }
+        .menu-item { display: flex; align-items: center; padding: 12px 15px; border-radius: 10px; margin-bottom: 5px; color: #d1d5db; transition: var(--transition); font-weight: 500; }
+        .menu-item i { width: 20px; margin-right: 15px; font-size: 18px; }
+        .menu-item:hover, .menu-item.active { background-color: var(--bg-sidebar-hover); color: #ffffff; transform: translateX(5px); }
+        .menu-item.active { border-left: 4px solid var(--primary); }
+        
+        .badge-cart { background: var(--secondary); color: white; padding: 2px 8px; border-radius: 20px; font-size: 12px; margin-left: auto; }
+
+        .sidebar-auth { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); }
+        .auth-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; font-weight: 600; transition: var(--transition); cursor: pointer; border: none; text-decoration: none; }
+        .btn-google { background-color: white; color: #333; }
+        .btn-google:hover { background-color: #f1f1f1; }
+        .btn-google img { width: 18px; margin-right: 10px; }
+        .btn-signup { background: var(--gradient-tech); color: white; }
+        .btn-signup:hover { opacity: 0.9; box-shadow: 0 0 10px rgba(99, 102, 241, 0.5); }
+        .btn-login { background: transparent; border: 1px solid #4b5563; color: white; }
+        .btn-login:hover { background: #374151; }
+
+        /* ================= Main Content Styles (LOCKED) ================= */
+        .main-content { flex: 1; margin-left: var(--sidebar-width); display: flex; flex-direction: column; transition: var(--transition); }
+
+        .top-header { height: 80px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; }
+        .hamburger { display: none; font-size: 24px; cursor: pointer; color: var(--text-main); border: none; background: none; }
+
+        .profile-menu-container { position: relative; }
+        .profile-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-tech); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .profile-dropdown { display: none; position: absolute; top: 50px; right: 0; background: var(--bg-sidebar); width: 260px; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-lg); z-index: 1000; border: 1px solid rgba(255,255,255,0.1); }
+        .profile-dropdown.active { display: block; }
+
+        @media (max-width: 850px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .hamburger { display: block; }
+        }
+        
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(3px); }
+        .sidebar-overlay.active { display: block; }
+
+        /* ================= AUTHENTICATION FORM SPECIFIC CSS ================= */
+        .content-wrapper { padding: 30px; display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 80px); }
+        
+        .auth-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 500px; /* Slightly wider than login for the register fields */
+        }
+
+        .auth-header { text-align: center; margin-bottom: 30px; }
+        .sub-title { text-transform: uppercase; letter-spacing: 2px; font-size: 12px; font-weight: 600; color: var(--primary); display: block; margin-bottom: 5px; }
+        .auth-header h1 { font-size: 28px; font-weight: 700; color: var(--text-main); margin-bottom: 5px; }
+
+        .social-login-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 12px;
+            background: white; color: var(--text-main); font-weight: 600; font-size: 14px;
+            transition: var(--transition); cursor: pointer; text-decoration: none;
+        }
+        .social-login-btn:hover { background: #f9fafb; border-color: #d1d5db; transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+        .social-login-btn svg { width: 20px; height: 20px; }
+
+        .divider-or { display: flex; align-items: center; text-align: center; margin: 25px 0; color: var(--text-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        .divider-or::before, .divider-or::after { content: ''; flex: 1; border-bottom: 1px solid #e5e7eb; }
+        .divider-or span { padding: 0 15px; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
+        .input-wrapper { position: relative; }
+        .form-control {
+            width: 100%; padding: 14px 15px; border: 1px solid #e5e7eb; border-radius: 12px;
+            font-family: inherit; font-size: 14px; background: #f9fafb; color: var(--text-main);
+            outline: none; transition: var(--transition);
+        }
+        .form-control:focus { border-color: var(--primary); background: #ffffff; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+        
+        .toggle-password {
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 16px; transition: var(--transition);
+        }
+        .toggle-password:hover, .toggle-password.active { color: var(--primary); }
+
+        .btn-submit {
+            width: 100%; background: var(--gradient-tech); color: white; border: none;
+            padding: 14px; border-radius: 12px; font-weight: 600; font-size: 16px;
+            cursor: pointer; transition: var(--transition); margin-top: 10px;
+        }
+        .btn-submit:hover { box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3); transform: translateY(-2px); }
+
+        .auth-footer { text-align: center; margin-top: 25px; font-size: 14px; color: var(--text-muted); }
+        .auth-footer a { color: var(--primary); font-weight: 600; text-decoration: none; transition: var(--transition); }
+        .auth-footer a:hover { color: var(--primary-hover); text-decoration: underline; }
+
+        .messages-container { margin-bottom: 20px; }
+        .message { padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 500; text-align: center; }
+        .message.error { background: #fef2f2; color: #dc2626; border: 1px solid #f87171; }
+        .message.success { background: #f0fdf4; color: #16a34a; border: 1px solid #4ade80; }
+
+        /* --- Custom Register Validation CSS --- */
+        .validation-list { list-style: none; padding: 0; margin: 8px 0 0 5px; font-size: 12px; font-weight: 500; }
+        .validation-list li { margin-bottom: 4px; transition: var(--transition); }
+        .validation-list li.invalid { color: #9ca3af; } /* Gray */
+        .validation-list li.valid { color: var(--success); } /* Green */
+        .form-text { display: block; font-size: 12px; font-weight: 500; margin-top: 8px; margin-left: 5px; }
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--error); }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-paw"></i>
+            <h2>PetPortal<span style="color: var(--secondary)">.</span></h2>
+        </div>
+
+        <ul class="sidebar-menu">
+            <div class="menu-label">Main Menu</div>
+            <a href="{% url 'home' %}" class="menu-item">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+            
+            <div class="menu-label">Marketplace</div>
+            <a href="{% url 'home' %}#pets" class="menu-item">
+                <i class="fa-solid fa-dog"></i> Adopt Pets
+            </a>
+            <a href="{% url 'home' %}#food" class="menu-item">
+                <i class="fa-solid fa-bone"></i> Pet Food
+            </a>
+            <a href="{% url 'home' %}#accessories-section" class="menu-item">
+                <i class="fa-solid fa-tag"></i> Accessories
+            </a>
+
+            <div class="menu-label">Services</div>
+            <a href="{% if user.is_authenticated %}{% url 'consult_doctor' %}{% else %}{% url 'login' %}{% endif %}" class="menu-item">
+                <i class="fa-solid fa-user-doctor"></i> Consult Doctor
+            </a>
+            <a href="{% if user.is_authenticated %}{% url 'pet_care' %}{% else %}{% url 'login' %}{% endif %}" class="menu-item">
+                <i class="fa-solid fa-heart-pulse"></i> Pet Care
+            </a>
+            <a href="{% if user.is_authenticated %}{% url 'grooming' %}{% else %}{% url 'login' %}{% endif %}" class="menu-item">
+                <i class="fa-solid fa-scissors"></i> Grooming
+            </a>
+
+            <div class="menu-label">Account</div>
+            <a href="{% url 'contact_us' %}" class="menu-item">
+                <i class="fa-solid fa-headset"></i> Contact Support
+            </a>
+        </ul>
+
+        <div class="sidebar-auth">
+            <a href="{% provider_login_url 'google' %}" class="auth-btn btn-google" style="text-decoration: none; color:#333;">
+                <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google">
+                Continue with Google
+            </a>
+            <a href="{% url 'login' %}" class="auth-btn btn-login">Login to Account</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        
+        <header class="top-header">
+            <button class="hamburger" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div style="flex: 1;"></div>
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div class="profile-menu-container">
+                    <div class="profile-icon" onclick="toggleProfileDropdown()">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <h4 style="color: white; margin-bottom: 15px; font-size: 14px; text-align: center;">Join Pet Portal</h4>
+                        <a href="{% provider_login_url 'google' %}" class="auth-btn btn-google">
+                            <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google">
+                            Continue with Google 
+                        </a>
+                        <a href="{% url 'login' %}" class="auth-btn btn-login">Login to Account</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            
+            <div class="auth-card">
+                <div class="auth-header">
+                    <!-- <span class="sub-title">Join our Community ✨</span> -->
+                    <h1>Create Account</h1>
+                </div>
+
+                <a href="{% provider_login_url 'google' %}" class="social-login-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.7 17.74 9.5 24 9.5z"/>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                    </svg>
+                    Continue with Google
+                </a>
+
+                <div class="divider-or">
+                    <span>OR EMAIL</span>
+                </div>
+
+                {% if messages %}
+                    <div class="messages-container">
+                        {% for message in messages %}
+                            <p class="message {{ message.tags }}">{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <form method="post" action="{% url 'register' %}" id="registerForm" novalidate>
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="username">Full Name</label>
+                        <input type="text" id="username" name="username" class="form-control" placeholder="e.g. John Doe" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="you@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password1">Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="password1" name="password1" class="form-control" placeholder="Create a password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('password1', this)">
+                                <i class="fa-regular fa-eye-slash"></i>
+                            </button>
+                        </div>
+                        <ul class="validation-list" id="password-requirements">
+                            <li id="req-length" class="invalid"><i class="fa-solid fa-circle" style="font-size: 6px; vertical-align: middle; margin-right: 5px;"></i> 8+ Characters</li>
+                            <li id="req-number" class="invalid"><i class="fa-solid fa-circle" style="font-size: 6px; vertical-align: middle; margin-right: 5px;"></i> 1 Number</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password2">Confirm Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="password2" name="password2" class="form-control" placeholder="Confirm password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('password2', this)">
+                                <i class="fa-regular fa-eye-slash"></i>
+                            </button>
+                        </div>
+                        <small id="match-feedback" class="form-text"></small>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="submitBtn">Sign Up Now</button>
+
+                    <div class="auth-footer">
+                        Already have an account? <a href="{% url 'login' %}">Login here</a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+<script>
+    // --- Mobile Sidebar Toggle Logic ---
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+
+    // --- Profile Dropdown Toggle Logic ---
+    function toggleProfileDropdown() {
+        document.getElementById('profileDropdown').classList.toggle('active');
+    }
+
+    // Close dropdown when clicking anywhere outside of it
+    document.addEventListener('click', function(event) {
+        var isClickInside = document.querySelector('.profile-menu-container').contains(event.target);
+        if (!isClickInside) {
+            var dropdown = document.getElementById('profileDropdown');
+            if (dropdown && dropdown.classList.contains('active')) {
+                dropdown.classList.remove('active');
+            }
+        }
+    });
+
+    // --- Upgraded Password Visibility Toggle (Using Locked FA Icons) ---
+    window.togglePassword = function(fieldId, btn) {
+        const input = document.getElementById(fieldId);
+        const icon = btn.querySelector('i'); // Get the FontAwesome icon inside the button
+        
+        if (input) {
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.classList.add('active'); 
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            } else {
+                input.type = 'password';
+                btn.classList.remove('active'); 
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            }
+        }
+    };
+
+    // --- YOUR INTACT REAL-TIME PASSWORD VALIDATION ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const pass1 = document.getElementById('password1');
+        const pass2 = document.getElementById('password2');
+        const feedback = document.getElementById('match-feedback');
+        const reqLength = document.getElementById('req-length');
+        const reqNumber = document.getElementById('req-number');
+
+        // Check Complexity
+        if (pass1) {
+            pass1.addEventListener('input', function() {
+                const val = pass1.value;
+                
+                // Length Check
+                if (val.length >= 8) {
+                    reqLength.classList.add('valid');
+                    reqLength.classList.remove('invalid');
+                } else {
+                    reqLength.classList.remove('valid');
+                    reqLength.classList.add('invalid');
+                }
+
+                // Number Check
+                if (/\d/.test(val)) {
+                    reqNumber.classList.add('valid');
+                    reqNumber.classList.remove('invalid');
+                } else {
+                    reqNumber.classList.remove('valid');
+                    reqNumber.classList.add('invalid');
+                }
+                
+                checkMatch();
+            });
+        }
+
+        // Check Match
+        if (pass2) {
+            pass2.addEventListener('input', checkMatch);
+        }
+
+        function checkMatch() {
+            if (!pass1 || !pass2) return;
+
+            const val1 = pass1.value;
+            const val2 = pass2.value;
+
+            if (val2.length === 0) {
+                feedback.textContent = "";
+                pass2.style.borderColor = "#e5e7eb";
+                return;
+            }
+
+            if (val1 === val2) {
+                feedback.textContent = "Passwords match!";
+                feedback.className = "form-text text-success";
+                pass2.style.borderColor = "var(--success)";
+            } else {
+                feedback.textContent = "Passwords do not match.";
+                feedback.className = "form-text text-danger";
+                pass2.style.borderColor = "var(--error)";
+            }
+        }
+    });
+</script>
+</body>
+</html>
