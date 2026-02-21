@@ -110,6 +110,9 @@ urlpatterns = [
     path('accessory/<int:pk>/', views.accessory_detail, name='accessory_detail'),
     path('accessory/<int:pk>/', views.accessory_detail, name='accessory_detail'),
 
+    path('admin-ai-dashboard/', views.admin_ai_dashboard, name='admin_ai_dashboard'),
+
+
 
 
 

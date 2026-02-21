@@ -124,6 +124,12 @@ from django.contrib.auth.decorators import login_required
 from weasyprint import HTML
 from .models import Order 
 
+
+
+
+from django.utils import timezone
+
+from django.core.cache import cache
 # =====================================================
 # INTERNAL: CART SCHEMA NORMALIZER
 # =====================================================
@@ -756,6 +762,63 @@ def order_history(request):
 
 
 
+# def track_order(request):
+#     order = None
+#     timeline = []
+
+#     if request.method == 'POST':
+#         order_uuid = request.POST.get('order_id')
+
+#         try:
+#             if request.user.is_authenticated and request.user.is_superuser:
+#                 order = Order.objects.get(order_id=order_uuid)
+#             elif request.user.is_authenticated:
+#                 order = Order.objects.get(order_id=order_uuid, user=request.user)
+#             else:
+#                 order = Order.objects.get(order_id=order_uuid)
+
+#             base_time = order.created_at
+
+#             timeline = [
+#                 {
+#                     'key': 'CONFIRMED',
+#                     'label': 'Order Confirmed',
+#                     'desc': 'Your order has been received and verified.',
+#                     'time': base_time,
+#                 },
+#                 {
+#                     'key': 'PROCESSING',
+#                     'label': 'Processing',
+#                     'desc': 'Preparing your items for shipment.',
+#                     'time': base_time + timedelta(days=1),
+#                 },
+#                 {
+#                     'key': 'SHIPPED',
+#                     'label': 'Shipped',
+#                     'desc': 'Your package is on its way!',
+#                     'time': base_time + timedelta(days=2),
+#                 },
+#                 {
+#                     'key': 'DELIVERED',
+#                     'label': 'Delivered',
+#                     'desc': 'Successfully delivered to your door.',
+#                     'time': base_time + timedelta(days=3),
+#                 },
+#             ]
+
+#         except Order.DoesNotExist:
+#             messages.error(request, "Order ID not found or access denied.")
+
+#     return render(request, 'myapp/track_order.html', {
+#         'order': order,
+#         'timeline': timeline
+#     })
+
+
+
+
+
+@login_required
 def track_order(request):
     order = None
     timeline = []
@@ -771,34 +834,41 @@ def track_order(request):
             else:
                 order = Order.objects.get(order_id=order_uuid)
 
-            base_time = order.created_at
-
-            timeline = [
-                {
-                    'key': 'CONFIRMED',
-                    'label': 'Order Confirmed',
-                    'desc': 'Your order has been received and verified.',
-                    'time': base_time,
-                },
-                {
-                    'key': 'PROCESSING',
-                    'label': 'Processing',
-                    'desc': 'Preparing your items for shipment.',
-                    'time': base_time + timedelta(days=1),
-                },
-                {
-                    'key': 'SHIPPED',
-                    'label': 'Shipped',
-                    'desc': 'Your package is on its way!',
-                    'time': base_time + timedelta(days=2),
-                },
-                {
-                    'key': 'DELIVERED',
-                    'label': 'Delivered',
-                    'desc': 'Successfully delivered to your door.',
-                    'time': base_time + timedelta(days=3),
-                },
+            # Define timeline order
+            status_flow = [
+                ("CONFIRMED", "Order Confirmed", "Your order has been received and verified.", order.confirmed_at),
+                ("PROCESSING", "Processing", "Preparing your items for shipment.", order.processing_at),
+                ("SHIPPED", "Shipped", "Your package is on its way!", order.shipped_at),
+                ("DELIVERED", "Delivered", "Successfully delivered to your door.", order.delivered_at),
             ]
+
+            status_index = {
+                "CONFIRMED": 0,
+                "PROCESSING": 1,
+                "SHIPPED": 2,
+                "DELIVERED": 3,
+            }
+
+            current_index = status_index.get(order.status, 0)
+
+            for index, (key, label, desc, time_value) in enumerate(status_flow):
+
+                # If delivered → everything completed
+                if order.status == "DELIVERED":
+                    completed = True
+                    active = False
+                else:
+                    completed = index < current_index
+                    active = index == current_index
+
+                timeline.append({
+                    "key": key,
+                    "label": label,
+                    "desc": desc if time_value else "",
+                    "time": time_value,
+                    "completed": completed,
+                    "active": active,
+                })
 
         except Order.DoesNotExist:
             messages.error(request, "Order ID not found or access denied.")
@@ -1525,8 +1595,253 @@ def home_api(request):
 
 
 
-MODEL_NAME = "gemini-2.5-flash"
+# MODEL_NAME = "gemini-2.5-flash"
 
+
+# @csrf_exempt
+# @require_POST
+# def chatbot_api(request):
+#     try:
+#         data = json.loads(request.body)
+#         user_message = data.get("message", "").strip()
+
+#         if not user_message:
+#             return JsonResponse({"error": "Empty message"}, status=400)
+
+#         SYSTEM_PROMPT = """
+# You are PetPortal AI assistant.
+
+# You help users with:
+# - Pet suggestions
+# - Food recommendations
+# - Refund policy
+# - Shipping policy
+# - Order tracking
+# - General FAQ
+
+# Keep answers short and friendly.
+# """
+
+#         # Initialize Gemini client
+#         client = genai.Client(api_key=settings.GEMINI_API_KEY)
+
+#         response = client.models.generate_content(
+#             model=MODEL_NAME,
+#             contents=SYSTEM_PROMPT + "\nUser: " + user_message,
+#         )
+
+#         reply = response.text
+
+#         if not reply:
+#             reply = "Sorry, I couldn't understand that."
+
+#         return JsonResponse({"reply": reply})
+
+#     except Exception as e:
+#         print("Chatbot exception:", str(e))
+#         return JsonResponse(
+#             {"error": "AI service temporarily unavailable."},
+#             status=500
+#         )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # ==========================================
+# # SMART CONTEXT-AWARE GEMINI CHATBOT
+# # ==========================================
+
+# MODEL_NAME = "gemini-2.5-flash"
+
+# @csrf_exempt
+# @require_POST
+# def chatbot_api(request):
+#     try:
+#         data = json.loads(request.body)
+#         user_message = data.get("message", "").strip()
+
+#         if not user_message:
+#             return JsonResponse({"error": "Empty message"}, status=400)
+
+#         # ==========================
+#         # If user not logged in
+#         # ==========================
+#         if not request.user.is_authenticated:
+#             context_data = "User is not logged in."
+#         else:
+#             user = request.user
+
+#             # ---- PROFILE ----
+#             profile = getattr(user, "profile", None)
+
+#             profile_data = f"""
+# Username: {user.username}
+# Full Name: {user.first_name} {user.last_name}
+# Email: {user.email}
+# Phone: {profile.phone if profile else ""}
+# City: {profile.city if profile else ""}
+# Address: {profile.address if profile else ""}
+# Postal Code: {profile.postal_code if profile else ""}
+# """
+
+#             # ---- ORDERS ----
+#             orders = Order.objects.filter(user=user).prefetch_related("items").order_by("-created_at")
+
+#             order_summary = ""
+#             total_spent = 0
+
+#             for order in orders[:5]:  # limit to last 5
+#                 total_spent += order.total_cost
+#                 items_list = ", ".join([f"{item.product_name} (x{item.quantity})" for item in order.items.all()])
+
+#                 order_summary += f"""
+# Order ID: {order.order_id}
+# Status: {order.status}
+# Payment Status: {order.payment_status}
+# Total: ₹{order.total_cost}
+# Items: {items_list}
+# Created At: {order.created_at}
+# """
+
+#             # ---- DOCTOR APPOINTMENTS ----
+#             appointments = DoctorAppointment.objects.filter(user=user).order_by("-created_at")[:3]
+#             appointment_data = ""
+#             for a in appointments:
+#                 appointment_data += f"""
+# Pet: {a.pet_name}
+# Date: {a.appointment_date}
+# Time: {a.appointment_time}
+# Status: {a.status}
+# """
+
+#             # ---- PET CARE ----
+#             pet_care = PetCareBooking.objects.filter(user=user).order_by("-created_at")[:3]
+#             pet_care_data = ""
+#             for p in pet_care:
+#                 pet_care_data += f"""
+# Pet: {p.pet_name}
+# From: {p.start_datetime}
+# To: {p.end_datetime}
+# Status: {p.status}
+# Total: ₹{p.total_price}
+# """
+
+#             # ---- GROOMING ----
+#             grooming = GroomingBooking.objects.filter(user=user).order_by("-created_at")[:3]
+#             grooming_data = ""
+#             for g in grooming:
+#                 grooming_data += f"""
+# Pet: {g.pet_name}
+# Package: {g.package_type}
+# Visit: {g.visit_type}
+# Status: {g.status}
+# Total: ₹{g.total_price}
+# """
+
+#             context_data = f"""
+# USER PROFILE:
+# {profile_data}
+
+# LAST ORDERS:
+# {order_summary}
+
+# TOTAL SPENT: ₹{total_spent}
+
+# DOCTOR APPOINTMENTS:
+# {appointment_data}
+
+# PET CARE BOOKINGS:
+# {pet_care_data}
+
+# GROOMING BOOKINGS:
+# {grooming_data}
+# """
+
+#         SYSTEM_PROMPT = f"""
+# You are PetPortal AI assistant.
+
+# You are allowed to answer using ONLY the provided context data.
+
+# If the question is about:
+# - Orders
+# - Payment
+# - Refund
+# - Profile
+# - Appointments
+# - Grooming
+# - Pet Care
+# - Spending
+
+# Use the real data from context.
+
+# If data is missing, politely say you could not find it.
+
+# Never mention passwords.
+# Never expose sensitive data.
+# Keep answers short, clear and friendly.
+
+# CONTEXT:
+# {context_data}
+
+# User Question:
+# {user_message}
+# """
+
+#         ai_insights = cache.get("admin_ai_insights")
+
+#         if not ai_insights:
+#             try:
+#                 client = genai.Client(api_key=settings.GEMINI_API_KEY)
+
+#                 response = client.models.generate_content(
+#                     model="gemini-2.5-flash",
+#                     contents=ai_prompt,
+#                 )
+
+#                 ai_insights = response.text
+#                 cache.set("admin_ai_insights", ai_insights, 1800)  # 30 minutes
+
+#             except Exception:
+#                 ai_insights = "AI analysis temporarily unavailable."
+
+
+
+    #     client = genai.Client(api_key=settings.GEMINI_API_KEY)
+
+    #     response = client.models.generate_content(
+    #         model=MODEL_NAME,
+    #         contents=SYSTEM_PROMPT,
+    #     )
+
+    #     reply = response.text or "Sorry, I couldn't understand that."
+
+    #     return JsonResponse({"reply": reply})
+
+    # except Exception as e:
+    #     print("Chatbot exception:", str(e))
+    #     return JsonResponse(
+    #         {"error": "AI service temporarily unavailable."},
+    #         status=500
+    #     )
+
+
+
+
+# ==========================================
+# SMART CONTEXT-AWARE GEMINI CHATBOT
+# ==========================================
+
+MODEL_NAME = "gemini-2.5-flash"
 
 @csrf_exempt
 @require_POST
@@ -1538,38 +1853,309 @@ def chatbot_api(request):
         if not user_message:
             return JsonResponse({"error": "Empty message"}, status=400)
 
-        SYSTEM_PROMPT = """
-You are PetPortal AI assistant.
+        # ==========================
+        # Build Context
+        # ==========================
 
-You help users with:
-- Pet suggestions
-- Food recommendations
-- Refund policy
-- Shipping policy
-- Order tracking
-- General FAQ
+        if not request.user.is_authenticated:
+            context_data = "User is not logged in."
+        else:
+            user = request.user
+            profile = getattr(user, "profile", None)
 
-Keep answers short and friendly.
+            # ---- PROFILE ----
+            profile_data = f"""
+Username: {user.username}
+Full Name: {user.first_name} {user.last_name}
+Email: {user.email}
+Phone: {profile.phone if profile else ""}
+City: {profile.city if profile else ""}
+Address: {profile.address if profile else ""}
+Postal Code: {profile.postal_code if profile else ""}
 """
 
-        # Initialize Gemini client
-        client = genai.Client(api_key=settings.GEMINI_API_KEY)
+            # ---- ORDERS ----
+            orders = Order.objects.filter(user=user).prefetch_related("items").order_by("-created_at")
+            order_summary = ""
+            total_spent = 0
 
-        response = client.models.generate_content(
-            model=MODEL_NAME,
-            contents=SYSTEM_PROMPT + "\nUser: " + user_message,
-        )
+            for order in orders[:5]:
+                total_spent += order.total_cost
+                items_list = ", ".join(
+                    [f"{item.product_name} (x{item.quantity})" for item in order.items.all()]
+                )
 
-        reply = response.text
+                order_summary += f"""
+Order ID: {order.order_id}
+Status: {order.status}
+Payment Status: {order.payment_status}
+Total: ₹{order.total_cost}
+Items: {items_list}
+Created At: {order.created_at}
+"""
 
-        if not reply:
-            reply = "Sorry, I couldn't understand that."
+            # ---- DOCTOR ----
+            appointments = DoctorAppointment.objects.filter(user=user).order_by("-created_at")[:3]
+            appointment_data = ""
+            for a in appointments:
+                appointment_data += f"""
+Pet: {a.pet_name}
+Date: {a.appointment_date}
+Time: {a.appointment_time}
+Status: {a.status}
+"""
+
+            # ---- PET CARE ----
+            pet_care = PetCareBooking.objects.filter(user=user).order_by("-created_at")[:3]
+            pet_care_data = ""
+            for p in pet_care:
+                pet_care_data += f"""
+Pet: {p.pet_name}
+From: {p.start_datetime}
+To: {p.end_datetime}
+Status: {p.status}
+Total: ₹{p.total_price}
+"""
+
+            # ---- GROOMING ----
+            grooming = GroomingBooking.objects.filter(user=user).order_by("-created_at")[:3]
+            grooming_data = ""
+            for g in grooming:
+                grooming_data += f"""
+Pet: {g.pet_name}
+Package: {g.package_type}
+Visit: {g.visit_type}
+Status: {g.status}
+Total: ₹{g.total_price}
+"""
+
+            context_data = f"""
+USER PROFILE:
+{profile_data}
+
+LAST ORDERS:
+{order_summary}
+
+TOTAL SPENT: ₹{total_spent}
+
+DOCTOR APPOINTMENTS:
+{appointment_data}
+
+PET CARE BOOKINGS:
+{pet_care_data}
+
+GROOMING BOOKINGS:
+{grooming_data}
+"""
+
+        # ==========================
+        # SYSTEM PROMPT
+        # ==========================
+
+        system_prompt = f"""
+You are PetPortal AI assistant.
+
+You must answer ONLY using the provided context data.
+
+If data is missing, politely say you could not find it.
+
+Never mention passwords.
+Never expose sensitive data.
+Keep answers short, clear and friendly.
+
+CONTEXT:
+{context_data}
+
+User Question:
+{user_message}
+"""
+
+        # ==========================
+        # Call Gemini
+        # ==========================
+
+        try:
+            client = genai.Client(api_key=settings.GEMINI_API_KEY)
+
+            response = client.models.generate_content(
+                model=MODEL_NAME,
+                contents=system_prompt,
+            )
+
+            reply = response.text or "Sorry, I couldn't understand that."
+
+        except Exception as e:
+            print("Gemini error:", str(e))
+            reply = "AI service temporarily unavailable. Please try again later."
 
         return JsonResponse({"reply": reply})
 
     except Exception as e:
         print("Chatbot exception:", str(e))
         return JsonResponse(
-            {"error": "AI service temporarily unavailable."},
+            {"error": "Something went wrong."},
             status=500
         )
+
+
+
+
+
+
+
+
+# ==========================================
+# ADMIN AI ANALYTICS DASHBOARD
+# ==========================================
+
+from django.db.models import Sum, Count
+from django.utils import timezone
+from datetime import timedelta
+
+@login_required
+def admin_ai_dashboard(request):
+
+    if not request.user.is_superuser:
+        return redirect("home")
+
+    # ==========================
+    # BASIC METRICS
+    # ==========================
+
+    total_orders = Order.objects.count()
+    total_revenue = Order.objects.filter(payment_status="PAID").aggregate(
+        revenue=Sum("total_cost")
+    )["revenue"] or 0
+
+    total_refunds = Order.objects.filter(payment_status="REFUNDED").count()
+
+    grooming_count = GroomingBooking.objects.count()
+    petcare_count = PetCareBooking.objects.count()
+    appointment_count = DoctorAppointment.objects.count()
+
+    cancelled_orders = Order.objects.filter(status="CANCELLED").count()
+
+    # ==========================
+    # TOP SELLING PRODUCTS
+    # ==========================
+
+    top_items = (
+        OrderItem.objects
+        .values("product_name")
+        .annotate(total_qty=Sum("quantity"))
+        .order_by("-total_qty")[:5]
+    )
+
+    # ==========================
+    # LOW STOCK ACCESSORIES
+    # ==========================
+
+    low_stock = Accessory.objects.filter(stock__lt=5).order_by("stock")
+
+    # ==========================
+    # PEAK BOOKING HOURS
+    # ==========================
+
+    peak_hours = (
+        DoctorAppointment.objects
+        .values("appointment_time")
+        .annotate(count=Count("id"))
+        .order_by("-count")[:3]
+    )
+
+    # ==========================
+    # MONTHLY GROWTH
+    # ==========================
+
+    now = timezone.now()
+    last_month = now - timedelta(days=30)
+
+    current_month_revenue = Order.objects.filter(
+        created_at__gte=last_month,
+        payment_status="PAID"
+    ).aggregate(total=Sum("total_cost"))["total"] or 0
+
+    previous_month = last_month - timedelta(days=30)
+
+    previous_month_revenue = Order.objects.filter(
+        created_at__range=(previous_month, last_month),
+        payment_status="PAID"
+    ).aggregate(total=Sum("total_cost"))["total"] or 0
+
+    growth_rate = 0
+    if previous_month_revenue > 0:
+        growth_rate = ((current_month_revenue - previous_month_revenue) / previous_month_revenue) * 100
+
+    # ==========================
+    # AI ANALYTICS
+    # ==========================
+
+    analytics_summary = f"""
+Total Orders: {total_orders}
+Total Revenue: ₹{total_revenue}
+Total Refunds: {total_refunds}
+Cancelled Orders: {cancelled_orders}
+
+Grooming Bookings: {grooming_count}
+Pet Care Bookings: {petcare_count}
+Doctor Appointments: {appointment_count}
+
+Current Month Revenue: ₹{current_month_revenue}
+Previous Month Revenue: ₹{previous_month_revenue}
+Growth Rate: {growth_rate:.2f}%
+
+Top Selling Items:
+{list(top_items)}
+
+Low Stock Accessories:
+{list(low_stock.values_list('name', flat=True))}
+"""
+
+    try:
+        client = genai.Client(api_key=settings.GEMINI_API_KEY)
+
+        ai_prompt = f"""
+You are a Business Intelligence AI.
+
+Analyze the following business metrics and generate:
+
+1. Best performing service
+2. Worst performing service
+3. Revenue trend analysis
+4. Refund risk detection
+5. Cancellation risk
+6. Business recommendations
+7. Growth forecast insight
+
+DATA:
+{analytics_summary}
+
+Keep response professional and structured.
+"""
+
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=ai_prompt,
+        )
+
+        ai_insights = response.text
+
+    except Exception:
+        ai_insights = "AI analysis temporarily unavailable."
+
+    context = {
+        "total_orders": total_orders,
+        "total_revenue": total_revenue,
+        "total_refunds": total_refunds,
+        "cancelled_orders": cancelled_orders,
+        "grooming_count": grooming_count,
+        "petcare_count": petcare_count,
+        "appointment_count": appointment_count,
+        "growth_rate": round(growth_rate, 2),
+        "top_items": top_items,
+        "low_stock": low_stock,
+        "peak_hours": peak_hours,
+        "ai_insights": ai_insights,
+    }
+
+    return render(request, "myapp/admin_ai_dashboard.html", context)

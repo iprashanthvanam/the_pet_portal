@@ -23,6 +23,12 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import time
 
+
+
+
+
+from django.utils import timezone
+
 # =========================
 # PRODUCT MODELS
 # =========================
@@ -165,6 +171,15 @@ class Order(models.Model):
     razorpay_payment_id = models.CharField(max_length=100, blank=True, null=True)
     razorpay_refund_id = models.CharField(max_length=100, blank=True, null=True)
 
+
+
+    confirmed_at = models.DateTimeField(null=True, blank=True)
+    processing_at = models.DateTimeField(null=True, blank=True)
+    shipped_at = models.DateTimeField(null=True, blank=True)
+    delivered_at = models.DateTimeField(null=True, blank=True)
+    cancelled_at = models.DateTimeField(null=True, blank=True)
+
+
     def __str__(self):
         return f"Order {self.order_id}"
 
@@ -180,6 +195,23 @@ class Order(models.Model):
 
     
     
+    # def timeline(self):
+    #     base = self.created_at
+    #     return {
+    #         'CONFIRMED': base,
+    #         'PROCESSING': base + timedelta(days=1),
+    #         'SHIPPED': base + timedelta(days=2),
+    #         'DELIVERED': base + timedelta(days=3),
+    #         'CANCELLED': None
+            
+    #     }
+
+
+
+
+
+
+
     def timeline(self):
         base = self.created_at
         return {
@@ -188,7 +220,6 @@ class Order(models.Model):
             'SHIPPED': base + timedelta(days=2),
             'DELIVERED': base + timedelta(days=3),
             'CANCELLED': None
-            
         }
     
 
@@ -438,9 +469,29 @@ class PetCareBooking(models.Model):
 
         self.total_price = base_price + extra
 
+    # def save(self, *args, **kwargs):
+    #     self.clean()
+    #     self.calculate_price()
+    #     super().save(*args, **kwargs)
+
+
+
+
     def save(self, *args, **kwargs):
-        self.clean()
-        self.calculate_price()
+    # Auto-set confirmed time when order first created
+        if not self.confirmed_at:
+            self.confirmed_at = self.created_at or timezone.now()
+
+        # When status changes → set timestamp
+        if self.status == "PROCESSING" and not self.processing_at:
+            self.processing_at = timezone.now()
+
+        if self.status == "SHIPPED" and not self.shipped_at:
+            self.shipped_at = timezone.now()
+
+        if self.status == "DELIVERED" and not self.delivered_at:
+            self.delivered_at = timezone.now()
+
         super().save(*args, **kwargs)
 
     def __str__(self):

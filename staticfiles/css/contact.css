@@ -1,0 +1,411 @@
+/* --- CSS Variables & Reset (Synced with other pages) --- */
+:root {
+    /* Palette */
+    --primary: #4CAF50;       /* Vivid Green */
+    --primary-hover: #43A047;
+    --secondary: #2196F3;     /* Reliable Blue */
+    --accent: #FF9800;        /* Energetic Orange */
+    --text-dark: #212121;     /* Deep Charcoal */
+    --text-gray: #616161;     /* Slate Gray */
+    --bg-white: #FFFFFF;
+    --bg-soft: #FAFAFA;
+    --error: #EF5350;
+    --success: #4CAF50;
+
+    /* Spacing & Effects */
+    --nav-height: 70px;
+    --card-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    --hover-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    --input-focus-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
+    --border-radius: 12px;
+    --btn-pill-radius: 24px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(to bottom, var(--bg-soft), var(--bg-white));
+    color: var(--text-dark);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Navigation Bar (Exact Match) --- */
+.navbar {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: var(--nav-height);
+    background-color: rgba(232, 245, 255, 0.95);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+}
+
+.nav-container {
+    width: 100%;
+    padding: 0 20px;
+    display: flex;
+    /* KEY: Separates Logo (Left) and Links (Right) */
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Brand Logo Style */
+.nav-brand {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    text-decoration: none;
+    color: var(--text-dark);
+    letter-spacing: 0.5px;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+/* Standard Nav Buttons (Outline) */
+.nav-btn {
+    text-decoration: none;
+    padding: 8px 20px;
+    border-radius: var(--btn-pill-radius);
+    border: 1px solid var(--secondary); /* Blue outline */
+    color: var(--secondary);
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: transparent;
+    display: inline-block;
+}
+
+.nav-btn:hover {
+    background-color: var(--secondary);
+    color: var(--bg-white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+}
+
+/* "Get Started" Filled Button Style */
+.nav-btn.btn-filled {
+    background-color: var(--primary); /* Green Fill */
+    color: white;
+    border-color: var(--primary);
+}
+
+.nav-btn.btn-filled:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+/* Mobile Hamburger */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 5px;
+}
+.mobile-menu-btn span {
+    display: block; width: 25px; height: 3px;
+    background: var(--text-dark); border-radius: 2px;
+}
+
+
+/* --- Hero Section --- */
+.hero-section {
+    width: 100%;
+    height: 400px;
+    position: relative;
+    overflow: hidden;
+    margin-top: 0;
+}
+
+.image-wrapper { width: 100%; height: 100%; position: relative; }
+
+.image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: zoomIn 1.5s ease-out;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.1));
+}
+
+/* --- Main Content --- */
+Here is your contact page CSS made fully responsive, while keeping all colors, shadows, fonts, animations, spacing philosophy and overall aesthetic exactly the same.
+What changed / improved (only layout & responsiveness)
+
+Desktop → nice side-by-side layout (info left, form right)
+Tablet → still side-by-side but tighter
+Mobile (< ~768px) → vertical stack (info on top, form below), full-width cards
+Very small screens (< ~480px) → smaller fonts/padding, everything remains readable & tappable
+Input + button remain usable on touch devices
+No horizontal overflow, no squished content
+
+Updated responsive version of your contact CSS
+CSS/* ── Main Content ── */
+.main-content {
+    flex: 1;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* ── Header ── */
+.header-content {
+    text-align: center;
+    margin-bottom: 48px;
+    animation: fadeUp 0.8s ease-out;
+}
+
+.title-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+
+.app-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 44px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.paw-icon {
+    width: 36px;
+    height: 36px;
+    fill: var(--accent);
+    animation: bounce 2s infinite;
+}
+
+.title-underline {
+    width: 60px;
+    height: 3px;
+    background-color: var(--accent);
+    margin: 8px auto 16px;
+}
+
+.page-description {
+    font-size: 18px;
+    color: var(--text-gray);
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* ── Contact Wrapper (Split Layout) ── */
+.contact-wrapper {
+    display: flex;
+    gap: 32px;
+    align-items: stretch;          /* better height matching */
+    flex-wrap: wrap;
+}
+
+.contact-card {
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    padding: 32px;
+    flex: 1;
+    min-width: 340px;
+    animation: fadeUp 1s ease-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-card h2 {
+    color: var(--primary);
+    margin-bottom: 24px;
+    font-family: 'Lato', sans-serif;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+    font-size: 24px;
+}
+
+/* Left Card: Info */
+.info-item {
+    margin-bottom: 28px;
+}
+
+.label {
+    display: block;
+    font-weight: 700;
+    color: var(--secondary);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.info-link {
+    color: var(--text-dark);
+    font-size: 18px;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.info-link:hover {
+    color: var(--accent);
+}
+
+.info-text {
+    font-size: 18px;
+    color: var(--text-gray);
+    line-height: 1.5;
+}
+
+/* Right Card: Form */
+.form-group {
+    margin-bottom: 24px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 14px;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    color: var(--text-gray);
+    background-color: #FAFAFA;
+    transition: all 0.2s ease;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--secondary);
+    background-color: var(--bg-white);
+    box-shadow: var(--input-focus-shadow);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: auto;           /* pushes button to bottom if card is tall */
+}
+
+.btn-submit:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
+}
+/* --- Footer --- */
+footer {
+    background-color: var(--text-dark);
+    color: var(--bg-soft);
+    padding: 24px 0;
+    border-top: 4px solid var(--primary);
+    margin-top: auto;
+}
+
+.footer-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 14px;
+    padding: 0 20px;
+}
+
+.footer-links { margin: 10px 0; }
+.footer-links a { color: var(--secondary); text-decoration: none; }
+.separator { margin: 0 8px; color: var(--text-gray); }
+
+
+
+
+/* Animations & Responsive */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes bounce { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-10px);} }
+
+
+
+
+@media (min-width: 769px) {
+    .catalog-container {
+        flex-direction: row;   /* ALWAYS 2 COLUMNS */
+    }
+}
+
+/* ✅ True Mobile View */
+/* ================================
+   MOBILE NAVIGATION FIX
+   ================================ */
+@media (max-width: 768px) {
+
+    /* Show hamburger */
+    .mobile-menu-btn {
+        display: flex;
+    }
+
+    /* Hide links initially */
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: var(--nav-height);
+        left: 0;
+        width: 100%;
+        background: var(--bg-white);
+        flex-direction: column;
+        gap: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        z-index: 999;
+    }
+
+    /* Show when active */
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Catalog stacks only on real mobile */
+    .catalog-container {
+        flex-direction: column;
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+}

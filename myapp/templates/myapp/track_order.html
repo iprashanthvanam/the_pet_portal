@@ -289,25 +289,37 @@
                         </div>
                     {% else %}
                         <div class="status-timeline">
-                            {% for step in timeline %}
-                                <div class="timeline-step 
-                                    {% if order.status == step.key %}active{% endif %}
-                                    {% if step.time < now and order.status != step.key %}completed{% endif %}
-                                ">
-                                    <div class="step-marker"><i class="fa-solid fa-check"></i></div>
+    {% for step in timeline %}
+        <div class="timeline-step 
+            {% if step.completed %}completed{% endif %}
+            {% if step.active %}active{% endif %}
+        ">
+            <div class="step-marker">
+                {% if step.completed %}
+                    <i class="fa-solid fa-check"></i>
+                {% endif %}
+            </div>
 
-                                    <div class="step-content">
-                                        <h3 class="step-title">{{ step.label }}</h3>
-                                        <p class="step-desc">{{ step.desc }}</p>
-                                        
-                                        <div class="step-time">
-                                            <i class="fa-regular fa-calendar" style="margin-right: 3px;"></i> {{ step.time|date:"d M Y" }}
-                                            &nbsp;&nbsp;<i class="fa-regular fa-clock" style="margin-right: 3px;"></i> {{ step.time|date:"h:i A" }}
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
+            <div class="step-content">
+                <h3 class="step-title">{{ step.label }}</h3>
+
+                {% if step.desc %}
+                    <p class="step-desc">{{ step.desc }}</p>
+                {% endif %}
+
+                {% if step.time %}
+                    <div class="step-time">
+                        <i class="fa-regular fa-calendar"></i>
+                        {{ step.time|date:"d M Y" }}
+                        &nbsp;
+                        <i class="fa-regular fa-clock"></i>
+                        {{ step.time|date:"h:i A" }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
                     {% endif %}
 
                 {% endif %}

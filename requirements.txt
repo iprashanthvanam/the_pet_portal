@@ -10,6 +10,8 @@ cssselect2==0.9.0
 distro==1.9.0
 Django==5.2.6
 django-allauth==65.14.3
+django-jazzmin==3.0.2
+django-unfold==0.80.2
 djangorestframework==3.16.1
 fonttools==4.61.1
 google-ai-generativelanguage==0.6.15

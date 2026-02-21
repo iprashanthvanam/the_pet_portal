@@ -1,4 +1,4 @@
-{% load static %}
+<!-- {% load static %}
 {% load socialaccount %}
 <!DOCTYPE html>
 <html lang="en">
@@ -279,6 +279,323 @@
                     </div>
                     
                     <a href="https://maps.google.com/?q=Hyderabad,Telangana,India" target="_blank" class="btn-map">
+                        <i class="fa-solid fa-location-arrow"></i> Open in Google Maps
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+<script>
+    // Mobile menu toggle logic
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+</script>
+
+</body>
+</html> -->
+
+
+
+
+{% load static %}
+{% load socialaccount %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | The Pet Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ================= Advanced CSS Variables (LOCKED) ================= */
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #ec4899;
+            --bg-body: #f3f4f6;
+            --bg-sidebar: #111827;
+            --bg-sidebar-hover: #1f2937;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --text-light: #f9fafb;
+            --gradient-tech: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-width: 280px;
+        }
+
+        /* ================= Reset & Typography (LOCKED) ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); overflow-x: hidden; display: flex; height: 100vh; }
+        a { text-decoration: none; color: inherit; }
+
+        /* ================= Layout Structure (LOCKED) ================= */
+        .dashboard-container { display: flex; width: 100%; min-height: 100vh; }
+
+        /* ================= Sidebar Styles (LOCKED) ================= */
+        .sidebar {
+            width: var(--sidebar-width); background-color: var(--bg-sidebar); color: var(--text-light);
+            height: 100vh; position: fixed; left: 0; top: 0; display: flex; flex-direction: column;
+            transition: var(--transition); z-index: 1000; box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+        .sidebar-header { padding: 25px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-header i { font-size: 24px; background: var(--gradient-tech); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sidebar-header h2 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+        .sidebar-menu { flex: 1; padding: 20px 15px; overflow-y: auto; list-style: none; }
+        .sidebar-menu::-webkit-scrollbar { width: 4px; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        .menu-label { font-size: 12px; text-transform: uppercase; color: #9ca3af; letter-spacing: 1px; margin: 15px 0 10px 10px; font-weight: 600; }
+        .menu-item { display: flex; align-items: center; padding: 12px 15px; border-radius: 10px; margin-bottom: 5px; color: #d1d5db; transition: var(--transition); font-weight: 500; }
+        .menu-item i { width: 20px; margin-right: 15px; font-size: 18px; }
+        .menu-item:hover, .menu-item.active { background-color: var(--bg-sidebar-hover); color: #ffffff; transform: translateX(5px); }
+        .menu-item.active { border-left: 4px solid var(--primary); }
+        .badge-cart { background: var(--secondary); color: white; padding: 2px 8px; border-radius: 20px; font-size: 12px; margin-left: auto; }
+        .sidebar-auth { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); }
+        .auth-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; font-weight: 600; transition: var(--transition); cursor: pointer; border: none; text-decoration: none; }
+        .btn-login { background: transparent; border: 1px solid #4b5563; color: white; }
+        .btn-login:hover { background: #374151; }
+
+        /* ================= Main Content Styles (LOCKED) ================= */
+        .main-content { flex: 1; margin-left: var(--sidebar-width); display: flex; flex-direction: column; transition: var(--transition); height: 100vh; overflow-y: auto; }
+        .top-header { height: 80px; min-height: 80px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; }
+        .hamburger { display: none; font-size: 24px; cursor: pointer; color: var(--text-main); border: none; background: none; }
+
+        /* Profile Icon UI */
+        .profile-menu-container { position: relative; }
+        .profile-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-tech); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; text-decoration: none; overflow: hidden; border: 2px solid white; box-shadow: var(--shadow-sm); }
+        .profile-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ================= CONTACT US SPECIFIC CSS ================= */
+        .content-wrapper { padding: 40px 30px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        
+        .page-header { margin-bottom: 30px; text-align: center; }
+        .sub-title { text-transform: uppercase; letter-spacing: 2px; font-size: 12px; font-weight: 600; color: var(--primary); display: block; margin-bottom: 5px; }
+        .page-header h1 { font-size: 32px; font-weight: 700; color: var(--text-main); margin-bottom: 10px; }
+        .page-header p { color: var(--text-muted); font-size: 15px; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+        /* FIXED: Grid now handles flexible sizing better */
+        .contact-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1.2fr; 
+            gap: 30px; 
+            align-items: start; 
+            width: 100%;
+        }
+
+        .contact-card { background: var(--bg-card); border-radius: 20px; padding: 40px; box-shadow: var(--shadow-lg); width: 100%; }
+        
+        /* Contact Info List */
+        .contact-list { display: flex; flex-direction: column; gap: 30px; }
+        .contact-item { display: flex; align-items: flex-start; gap: 20px; transition: var(--transition); padding: 15px; border-radius: 12px; border: 1px solid transparent; width: 100%; }
+        .contact-item:hover { background: #f9fafb; border-color: #e5e7eb; transform: translateX(5px); }
+        
+        .icon-wrapper { 
+            width: 50px; height: 50px; border-radius: 12px; background: rgba(99, 102, 241, 0.1); 
+            display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--primary); flex-shrink: 0;
+        }
+        .contact-item:nth-child(2) .icon-wrapper { background: rgba(236, 72, 153, 0.1); color: var(--secondary); }
+        .contact-item:nth-child(3) .icon-wrapper { background: rgba(34, 197, 94, 0.1); color: #16a34a; }
+
+        .details { word-break: break-word; } /* Ensure long emails don't overflow */
+        .details h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 5px; }
+        .details p, .details a { font-size: 14px; color: var(--text-muted); font-weight: 500; transition: var(--transition); line-height: 1.5; }
+        .details a:hover { color: var(--primary); text-decoration: underline; }
+
+        /* Hours Note */
+        .support-note { margin-top: 20px; padding-top: 20px; border-top: 1px dashed #d1d5db; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 10px; }
+        .support-note i { color: var(--secondary); font-size: 16px; }
+
+        /* Map Card - FIXED RESPONSIVENESS */
+        .map-card { background: var(--bg-card); border-radius: 20px; padding: 15px; box-shadow: var(--shadow-lg); display: flex; flex-direction: column; gap: 15px; width: 100%; }
+        .map-container { width: 100%; height: 350px; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; position: relative; }
+        .map-container iframe { width: 100%; height: 100%; border: none; }
+        
+        .btn-map { 
+            display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; 
+            background: var(--gradient-tech); color: white; padding: 16px; border-radius: 12px; 
+            font-size: 15px; font-weight: 600; transition: var(--transition); box-shadow: var(--shadow-sm); 
+        }
+        .btn-map:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); color: white; }
+
+        /* ================= Responsive Design (LOCKED + FIXED) ================= */
+        @media (max-width: 1024px) {
+            .contact-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 850px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; width: 100%; }
+            .hamburger { display: block; }
+            
+            /* FIXED: Padding and Widths for Mobile */
+            .content-wrapper { padding: 30px 15px; width: 100%; overflow-x: hidden; }
+            .contact-card, .map-card { padding: 25px; width: 100%; }
+            .page-header h1 { font-size: 26px; }
+            .contact-item:hover { transform: none; } /* Disable hover slide on mobile */
+        }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(3px); }
+        .sidebar-overlay.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-paw"></i>
+            <h2>PetPortal<span style="color: var(--secondary)">.</span></h2>
+        </div>
+
+        <ul class="sidebar-menu">
+            <div class="menu-label">Main Menu</div>
+            <a href="{% url 'pets' %}" class="menu-item">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+            
+            <div class="menu-label">Marketplace</div>
+            <a href="{% url 'pets' %}#pets-section" class="menu-item">
+                <i class="fa-solid fa-dog"></i> Adopt Pets
+            </a>
+            <a href="{% url 'pets' %}#food-section" class="menu-item">
+                <i class="fa-solid fa-bone"></i> Pet Food
+            </a>
+            <a href="{% url 'pets' %}#accessories-section" class="menu-item">
+                <i class="fa-solid fa-tag"></i> Accessories
+            </a>
+
+            <div class="menu-label">Services</div>
+            <a href="{% url 'consult_doctor' %}" class="menu-item">
+                <i class="fa-solid fa-user-doctor"></i> Consult Doctor
+            </a>
+            <a href="{% url 'pet_care' %}" class="menu-item">
+                <i class="fa-solid fa-heart-pulse"></i> Pet Care
+            </a>
+            <a href="{% url 'grooming' %}" class="menu-item">
+                <i class="fa-solid fa-scissors"></i> Grooming
+            </a>
+
+            <div class="menu-label">Account</div>
+            <a href="{% url 'cart_detail' %}" class="menu-item">
+                <i class="fa-solid fa-cart-shopping"></i> Cart 
+            </a>
+            <a href="{% url 'order_history' %}" class="menu-item">
+                <i class="fa-solid fa-box-open"></i> My Orders
+            </a>
+            <a href="{% url 'contact_us' %}" class="menu-item active">
+                <i class="fa-solid fa-headset"></i> Contact Support
+            </a>
+        </ul>
+
+        <div class="sidebar-auth">
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="auth-btn btn-login">
+                    <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Logout
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="auth-btn btn-login">
+                    <i class="fa-solid fa-arrow-right-to-bracket" style="margin-right: 8px;"></i> Login
+                </a>
+            {% endif %}
+        </div>
+    </aside>
+
+    <main class="main-content">
+        
+        <header class="top-header">
+            <button class="hamburger" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div style="flex: 1;"></div>
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div class="profile-menu-container">
+                    <a href="{% if user.is_authenticated %}{% url 'profile' %}{% else %}{% url 'login' %}{% endif %}" class="profile-icon">
+                        {% if user.is_authenticated %}
+                            {% if user.profile.profile_image %}
+                                <img src="{{ user.profile.profile_image.url }}" alt="Profile">
+                            {% else %}
+                                <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=6366f1&color=fff" alt="Profile">
+                            {% endif %}
+                        {% else %}
+                            <i class="fa-solid fa-user"></i>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            
+            <div class="page-header">
+                <span class="sub-title">Get in Touch ✨</span>
+                <h1>We're Here to Help</h1>
+                <p>Have questions about adopting a pet, tracking an order, or booking a vet appointment? Reach out to us using the details below.</p>
+            </div>
+
+            <div class="contact-grid">
+                
+                <div class="contact-card">
+                    <div class="contact-list">
+                        
+                        <div class="contact-item">
+                            <div class="icon-wrapper">
+                                <i class="fa-regular fa-envelope"></i>
+                            </div>
+                            <div class="details">
+                                <h3>Email Support</h3>
+                                <p><a href="mailto:prashanthvanam61@gmail.com">prashanthvanam61@gmail.com</a></p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="icon-wrapper">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div class="details">
+                                <h3>Call Us</h3>
+                                <p><a href="tel:+917036142499">+91 7036142499</a></p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="icon-wrapper">
+                                <i class="fa-solid fa-map-location-dot"></i>
+                            </div>
+                            <div class="details">
+                                <h3>Headquarters</h3>
+                                <p>Hyderabad, Telangana, India</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="support-note">
+                        <i class="fa-regular fa-clock"></i>
+                        <span><strong>Business Hours:</strong> Mon - Sun, 9:00 AM - 10:00 PM (IST)</span>
+                    </div>
+                </div>
+
+                <div class="map-card">
+                    <div class="map-container">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d243647.31603522268!2d78.24323067789324!3d17.41215307525325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb99daeaebd2c7%3A0xae93b78392bafbc2!2sHyderabad%2C%20Telangana!5e0!3m2!1sen!2sin!4v1708320000000!5m2!1sen!2sin" 
+                            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                    
+                    <a href="https://goo.gl/maps/Hyderabad" target="_blank" class="btn-map">
                         <i class="fa-solid fa-location-arrow"></i> Open in Google Maps
                     </a>
                 </div>

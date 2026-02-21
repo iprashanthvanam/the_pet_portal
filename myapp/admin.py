@@ -1,95 +1,16 @@
 
-
-
+# from django.contrib import admin
+# from unfold.admin import ModelAdmin
 
 # from django.contrib import admin
-# from .models import Order, OrderItem, Pet, Food, CartItem, products
-
-
-
-# class OrderItemInline(admin.TabularInline):
-#     model = OrderItem
-#     extra = 0
-#     readonly_fields = ("product_name", "price", "quantity")
-
-
-# @admin.register(Order)
-# class OrderAdmin(admin.ModelAdmin):
-#     list_display = (
-#         "order_id",
-#         "user",
-#         "status",
-#         "payment_method",
-#         "payment_status",
-#         "total_cost",
-#         "created_at",
-#     )
-
-#     list_filter = (
-#         "status",
-#         "payment_method",
-#         "payment_status",
-#         "created_at",
-#     )
-
-#     search_fields = (
-#         "order_id",
-#         "full_name",
-#         "email",
-#         "razorpay_order_id",
-#         "razorpay_payment_id",
-#     )
-
-#     ordering = ("-created_at",)
-
-#     readonly_fields = (
-#         "order_id",
-#         "razorpay_order_id",
-#         "razorpay_payment_id",
-#         "created_at",
-#         "total_cost",
-#     )
-
-#     fieldsets = (
-#         ("Order Info", {
-#             "fields": ("order_id", "created_at", "status")
-#         }),
-#         ("Customer Details", {
-#             "fields": ("full_name", "email", "mobile_number")
-#         }),
-#         ("Address", {
-#             "fields": ("address", "city", "postal_code")
-#         }),
-#         ("Payment", {
-#             "fields": ("payment_method", "payment_status", "razorpay_order_id", "razorpay_payment_id")
-#         }),
-#         ("Amount", {
-#             "fields": ("total_cost",)
-#         }),
-#     )
-
-#     inlines = [OrderItemInline]
-
-
-# admin.site.register(Pet)
-# admin.site.register(Food)
-# admin.site.register(CartItem)
-# admin.site.register(products)
-
-
-
-
-
-
-
 
 
 
 from .models import UserProfile
 from .models import DoctorAppointment
-
-
 from django.contrib import admin
+
+
 from .models import (
     Order, OrderItem,
     Pet, Food, CartItem,
