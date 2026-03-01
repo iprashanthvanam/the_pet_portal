@@ -451,19 +451,47 @@ def add_to_cart(request, item_type, item_id):
 
 
 
+# def cart_detail(request):
+#     cart = normalize_cart(request.session.get('cart', {}))
+#     request.session['cart'] = cart
+
+#     total_price = 0
+#     for item in cart.values():
+#         item['total'] = item['price'] * item['quantity']
+#         total_price += item['total']
+
+#     return render(request, 'myapp/cart.html', {
+#         'cart': cart,
+#         'total_price': total_price
+#     })
+
+
+
 def cart_detail(request):
     cart = normalize_cart(request.session.get('cart', {}))
     request.session['cart'] = cart
+    request.session.modified = True
 
     total_price = 0
+    cart_count = 0
+
     for item in cart.values():
         item['total'] = item['price'] * item['quantity']
         total_price += item['total']
+        cart_count += item['quantity']
 
     return render(request, 'myapp/cart.html', {
         'cart': cart,
-        'total_price': total_price
+        'total_price': total_price,
+        'cart_count': cart_count,   # ✅ FIXED
     })
+
+
+
+
+
+
+
 
 
 # =====================================================

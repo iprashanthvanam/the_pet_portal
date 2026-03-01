@@ -388,6 +388,116 @@ class DoctorAppointment(models.Model):
 # PET CARE BOARDING MODEL
 # =========================
 
+# class PetCareBooking(models.Model):
+
+#     STATUS_CHOICES = (
+#         ("PENDING", "Pending"),
+#         ("CONFIRMED", "Confirmed"),
+#         ("ACTIVE", "Active"),
+#         ("COMPLETED", "Completed"),
+#         ("CANCELLED", "Cancelled"),
+#     )
+
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="pet_care_bookings")
+
+#     # Pet Details (Owner's own pet)
+#     pet_name = models.CharField(max_length=100)
+#     pet_species = models.CharField(max_length=50)
+#     pet_age = models.PositiveIntegerField()
+#     pet_gender = models.CharField(max_length=20, blank=True)
+
+#     health_notes = models.TextField(blank=True)
+#     vaccinated = models.BooleanField(default=False)
+
+#     # Care Options
+#     special_diet = models.BooleanField(default=False)
+#     injection_required = models.BooleanField(default=False)
+#     vaccine_required = models.BooleanField(default=False)
+#     extra_care = models.BooleanField(default=False)
+
+#     # Stay Duration
+#     start_datetime = models.DateTimeField()
+#     end_datetime = models.DateTimeField()
+
+#     total_days = models.PositiveIntegerField(default=1)
+#     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+#     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="PENDING")
+
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     def clean(self):
+#         if not self.start_datetime or not self.end_datetime:
+#             raise ValidationError("Start and End date/time required.")
+
+#         if self.start_datetime < timezone.now():
+#             raise ValidationError("Start date cannot be in the past.")
+
+#         if self.end_datetime <= self.start_datetime:
+#             raise ValidationError("End date must be after start date.")
+
+#     def calculate_price(self):
+#         duration = self.end_datetime - self.start_datetime
+#         days = duration.days
+#         if duration.seconds > 0:
+#             days += 1
+
+#         if days < 1:
+#             days = 1
+
+#         self.total_days = days
+
+#         # Pricing Engine
+#         base_price = 0
+
+#         if days == 1:
+#             base_price = 500
+#         elif days == 2:
+#             base_price = 950
+#         else:
+#             base_price = 950 + (days - 2) * 450
+
+#         extra = 0
+#         if self.special_diet:
+#             extra += 250
+#         if self.injection_required:
+#             extra += 200
+#         if self.vaccine_required:
+#             extra += 300
+#         if self.extra_care:
+#             extra += 400
+
+#         self.total_price = base_price + extra
+
+#     # def save(self, *args, **kwargs):
+#     #     self.clean()
+#     #     self.calculate_price()
+#     #     super().save(*args, **kwargs)
+
+
+
+
+#     def save(self, *args, **kwargs):
+#     # Auto-set confirmed time when order first created
+#         if not self.confirmed_at:
+#             self.confirmed_at = self.created_at or timezone.now()
+
+#         # When status changes → set timestamp
+#         if self.status == "PROCESSING" and not self.processing_at:
+#             self.processing_at = timezone.now()
+
+#         if self.status == "SHIPPED" and not self.shipped_at:
+#             self.shipped_at = timezone.now()
+
+#         if self.status == "DELIVERED" and not self.delivered_at:
+#             self.delivered_at = timezone.now()
+
+#         super().save(*args, **kwargs)
+
+#     def __str__(self):
+#         return f"{self.pet_name} - {self.user.username} ({self.status})"
+
+
 class PetCareBooking(models.Model):
 
     STATUS_CHOICES = (
@@ -400,7 +510,6 @@ class PetCareBooking(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="pet_care_bookings")
 
-    # Pet Details (Owner's own pet)
     pet_name = models.CharField(max_length=100)
     pet_species = models.CharField(max_length=50)
     pet_age = models.PositiveIntegerField()
@@ -409,13 +518,11 @@ class PetCareBooking(models.Model):
     health_notes = models.TextField(blank=True)
     vaccinated = models.BooleanField(default=False)
 
-    # Care Options
     special_diet = models.BooleanField(default=False)
     injection_required = models.BooleanField(default=False)
     vaccine_required = models.BooleanField(default=False)
     extra_care = models.BooleanField(default=False)
 
-    # Stay Duration
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
 
@@ -447,7 +554,6 @@ class PetCareBooking(models.Model):
 
         self.total_days = days
 
-        # Pricing Engine
         base_price = 0
 
         if days == 1:
@@ -469,36 +575,13 @@ class PetCareBooking(models.Model):
 
         self.total_price = base_price + extra
 
-    # def save(self, *args, **kwargs):
-    #     self.clean()
-    #     self.calculate_price()
-    #     super().save(*args, **kwargs)
-
-
-
-
     def save(self, *args, **kwargs):
-    # Auto-set confirmed time when order first created
-        if not self.confirmed_at:
-            self.confirmed_at = self.created_at or timezone.now()
-
-        # When status changes → set timestamp
-        if self.status == "PROCESSING" and not self.processing_at:
-            self.processing_at = timezone.now()
-
-        if self.status == "SHIPPED" and not self.shipped_at:
-            self.shipped_at = timezone.now()
-
-        if self.status == "DELIVERED" and not self.delivered_at:
-            self.delivered_at = timezone.now()
-
+        self.clean()
+        self.calculate_price()
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.pet_name} - {self.user.username} ({self.status})"
-
-
-
 
 
 
