@@ -297,7 +297,6 @@ A complete visual walkthrough of every screen in The Pet Portal.
   <sub><b>Full admin control.</b> Manage pets, food, orders (with inline items), appointments, grooming bookings, pet care bookings, accessories, and users — styled with <code>django-jazzmin</code> and <code>django-unfold</code>.</sub>
 </div>
 
----
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
