@@ -380,7 +380,7 @@ A complete visual walkthrough of every screen in The Pet Portal.
 └────────────────────────┬──────────────────────────────────────────┘
                          │  HTTP (Django Sessions + CSRF)
 ┌────────────────────────▼─────────────────────────────────────────┐
-│                  DJANGO BACKEND (views.py — 40+ views)           │
+│                  DJANGO BACKEND                                  │
 │                                                                  │
 │  Auth Layer          │  Cart Engine         │  Order Engine      │
 │  (Django Auth +      │  (Session + DB,      │  (UUID Orders,     │
@@ -733,7 +733,7 @@ the_pet_portal/
 
 ## Deployment (PythonAnywhere)
 
-The Pet Portal is live at **[https://prashanthvanam.pythonanywhere.com](https://prashanthvanam.pythonanywhere.com)**
+The Pet Portal is live at **[https://thepetportal.pythonanywhere.com/](https://thepetportal.pythonanywhere.com/)**
 
 ### Deployment Steps
 
