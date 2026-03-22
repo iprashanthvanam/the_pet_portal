@@ -300,6 +300,7 @@ A complete visual walkthrough of every screen in The Pet Portal.
 ---
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ---
 
 ## Key Features
