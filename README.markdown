@@ -331,8 +331,8 @@ A complete visual walkthrough of every screen in The Pet Portal.
 │                                                                  │
 │  ┌──────────────────────────────────────────────────────────┐    │
 │  │                 PAYMENT ENGINE (Razorpay)                │    │
-│  │  Create Order → JS Modal → Verify Signature             │    │
-│  │  Mark Paid → Webhook Sync → Refund Flow                 │    │
+│  │  Create Order → JS Modal → Verify Signature              │    │
+│  │  Mark Paid → Webhook Sync → Refund Flow                  │    │
 │  └──────────────────────────────────────────────────────────┘    │
 │                                                                  │
 │  ┌──────────────────────────────────────────────────────────┐    │
