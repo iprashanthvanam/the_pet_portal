@@ -29,7 +29,7 @@
 <br/>
 
 <!-- HERO SCREENSHOT -->
-<img src="Images/home.png" alt="The Pet Portal — Home Page" width="900"/>
+<img src="images/home.png" alt="The Pet Portal — Home Page" width="900"/>
 
 > **The Pet Portal** — A complete pet marketplace covering adoption, shopping, services, payments, and AI assistance
 
@@ -38,6 +38,16 @@
 ---
 
 <!-- TABLE OF CONTENTS -->
+<!--
+  HOW GITHUB ANCHOR LINKS WORK:
+  GitHub auto-generates anchors from heading text:
+  - All letters → lowercase
+  - Spaces → hyphens
+  - Special chars (brackets, slashes, apostrophes, emoji) → removed
+  - Example: "## Payment Integration (Razorpay)" → #payment-integration-razorpay
+  - Example: "## AI Chatbot (Gemini)"             → #ai-chatbot-gemini
+  - Example: "## Deployment (PythonAnywhere)"      → #deployment-pythonanywhere
+-->
 <details>
   <summary>📑 Table of Contents</summary>
   <ol>
@@ -48,13 +58,13 @@
     <li><a href="#system-architecture">System Architecture</a></li>
     <li><a href="#application-workflow">Application Workflow</a></li>
     <li><a href="#database-models">Database Models</a></li>
-    <li><a href="#payment-integration">Payment Integration (Razorpay)</a></li>
-    <li><a href="#ai-chatbot">AI Chatbot (Gemini)</a></li>
+    <li><a href="#payment-integration-razorpay">Payment Integration (Razorpay)</a></li>
+    <li><a href="#ai-chatbot-gemini">AI Chatbot (Gemini)</a></li>
     <li><a href="#getting-started">Getting Started</a></li>
     <li><a href="#environment-variables">Environment Variables</a></li>
     <li><a href="#project-structure">Project Structure</a></li>
     <li><a href="#security">Security</a></li>
-    <li><a href="#deployment">Deployment (PythonAnywhere)</a></li>
+    <li><a href="#deployment-pythonanywhere">Deployment (PythonAnywhere)</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -85,8 +95,6 @@ Most pet owners juggle multiple platforms — one for adoption, another for food
 
 ## Screenshots
 
-> **📸 Image folder guide** — see [which screenshots to take and how to name them](#-which-screenshots-to-take--naming-guide) at the bottom of this section.
-
 A complete visual walkthrough of every screen in The Pet Portal.
 
 ---
@@ -94,19 +102,17 @@ A complete visual walkthrough of every screen in The Pet Portal.
 ### 🏠 Home Page
 
 <div align="center">
-  <img src="Images/home.png" alt="The Pet Portal — Home Page" width="860"/>
+  <img src="images/home.png" alt="The Pet Portal — Home Page" width="860"/>
   <br/><br/>
   <sub><b>Landing page.</b> Hero banner, featured pets, food categories, and service highlights — built with responsive HTML/CSS and Google Fonts (Poppins).</sub>
 </div>
 
 ---
 
-### 🔐 Register & Login
+### 🔐 Login
 
 <div align="center">
-  <img src="Images/register.png" alt="User Registration" width="420"/>
-  &nbsp;&nbsp;
-  <img src="Images/login.png" alt="User Login" width="420"/>
+  <img src="images/login.png" alt="User Login" width="860"/>
   <br/><br/>
   <sub><b>User authentication.</b> Django's built-in auth system extended with <code>django-allauth</code> for social login. Cart data persists across login via session merge.</sub>
 </div>
@@ -116,9 +122,9 @@ A complete visual walkthrough of every screen in The Pet Portal.
 ### 🐾 Pet Listing & Pet Detail
 
 <div align="center">
-  <img src="Images/pets_listing.png" alt="Pet Listing Page" width="420"/>
+  <img src="images/pets_listing.png" alt="Pet Listing Page" width="420"/>
   &nbsp;&nbsp;
-  <img src="Images/pet_detail.png" alt="Pet Detail Page" width="420"/>
+  <img src="images/pets_detail.png" alt="Pet Detail Page" width="420"/>
   <br/><br/>
   <sub><b>Pet marketplace.</b> Browse available pets with live search, species filter, and price range. Each pet page shows the full health profile — vaccination status, weight, microchip ID, temperament, and adoption readiness.</sub>
 </div>
@@ -128,35 +134,33 @@ A complete visual walkthrough of every screen in The Pet Portal.
 ### 🛒 Cart & Checkout
 
 <div align="center">
-  <img src="Images/cart.png" alt="Shopping Cart" width="420"/>
+  <img src="images/cart.png" alt="Shopping Cart" width="420"/>
   &nbsp;&nbsp;
-  <img src="Images/checkout.png" alt="Checkout Page" width="420"/>
+  <img src="images/checkout.png" alt="Checkout Page" width="420"/>
   <br/><br/>
   <sub><b>Cart and checkout flow.</b> Session-based cart supports pets, food, and accessories together. Checkout accepts <b>Cash on Delivery</b> and <b>Razorpay online payment</b> with real-time server-side verification.</sub>
 </div>
 
 ---
 
-### 💳 Razorpay Payment & Order Success
+### 📦 Order Success & Order History
 
 <div align="center">
-  <img src="Images/razorpay_payment.png" alt="Razorpay Payment Modal" width="420"/>
+  <img src="images/order_success.png" alt="Order Success Page" width="420"/>
   &nbsp;&nbsp;
-  <img src="Images/order_success.png" alt="Order Success Page" width="420"/>
+  <img src="images/order_history.png" alt="Order History" width="420"/>
   <br/><br/>
-  <sub><b>Payment integration.</b> Razorpay checkout modal opens in-browser. Payment is verified server-side via HMAC-SHA256 signature validation. On success, the order is marked PAID and the confirmation page is shown.</sub>
+  <sub><b>Order management.</b> On payment success the confirmation page is displayed. Full order history shows status badges (CONFIRMED → PROCESSING → SHIPPED → DELIVERED) with invoice download.</sub>
 </div>
 
 ---
 
-### 📦 Order History & Order Tracking
+### 🔍 Order Tracking
 
 <div align="center">
-  <img src="Images/order_history.png" alt="Order History" width="420"/>
-  &nbsp;&nbsp;
-  <img src="Images/track_order.png" alt="Track Order" width="420"/>
+  <img src="images/track_order.png" alt="Track Order" width="860"/>
   <br/><br/>
-  <sub><b>Order management.</b> Full history with status badges (CONFIRMED → PROCESSING → SHIPPED → DELIVERED). Track any order using its UUID-based Order ID — no login required.</sub>
+  <sub><b>Public order tracking.</b> Track any order using its UUID-based Order ID — no login required. Displays customer name, total, current status, and the full status timeline.</sub>
 </div>
 
 ---
@@ -164,7 +168,7 @@ A complete visual walkthrough of every screen in The Pet Portal.
 ### 🧾 Invoice Download
 
 <div align="center">
-  <img src="Images/invoice.png" alt="PDF Invoice" width="860"/>
+  <img src="images/invoice.png" alt="PDF Invoice" width="860"/>
   <br/><br/>
   <sub><b>PDF invoice generation.</b> WeasyPrint generates a formatted PDF invoice per order — includes customer details, itemised list, payment method, payment status, and total. Downloadable by both user and admin.</sub>
 </div>
@@ -174,9 +178,9 @@ A complete visual walkthrough of every screen in The Pet Portal.
 ### 🩺 Consult a Doctor & Appointment History
 
 <div align="center">
-  <img src="Images/consult_doctor.png" alt="Consult Doctor Booking" width="420"/>
+  <img src="images/consult_doctor.png" alt="Consult Doctor Booking" width="420"/>
   &nbsp;&nbsp;
-  <img src="Images/appointment_history.png" alt="Appointment History" width="420"/>
+  <img src="images/appointment_history.png" alt="Appointment History" width="420"/>
   <br/><br/>
   <sub><b>Veterinary consultation booking.</b> Book a vet appointment with pet details, symptoms, preferred date/time, and contact info. View and cancel upcoming appointments from the history page.</sub>
 </div>
@@ -186,11 +190,11 @@ A complete visual walkthrough of every screen in The Pet Portal.
 ### ✂️ Grooming Booking & History
 
 <div align="center">
-  <img src="Images/grooming_booking.png" alt="Grooming Booking Form" width="420"/>
+  <img src="images/grooming_booking.png" alt="Grooming Booking Form" width="420"/>
   &nbsp;&nbsp;
-  <img src="Images/grooming_history.png" alt="Grooming History" width="420"/>
+  <img src="images/grooming_history.png" alt="Grooming History" width="420"/>
   <br/><br/>
-  <sub><b>Pet grooming services.</b> Choose from 6 packages — Basic Bath, Haircut & Styling, Nail Clipping, Ear Cleaning, Tick Treatment, or Full Package. Price auto-calculated by pet size (Small/Medium/Large) and visit type (Center/Home ₹300 extra).</sub>
+  <sub><b>Pet grooming services.</b> Choose from 6 packages — Basic Bath, Haircut & Styling, Nail Clipping, Ear Cleaning, Tick Treatment, or Full Package. Price auto-calculated by pet size (Small/Medium/Large) and visit type (Center/Home +₹300).</sub>
 </div>
 
 ---
@@ -198,21 +202,11 @@ A complete visual walkthrough of every screen in The Pet Portal.
 ### 🏡 Pet Care / Boarding & History
 
 <div align="center">
-  <img src="Images/pet_care_booking.png" alt="Pet Care Boarding Form" width="420"/>
+  <img src="images/pet_care_booking.png" alt="Pet Care Boarding Form" width="420"/>
   &nbsp;&nbsp;
-  <img src="Images/pet_care_history.png" alt="Pet Care History" width="420"/>
+  <img src="images/pet_care_history.png" alt="Pet Care History" width="420"/>
   <br/><br/>
-  <sub><b>Pet boarding / day care.</b> Book overnight or multi-day care with optional add-ons — special diet (+₹250), injections (+₹200), vaccinations (+₹300), extra care (+₹400). Total price is calculated automatically on save.</sub>
-</div>
-
----
-
-### 👤 User Profile
-
-<div align="center">
-  <img src="Images/profile.png" alt="User Profile Page" width="860"/>
-  <br/><br/>
-  <sub><b>Profile management.</b> Update profile image, phone number, address, and city. Profile is auto-created on registration via Django signals.</sub>
+  <sub><b>Pet boarding / day care.</b> Book overnight or multi-day care with optional add-ons — special diet (+₹250), injections (+₹200), vaccinations (+₹300), extra care (+₹400). Total price calculated automatically on save.</sub>
 </div>
 
 ---
@@ -220,7 +214,7 @@ A complete visual walkthrough of every screen in The Pet Portal.
 ### 🤖 AI Chatbot (Gemini)
 
 <div align="center">
-  <img src="Images/ai_chatbot.png" alt="Gemini AI Chatbot" width="860"/>
+  <img src="images/ai_chatbot.png" alt="Gemini AI Chatbot" width="860"/>
   <br/><br/>
   <sub><b>Gemini-powered pet assistant.</b> Embedded AI chatbot built with Google's <code>google-genai</code> SDK. Answers pet care questions, product queries, and service information in real time without page reload.</sub>
 </div>
@@ -230,7 +224,7 @@ A complete visual walkthrough of every screen in The Pet Portal.
 ### 🛠️ Admin AI Dashboard
 
 <div align="center">
-  <img src="Images/admin_ai_dashboard.png" alt="Admin AI Dashboard" width="860"/>
+  <img src="images/admin_ai_dashboard.png" alt="Admin AI Dashboard" width="860"/>
   <br/><br/>
   <sub><b>Admin-only AI analytics dashboard.</b> A Gemini-powered internal dashboard for admins to query platform data, order trends, and get AI-assisted insights.</sub>
 </div>
@@ -240,43 +234,12 @@ A complete visual walkthrough of every screen in The Pet Portal.
 ### 🎛️ Django Admin Panel
 
 <div align="center">
-  <img src="Images/django_admin.png" alt="Django Admin Dashboard" width="860"/>
+  <img src="images/django_admin.png" alt="Django Admin Dashboard" width="860"/>
   <br/><br/>
   <sub><b>Full admin control.</b> Manage pets, food, orders (with inline items), appointments, grooming bookings, pet care bookings, accessories, and users. Styled with <code>django-jazzmin</code> and <code>django-unfold</code>.</sub>
 </div>
 
 ---
-
-### 📸 Which Screenshots to Take — Naming Guide
-
-Create an `Images/` folder in the root of your repository and take the following screenshots. Name each file **exactly** as shown below so the README renders correctly:
-
-| File Name | Page / URL | What to Show |
-|-----------|-----------|--------------|
-| `home.png` | `/` | Full landing page with banner and featured sections |
-| `register.png` | `/register/` | Registration form |
-| `login.png` | `/login/` | Login form |
-| `pets_listing.png` | `/pets/` | Pet listing grid with search bar |
-| `pet_detail.png` | `/pet/<id>/` | Single pet page with health profile |
-| `cart.png` | `/cart/` | Cart with items added |
-| `checkout.png` | `/checkout/` | Checkout form with payment options |
-| `razorpay_payment.png` | `/checkout/` | Razorpay modal open (browser screenshot) |
-| `order_success.png` | `/order/success/<id>/` | Order confirmed page |
-| `order_history.png` | `/orders/` | List of user orders with status badges |
-| `track_order.png` | `/track/` | Order tracking result with timeline |
-| `invoice.png` | `/order/invoice/<id>/` | PDF invoice rendered in browser |
-| `consult_doctor.png` | `/consult/` | Vet booking form |
-| `appointment_history.png` | `/appointments/` | Appointment history list |
-| `grooming_booking.png` | `/grooming/` | Grooming booking form with package selector |
-| `grooming_history.png` | `/grooming/history/` | Grooming booking history |
-| `pet_care_booking.png` | `/pet-care/` | Pet boarding form with add-ons |
-| `pet_care_history.png` | `/pet-care/history/` | Boarding booking history |
-| `profile.png` | `/profile/` | User profile edit page |
-| `ai_chatbot.png` | Any page | AI chatbot panel open with a conversation |
-| `admin_ai_dashboard.png` | `/admin-ai-dashboard/` | Admin AI analytics page |
-| `django_admin.png` | `/admin/` | Django admin home (jazzmin/unfold styled) |
-
-> **Tip:** Use full-page screenshots at 1440px wide for the best quality. Tools like [GoFullPage](https://chrome.google.com/webstore/detail/gofullpage/fdpohaocaechugugjohnnlfkgccgceka) (Chrome extension) capture entire pages in one click.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -296,7 +259,7 @@ Create an `Images/` folder in the root of your repository and take the following
 - **Multi-type cart** — Supports pets, food, and accessories together in one cart
 - **Ajax cart updates** — Quantity changes without page reload
 - **Cash on Delivery (COD)** — Instant order placement, payment collected on delivery
-- **Razorpay Online Payment** — In-browser checkout modal with server-side signature verification
+- **Razorpay Online Payment** — In-browser checkout modal with server-side HMAC-SHA256 signature verification
 - **Razorpay Webhooks** — `payment.captured` event syncs payment state even if user closes browser
 - **Retry Payment** — Users can re-attempt failed Razorpay payments from order history
 - **Order Cancellation + Auto-Refund** — Triggers Razorpay refund, stores RRN, marks order CANCELLED + REFUNDED
@@ -368,8 +331,8 @@ Create an `Images/` folder in the root of your repository and take the following
 │                                                                  │
 │  ┌──────────────────────────────────────────────────────────┐    │
 │  │                 PAYMENT ENGINE (Razorpay)                │    │
-│  │  Create Order → JS Modal → Verify Signature              │    │
-│  │  Mark Paid → Webhook Sync → Refund Flow                  │    │
+│  │  Create Order → JS Modal → Verify Signature             │    │
+│  │  Mark Paid → Webhook Sync → Refund Flow                 │    │
 │  └──────────────────────────────────────────────────────────┘    │
 │                                                                  │
 │  ┌──────────────────────────────────────────────────────────┐    │
@@ -423,9 +386,9 @@ User Login → Browse Pets / Food / Accessories
 
 ```
 CONFIRMED ──→ PROCESSING ──→ SHIPPED ──→ DELIVERED
-    │                                       (each stage
-    └──→ CANCELLED                           timestamped)
-          └── Paid order → Razorpay Refund
+    │                                    (each stage timestamped)
+    └──→ CANCELLED
+          └── Paid order → Razorpay Refund triggered
                → payment_status = REFUNDED
                → razorpay_refund_id (RRN) stored
 ```
@@ -437,8 +400,7 @@ User selects service → Fills booking form
     → Auto-pricing calculated in model.save()
     → Booking saved (status: PENDING)
     → Admin approves → Status updates
-    → User views history page
-    → Can cancel if needed
+    → User views history page → Can cancel if needed
 ```
 
 ### 🤖 AI Chatbot Flow
@@ -484,7 +446,7 @@ The Pet Portal implements a production-grade Razorpay integration covering the f
 ```
 1. POST /checkout/
    └─ Server calls razorpay.order.create() → razorpay_order_id
-   └─ Checkout page rendered with key + order ID in JS
+   └─ Checkout page rendered with Razorpay key + order ID in JS
 
 2. Razorpay JS SDK opens checkout modal in browser
    └─ User enters card / UPI / netbanking details
@@ -639,29 +601,38 @@ EMAIL_HOST_PASSWORD=your-app-password
 
 ```
 the_pet_portal/
-├── Images/                             # 📸 README screenshots (22 images — see guide above)
+├── images/                             # 📸 README screenshots (all lowercase folder name)
+│   ├── home.png
+│   ├── login.png
+│   ├── pets_listing.png
+│   ├── pets_detail.png
+│   ├── cart.png
+│   ├── checkout.png
+│   ├── order_success.png
+│   ├── order_history.png
+│   ├── track_order.png
+│   ├── invoice.png
+│   ├── consult_doctor.png
+│   ├── appointment_history.png
+│   ├── grooming_booking.png
+│   ├── grooming_history.png
+│   ├── pet_care_booking.png
+│   ├── pet_care_history.png
+│   ├── ai_chatbot.png
+│   ├── admin_ai_dashboard.png
+│   └── django_admin.png
 │
 ├── myapp/
 │   ├── migrations/                     # 10 database migrations
 │   ├── static/
-│   │   ├── css/                        # Page-specific stylesheets (cart, checkout, home, etc.)
+│   │   ├── css/                        # Page-specific stylesheets
 │   │   ├── images/                     # Static assets (banners, logos)
-│   │   └── javascript/                 # Client-side scripts (login.js, pets.js, register.js)
+│   │   └── javascript/                 # Client-side scripts
 │   ├── templates/myapp/                # 25+ Django HTML templates
-│   │   ├── home.html
-│   │   ├── pets.html / pet_detail.html
-│   │   ├── cart.html / checkout.html
-│   │   ├── order_history.html / track_order.html
-│   │   ├── consult_doctor.html / appointment_history.html
-│   │   ├── grooming_form.html / grooming_history.html
-│   │   ├── pet_care_form.html / pet_care_history.html
-│   │   ├── profile.html / invoice.html
-│   │   ├── admin_ai_dashboard.html
-│   │   └── ... (25 total)
 │   ├── templatetags/
 │   │   ├── cart_extras.py              # Cart total calculation filters
 │   │   └── custom_filters.py          # Custom template filters
-│   ├── admin.py                        # All model admin registrations (jazzmin/unfold)
+│   ├── admin.py                        # All model admin registrations
 │   ├── apps.py                         # AppConfig + signals ready()
 │   ├── forms.py                        # OrderCreateForm
 │   ├── models.py                       # All 12 database models
@@ -723,6 +694,7 @@ pip install -r requirements.txt
 **2. Configure the WSGI file**
 
 Edit `/var/www/yourusername_pythonanywhere_com_wsgi.py`:
+
 ```python
 import os, sys
 path = '/home/yourusername/the_pet_portal'
@@ -767,7 +739,6 @@ Set `DEBUG=False` and add your PythonAnywhere domain to `ALLOWED_HOSTS` in `sett
 - [x] Vet consultation booking
 - [x] Pet grooming booking with auto-pricing
 - [x] Pet boarding / day care with add-on pricing
-- [x] User profile with profile image
 - [x] Gemini AI chatbot
 - [x] Admin AI analytics dashboard
 - [x] PythonAnywhere deployment
