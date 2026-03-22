@@ -109,6 +109,16 @@ A complete visual walkthrough of every screen in The Pet Portal.
 
 ---
 
+### 📝 Register
+
+<div align="center">
+  <img src="images/register.png" alt="User Registration" width="860"/>
+  <br/><br/>
+  <sub><b>User registration.</b> New users create an account with username, email, and password. Profile is auto-created via Django signals on registration.</sub>
+</div>
+
+---
+
 ### 🔐 Login
 
 <div align="center">
@@ -119,38 +129,62 @@ A complete visual walkthrough of every screen in The Pet Portal.
 
 ---
 
-### 🐾 Pet Listing & Pet Detail
+### 🐾 Pet Listing
 
 <div align="center">
-  <img src="images/pets_listing.png" alt="Pet Listing Page" width="420"/>
-  &nbsp;&nbsp;
-  <img src="images/pets_detail.png" alt="Pet Detail Page" width="420"/>
+  <img src="images/pets_listing.png" alt="Pet Listing Page" width="860"/>
   <br/><br/>
-  <sub><b>Pet marketplace.</b> Browse available pets with live search, species filter, and price range. Each pet page shows the full health profile — vaccination status, weight, microchip ID, temperament, and adoption readiness.</sub>
+  <sub><b>Pet marketplace.</b> Browse all available pets with live search, species filter, and price range filter.</sub>
 </div>
 
 ---
 
-### 🛒 Cart & Checkout
+### 🔎 Pet Detail
 
 <div align="center">
-  <img src="images/cart.png" alt="Shopping Cart" width="420"/>
-  &nbsp;&nbsp;
-  <img src="images/checkout.png" alt="Checkout Page" width="420"/>
+  <img src="images/pets_detail.png" alt="Pet Detail Page" width="860"/>
   <br/><br/>
-  <sub><b>Cart and checkout flow.</b> Session-based cart supports pets, food, and accessories together. Checkout accepts <b>Cash on Delivery</b> and <b>Razorpay online payment</b> with real-time server-side verification.</sub>
+  <sub><b>Pet detail page.</b> Full health profile per pet — vaccination status, weight, microchip ID, vet contact, diet type, temperament, and adoption readiness.</sub>
 </div>
 
 ---
 
-### 📦 Order Success & Order History
+### 🛒 Cart
 
 <div align="center">
-  <img src="images/order_success.png" alt="Order Success Page" width="420"/>
-  &nbsp;&nbsp;
-  <img src="images/order_history.png" alt="Order History" width="420"/>
+  <img src="images/cart.png" alt="Shopping Cart" width="860"/>
   <br/><br/>
-  <sub><b>Order management.</b> On payment success the confirmation page is displayed. Full order history shows status badges (CONFIRMED → PROCESSING → SHIPPED → DELIVERED) with invoice download.</sub>
+  <sub><b>Shopping cart.</b> Session-based cart supports pets, food, and accessories together. Quantity updates via Ajax — no page reload required.</sub>
+</div>
+
+---
+
+### 💳 Checkout
+
+<div align="center">
+  <img src="images/checkout.png" alt="Checkout Page" width="860"/>
+  <br/><br/>
+  <sub><b>Checkout page.</b> Enter delivery details and choose payment method — Cash on Delivery or Razorpay online payment with real-time server-side verification.</sub>
+</div>
+
+---
+
+### ✅ Order Success
+
+<div align="center">
+  <img src="images/order_success.png" alt="Order Success Page" width="860"/>
+  <br/><br/>
+  <sub><b>Order confirmation.</b> Displayed after a successful order placement or Razorpay payment. Shows Order ID, summary, and links to track or view history.</sub>
+</div>
+
+---
+
+### 📦 Order History
+
+<div align="center">
+  <img src="images/order_history.png" alt="Order History" width="860"/>
+  <br/><br/>
+  <sub><b>Order history.</b> Full list of all past orders with status badges (CONFIRMED → PROCESSING → SHIPPED → DELIVERED), payment status, and invoice download link.</sub>
 </div>
 
 ---
@@ -165,58 +199,82 @@ A complete visual walkthrough of every screen in The Pet Portal.
 
 ---
 
-### 🧾 Invoice Download
+### 🧾 Invoice
 
 <div align="center">
   <img src="images/invoice.png" alt="PDF Invoice" width="860"/>
   <br/><br/>
-  <sub><b>PDF invoice generation.</b> WeasyPrint generates a formatted PDF invoice per order — includes customer details, itemised list, payment method, payment status, and total. Downloadable by both user and admin.</sub>
+  <sub><b>PDF invoice.</b> WeasyPrint generates a formatted invoice per order — customer details, itemised list, payment method, payment status, and total. Downloadable by user and admin.</sub>
 </div>
 
 ---
 
-### 🩺 Consult a Doctor & Appointment History
+### 🩺 Consult a Doctor
 
 <div align="center">
-  <img src="images/consult_doctor.png" alt="Consult Doctor Booking" width="420"/>
-  &nbsp;&nbsp;
-  <img src="images/appointment_history.png" alt="Appointment History" width="420"/>
+  <img src="images/consult_doctor.png" alt="Consult Doctor Booking" width="860"/>
   <br/><br/>
-  <sub><b>Veterinary consultation booking.</b> Book a vet appointment with pet details, symptoms, preferred date/time, and contact info. View and cancel upcoming appointments from the history page.</sub>
+  <sub><b>Vet consultation booking.</b> Book a vet appointment by entering pet name, species, age, symptoms, preferred date/time, and contact details.</sub>
 </div>
 
 ---
 
-### ✂️ Grooming Booking & History
+### 📋 Appointment History
 
 <div align="center">
-  <img src="images/grooming_booking.png" alt="Grooming Booking Form" width="420"/>
-  &nbsp;&nbsp;
-  <img src="images/grooming_history.png" alt="Grooming History" width="420"/>
+  <img src="images/appointment_history.png" alt="Appointment History" width="860"/>
   <br/><br/>
-  <sub><b>Pet grooming services.</b> Choose from 6 packages — Basic Bath, Haircut & Styling, Nail Clipping, Ear Cleaning, Tick Treatment, or Full Package. Price auto-calculated by pet size (Small/Medium/Large) and visit type (Center/Home +₹300).</sub>
+  <sub><b>Appointment history.</b> View all upcoming and past vet appointments with status (PENDING / APPROVED / COMPLETED / CANCELLED) and cancellation option.</sub>
 </div>
 
 ---
 
-### 🏡 Pet Care / Boarding & History
+### ✂️ Grooming Booking
 
 <div align="center">
-  <img src="images/pet_care_booking.png" alt="Pet Care Boarding Form" width="420"/>
-  &nbsp;&nbsp;
-  <img src="images/pet_care_history.png" alt="Pet Care History" width="420"/>
+  <img src="images/grooming_booking.png" alt="Grooming Booking Form" width="860"/>
   <br/><br/>
-  <sub><b>Pet boarding / day care.</b> Book overnight or multi-day care with optional add-ons — special diet (+₹250), injections (+₹200), vaccinations (+₹300), extra care (+₹400). Total price calculated automatically on save.</sub>
+  <sub><b>Pet grooming booking.</b> Choose from 6 packages — Basic Bath, Haircut & Styling, Nail Clipping, Ear Cleaning, Tick Treatment, or Full Package. Price auto-calculated by pet size and visit type (Center / Home +₹300).</sub>
 </div>
 
 ---
 
-### 🤖 AI Chatbot (Gemini)
+### 📋 Grooming History
+
+<div align="center">
+  <img src="images/grooming_history.png" alt="Grooming History" width="860"/>
+  <br/><br/>
+  <sub><b>Grooming booking history.</b> View all grooming appointments with package type, pet size, visit type, total price, and current status.</sub>
+</div>
+
+---
+
+### 🏡 Pet Care Booking
+
+<div align="center">
+  <img src="images/pet_care_booking.png" alt="Pet Care Boarding Form" width="860"/>
+  <br/><br/>
+  <sub><b>Pet boarding / day care booking.</b> Book overnight or multi-day care with optional add-ons — special diet (+₹250), injections (+₹200), vaccinations (+₹300), extra care (+₹400). Price calculated automatically on save.</sub>
+</div>
+
+---
+
+### 📋 Pet Care History
+
+<div align="center">
+  <img src="images/pet_care_history.png" alt="Pet Care History" width="860"/>
+  <br/><br/>
+  <sub><b>Pet care booking history.</b> View all boarding bookings with start/end dates, total days, add-ons, total price, and status.</sub>
+</div>
+
+---
+
+### 🤖 AI Chatbot
 
 <div align="center">
   <img src="images/ai_chatbot.png" alt="Gemini AI Chatbot" width="860"/>
   <br/><br/>
-  <sub><b>Gemini-powered pet assistant.</b> Embedded AI chatbot built with Google's <code>google-genai</code> SDK. Answers pet care questions, product queries, and service information in real time without page reload.</sub>
+  <sub><b>Gemini-powered pet assistant.</b> Embedded AI chatbot built with Google's <code>google-genai</code> SDK. Answers pet care questions, product queries, and service information in real time.</sub>
 </div>
 
 ---
@@ -226,7 +284,7 @@ A complete visual walkthrough of every screen in The Pet Portal.
 <div align="center">
   <img src="images/admin_ai_dashboard.png" alt="Admin AI Dashboard" width="860"/>
   <br/><br/>
-  <sub><b>Admin-only AI analytics dashboard.</b> A Gemini-powered internal dashboard for admins to query platform data, order trends, and get AI-assisted insights.</sub>
+  <sub><b>Admin AI analytics dashboard.</b> A Gemini-powered internal dashboard for admins to query platform data, order trends, and get AI-assisted insights.</sub>
 </div>
 
 ---
@@ -234,15 +292,14 @@ A complete visual walkthrough of every screen in The Pet Portal.
 ### 🎛️ Django Admin Panel
 
 <div align="center">
-  <img src="images/django_admin.png" alt="Django Admin Dashboard" width="860"/>
+  <img src="images/django_admin.png" alt="Django Admin Panel" width="860"/>
   <br/><br/>
-  <sub><b>Full admin control.</b> Manage pets, food, orders (with inline items), appointments, grooming bookings, pet care bookings, accessories, and users. Styled with <code>django-jazzmin</code> and <code>django-unfold</code>.</sub>
+  <sub><b>Full admin control.</b> Manage pets, food, orders (with inline items), appointments, grooming bookings, pet care bookings, accessories, and users — styled with <code>django-jazzmin</code> and <code>django-unfold</code>.</sub>
 </div>
 
 ---
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ---
 
 ## Key Features
