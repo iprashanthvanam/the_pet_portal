@@ -1251,7 +1251,7 @@ def api_update_order_status(request, order_id):
             order.payment_status = 'PAID'
     order.save()
 
-    send_status_update_email(order.user, f"Order {order.order_id}", new_status)
+    threading.Thread(target=send_status_update_email, args=(order.user, f"Order {order.order_id}", new_status), daemon=True).start()
     return Response({"success": True})
 
 @api_view(['POST'])
@@ -1335,7 +1335,7 @@ def api_cancel_doctor_booking(request, pk):
             return Response({"error": "Permission denied"}, status=403)
     appointment.status = 'CANCELLED'
     appointment.save()
-    send_status_update_email(appointment.user, f"Doctor Appointment ({appointment.appointment_date})", "CANCELLED")
+    threading.Thread(target=send_status_update_email, args=(appointment.user, f"Doctor Appointment ({appointment.appointment_date})", "CANCELLED"), daemon=True).start()
     return Response({"success": True})
 
 @api_view(['GET', 'POST'])
@@ -1393,7 +1393,7 @@ def api_cancel_pet_care(request, pk):
             return Response({"error": "Permission denied"}, status=403)
     booking.status = 'CANCELLED'
     booking.save()
-    send_status_update_email(booking.user, f"Pet Care Boarding ({booking.start_datetime.date()})", "CANCELLED")
+    threading.Thread(target=send_status_update_email, args=(booking.user, f"Pet Care Boarding ({booking.start_datetime.date()})", "CANCELLED"), daemon=True).start()
     return Response({"success": True})
 
 @api_view(['GET', 'POST'])
@@ -1446,7 +1446,7 @@ def api_cancel_grooming(request, pk):
             return Response({"error": "Permission denied"}, status=403)
     booking.status = 'CANCELLED'
     booking.save()
-    send_status_update_email(booking.user, f"Pet Grooming Booking ({booking.appointment_datetime.date()})", "CANCELLED")
+    threading.Thread(target=send_status_update_email, args=(booking.user, f"Pet Grooming Booking ({booking.appointment_datetime.date()})", "CANCELLED"), daemon=True).start()
     return Response({"success": True})
 
 # =====================================================
