@@ -882,7 +882,6 @@ function saveItem(e) {
 }
 
 function deleteItem(itemClass, id) {
-    if (!confirm(`Are you sure you want to delete this ${itemClass}?`)) return;
 
     let endpointFolder = itemClass + "s";
     if (itemClass === "accessory") {
