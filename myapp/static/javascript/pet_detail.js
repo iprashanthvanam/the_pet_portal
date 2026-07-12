@@ -349,75 +349,120 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-function submitReview(e) {
-    e.preventDefault();
-    const rating = document.getElementById("review-rating-val").value;
-    const submitBtn = e.target.querySelector("button[type='submit']");
-    const originalText = submitBtn ? submitBtn.innerHTML : "Submit Review";
+    // Accumulate files to allow multiple selections sequentially
+    let selectedFiles = [];
+    const fileInput = document.getElementById("review-image");
+    const previewContainer = document.getElementById("review-media-preview");
 
-    // Setup visual status message banner
-    function showStatus(type, text) {
-        const form = document.getElementById("write-review-form");
-        const existing = form.querySelector('.review-status-msg');
-        if (existing) existing.remove();
-        const msg = document.createElement("div");
-        msg.className = "review-status-msg";
-        msg.style.cssText = `margin-bottom: 12px; padding: 8px 10px; border-radius: 4px; font-size: 13px; text-align: center; font-weight: 550;`;
-        if (type === "error") {
-            msg.style.background = "rgba(239, 68, 68, 0.15)";
-            msg.style.color = "#f87171";
-            msg.style.border = "1px solid rgba(239, 68, 68, 0.3)";
-        } else {
-            msg.style.background = "rgba(34, 197, 94, 0.15)";
-            msg.style.color = "#4ade80";
-            msg.style.border = "1px solid rgba(34, 197, 94, 0.3)";
+    if (fileInput && previewContainer) {
+        fileInput.addEventListener("change", function() {
+            const files = Array.from(fileInput.files);
+            files.forEach(f => {
+                selectedFiles.push(f);
+            });
+            renderSelectedPreviews();
+            // Clear input value so same file can be selected again
+            fileInput.value = "";
+        });
+    }
+
+    function renderSelectedPreviews() {
+        if (!previewContainer) return;
+        previewContainer.innerHTML = "";
+        selectedFiles.forEach((file, index) => {
+            const itemDiv = document.createElement("div");
+            itemDiv.style.cssText = "position: relative; width: 60px; height: 60px; border-radius: 4px; overflow: hidden; border: 1px solid var(--border-color);";
+            
+            if (file.type.startsWith("image/")) {
+                const img = document.createElement("img");
+                img.src = URL.createObjectURL(file);
+                img.style.cssText = "width:100%; height:100%; object-fit:cover;";
+                itemDiv.appendChild(img);
+            } else {
+                const placeholder = document.createElement("div");
+                placeholder.style.cssText = "width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#374151; color:#fff; font-size:10px;";
+                placeholder.innerText = "VIDEO";
+                itemDiv.appendChild(placeholder);
+            }
+
+            const removeBtn = document.createElement("span");
+            removeBtn.innerHTML = "&times;";
+            removeBtn.style.cssText = "position: absolute; top: 0; right: 0; background: rgba(0,0,0,0.6); color: #fff; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; border-bottom-left-radius: 4px;";
+            removeBtn.onclick = function() {
+                selectedFiles.splice(index, 1);
+                renderSelectedPreviews();
+            };
+            itemDiv.appendChild(removeBtn);
+            previewContainer.appendChild(itemDiv);
+        });
+    }
+
+    window.submitReview = function(e) {
+        e.preventDefault();
+        const rating = document.getElementById("review-rating-val").value;
+        const submitBtn = e.target.querySelector("button[type='submit']");
+        const originalText = submitBtn ? submitBtn.innerHTML : "Submit Review";
+
+        // Setup visual status message banner
+        function showStatus(type, text) {
+            const form = document.getElementById("write-review-form");
+            const existing = form.querySelector('.review-status-msg');
+            if (existing) existing.remove();
+            const msg = document.createElement("div");
+            msg.className = "review-status-msg";
+            msg.style.cssText = `margin-bottom: 12px; padding: 8px 10px; border-radius: 4px; font-size: 13px; text-align: center; font-weight: 550;`;
+            if (type === "error") {
+                msg.style.background = "rgba(239, 68, 68, 0.15)";
+                msg.style.color = "#f87171";
+                msg.style.border = "1px solid rgba(239, 68, 68, 0.3)";
+            } else {
+                msg.style.background = "rgba(34, 197, 94, 0.15)";
+                msg.style.color = "#4ade80";
+                msg.style.border = "1px solid rgba(34, 197, 94, 0.3)";
+            }
+            msg.innerText = text;
+            form.insertBefore(msg, form.firstChild);
+            setTimeout(() => msg.remove(), 4000);
         }
-        msg.innerText = text;
-        form.insertBefore(msg, form.firstChild);
-        setTimeout(() => msg.remove(), 4000);
-    }
 
-    if (!rating) {
-        showStatus("error", "Please select a rating!");
-        return;
-    }
-    const title = document.getElementById("review-title").value;
-    const comment = document.getElementById("review-comment").value;
-    const imgFile = document.getElementById("review-image").files[0];
-    const vidFile = document.getElementById("review-video") ? document.getElementById("review-video").files[0] : null;
+        if (!rating) {
+            showStatus("error", "Please select a rating!");
+            return;
+        }
+        const title = document.getElementById("review-title").value;
+        const comment = document.getElementById("review-comment").value;
 
-    const formData = new FormData();
-    formData.append("rating", rating);
-    formData.append("title", title);
-    formData.append("comment", comment);
-    formData.append("pet", itemId);
-    if (imgFile) {
-        formData.append("image", imgFile);
-    }
-    if (vidFile) {
-        formData.append("video", vidFile);
-    }
+        const formData = new FormData();
+        formData.append("rating", rating);
+        formData.append("title", title);
+        formData.append("comment", comment);
+        formData.append("pet", itemId);
 
-    if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
-    }
+        // Append all accumulated images/videos to key 'media_files'
+        selectedFiles.forEach(file => {
+            formData.append("media_files", file);
+        });
 
-    // Get CSRF Token
-    function getCSRF() {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, 10) === 'csrftoken=') {
-                    cookieValue = decodeURIComponent(cookie.substring(10));
-                    break;
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+        }
+
+        // Get CSRF Token
+        function getCSRF() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, 10) === 'csrftoken=') {
+                        cookieValue = decodeURIComponent(cookie.substring(10));
+                        break;
+                    }
                 }
             }
+            return cookieValue;
         }
-        return cookieValue;
-    }
 
     fetch("/api/reviews/", {
         method: "POST",
@@ -439,6 +484,8 @@ function submitReview(e) {
         }
         document.getElementById("write-review-form").reset();
         document.getElementById("review-rating-val").value = "";
+        selectedFiles = [];
+        renderSelectedPreviews();
         const starsReset = document.querySelectorAll(".star-option");
         starsReset.forEach(s => {
             s.classList.remove("fa-solid");
