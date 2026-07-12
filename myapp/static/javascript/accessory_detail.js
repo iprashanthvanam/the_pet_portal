@@ -4,15 +4,30 @@ function toggleMenu() {
     document.getElementById('sidebarOverlay').classList.toggle('active');
 }
 
-function changeMainImage(event, src) {
+function changeMainImage(event, src, isVideo) {
     if (event) {
         event.preventDefault();
         document.querySelectorAll('.thumb-box').forEach(el => el.classList.remove('active'));
         event.currentTarget.classList.add('active');
     }
     const mainImg = document.getElementById('main-product-img');
-    if (mainImg) {
-        mainImg.src = src;
+    const mainVid = document.getElementById('main-product-video');
+    if (isVideo) {
+        if (mainImg) mainImg.style.display = 'none';
+        if (mainVid) {
+            mainVid.style.display = 'block';
+            mainVid.src = src;
+            mainVid.play().catch(e => console.log('Autoplay prevented'));
+        }
+    } else {
+        if (mainVid) {
+            mainVid.style.display = 'none';
+            mainVid.pause();
+        }
+        if (mainImg) {
+            mainImg.style.display = 'block';
+            mainImg.src = src;
+        }
     }
 }
 
@@ -55,27 +70,50 @@ function fetchAccessoryDetails() {
             document.getElementById("accessory-display-title").innerText = fullTitle;
             
             // Populate gallery with actual product image
-            const productImgUrl = data.image || 'https://via.placeholder.com/400';
             const mainImg = document.getElementById('main-product-img');
-            mainImg.src = productImgUrl;
-            mainImg.alt = data.name;
-            
+            const mainVid = document.getElementById('main-product-video');
             const thumbContainer = document.getElementById('detail-thumbnails-container');
             thumbContainer.innerHTML = '';
-            const thumbVariants = [
-                { filter: 'none', label: 'Main' },
-                { filter: 'brightness(1.15) saturate(1.1)', label: 'Bright' },
-                { filter: 'contrast(1.1) saturate(0.9)', label: 'Natural' }
-            ];
-            thumbVariants.forEach((variant, idx) => {
+
+            const mediaItems = [];
+            if (data.image) mediaItems.push({ type: 'image', url: data.image, label: 'Main Image' });
+            if (data.image2) mediaItems.push({ type: 'image', url: data.image2, label: 'Image 2' });
+            if (data.video) mediaItems.push({ type: 'video', url: data.video, label: 'Video Demo' });
+
+            // Default fallbacks if empty
+            if (mediaItems.length === 0) {
+                mediaItems.push({ type: 'image', url: 'https://via.placeholder.com/400', label: 'Default Image' });
+            }
+
+            // Set initially loaded item
+            const initialMedia = mediaItems[0];
+            if (initialMedia.type === 'video') {
+                if (mainImg) mainImg.style.display = 'none';
+                if (mainVid) {
+                    mainVid.style.display = 'block';
+                    mainVid.src = initialMedia.url;
+                }
+            } else {
+                if (mainVid) mainVid.style.display = 'none';
+                if (mainImg) {
+                    mainImg.style.display = 'block';
+                    mainImg.src = initialMedia.url;
+                }
+            }
+
+            mediaItems.forEach((media, idx) => {
                 const thumbDiv = document.createElement('div');
                 thumbDiv.className = 'thumb-box' + (idx === 0 ? ' active' : '');
-                thumbDiv.onclick = function(e) { changeMainImage(e, productImgUrl); };
-                const img = document.createElement('img');
-                img.src = productImgUrl;
-                img.style.filter = variant.filter;
-                img.alt = data.name + ' - ' + variant.label;
-                thumbDiv.appendChild(img);
+                thumbDiv.onclick = function(e) { changeMainImage(e, media.url, media.type === 'video'); };
+                
+                if (media.type === 'video') {
+                    thumbDiv.innerHTML = `<div style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #000; border-radius: 4px;"><i class="fa-solid fa-play" style="color: white; font-size: 16px;"></i></div>`;
+                } else {
+                    const img = document.createElement('img');
+                    img.src = media.url;
+                    img.alt = media.label;
+                    thumbDiv.appendChild(img);
+                }
                 thumbContainer.appendChild(thumbDiv);
             });
             

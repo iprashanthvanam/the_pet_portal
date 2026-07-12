@@ -202,6 +202,7 @@ class AccessoryAdmin(admin.ModelAdmin):
     list_filter = ("category", "pet_type")
     search_fields = ("name", "brand")
     ordering = ("-date_added",)
+    fields = ("name", "category", "pet_type", "description", "price", "mrp", "brand", "stock", "size", "color", "is_prime_eligible", "bought_past_month_count", "image", "image2", "video", "vendor")
 
 
 
@@ -235,11 +236,16 @@ class AccessoryAdmin(admin.ModelAdmin):
 
 @admin.register(Pet)
 class PetAdmin(admin.ModelAdmin):
+    list_display = ("name", "species", "price", "stock", "date_added")
+    fields = ("name", "species", "description", "price", "mrp", "stock", "is_prime_eligible", "bought_past_month_count", "image", "image2", "video", "vendor")
     inlines = [PetHealthInline]
 
+@admin.register(Food)
+class FoodAdmin(admin.ModelAdmin):
+    list_display = ("name", "food_type", "price", "stock", "expire_date")
+    fields = ("name", "food_type", "description", "price", "mrp", "brand", "weight_kg", "stock", "is_prime_eligible", "bought_past_month_count", "mfg_date", "expire_date", "image", "image2", "video", "vendor")
 
 admin.site.register(PetHealthProfile)
-admin.site.register(Food)
 admin.site.register(CartItem)
 admin.site.register(products)
 

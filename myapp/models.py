@@ -43,6 +43,8 @@ class Pet(models.Model):
     
     date_added = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='pets/', blank=True, null=True)
+    image2 = models.ImageField(upload_to='pets/', blank=True, null=True)
+    video = models.FileField(upload_to='pets/videos/', blank=True, null=True)
     vendor = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='vendor_pets')
 
     def __str__(self):
@@ -136,6 +138,8 @@ class Food(models.Model):
     mfg_date = models.DateField()
     expire_date = models.DateField()
     image = models.ImageField(upload_to='foods/', blank=True, null=True)
+    image2 = models.ImageField(upload_to='foods/', blank=True, null=True)
+    video = models.FileField(upload_to='foods/videos/', blank=True, null=True)
     vendor = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='vendor_foods')
 
     def __str__(self):
@@ -640,6 +644,8 @@ class Accessory(models.Model):
     bought_past_month_count = models.PositiveIntegerField(default=0)
 
     image = models.ImageField(upload_to="accessories/", blank=True, null=True)
+    image2 = models.ImageField(upload_to="accessories/", blank=True, null=True)
+    video = models.FileField(upload_to="accessories/videos/", blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
     vendor = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='vendor_accessories')
 

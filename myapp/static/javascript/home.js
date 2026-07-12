@@ -188,9 +188,50 @@ function getItemCardHTML(item, itemType) {
     ` : '';
     
     return `
+    const mediaHtml = [];
+    const mediaUrls = [];
+    if (item.image) mediaUrls.push({ type: 'image', url: item.image });
+    if (item.image2) mediaUrls.push({ type: 'image', url: item.image2 });
+    if (item.video) mediaUrls.push({ type: 'video', url: item.video });
+    
+    // Add default fallbacks if none are available
+    if (mediaUrls.length === 0) {
+        mediaUrls.push({ type: 'image', url: 'https://via.placeholder.com/150' });
+        mediaUrls.push({ type: 'image', url: 'https://via.placeholder.com/150?text=Image+2' });
+    } else if (mediaUrls.length === 1) {
+        mediaUrls.push({ type: 'image', url: mediaUrls[0].url });
+    }
+    
+    let carouselId = `carousel-home-${itemType}-${item.id}`;
+    let carouselItems = mediaUrls.map((media, idx) => {
+        if (media.type === 'video') {
+            return `
+                <div class="carousel-slide" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative;">
+                    <video src="${media.url}" autoplay muted loop playsinline style="width: 100%; height: 100%; object-fit: cover;" onclick="event.stopPropagation(); this.paused ? this.play() : this.pause();"></video>
+                </div>
+            `;
+        } else {
+            return `
+                <div class="carousel-slide" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative;">
+                    <img src="${media.url}" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+            `;
+        }
+    }).join('');
+
+    let indicatorItems = mediaUrls.map((_, idx) => `
+        <span class="carousel-dot ${idx === 0 ? 'active' : ''}" onclick="event.stopPropagation(); scrollCarousel('${carouselId}', ${idx})" style="height: 8px; width: 8px; margin: 0 3px; background-color: ${idx === 0 ? 'var(--primary)' : '#bbb'}; border-radius: 50%; display: inline-block; cursor: pointer; transition: background-color 0.2s;"></span>
+    `).join('');
+
+    return `
         <div class="item-card" onclick="goToDetail(event, '${itemType}', ${item.id})">
-            <div class="item-image-container">
-                <img src="${item.image || 'https://via.placeholder.com/150'}" class="item-image">
+            <div class="item-image-container" style="position: relative; overflow: hidden; width: 100%; height: 200px; border-radius: 8px 8px 0 0;">
+                <div id="${carouselId}" class="carousel-track" style="display: flex; width: 100%; height: 100%; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);">
+                    ${carouselItems}
+                </div>
+                <div class="carousel-dots-container" style="position: absolute; bottom: 8px; width: 100%; text-align: center; z-index: 10;">
+                    ${indicatorItems}
+                </div>
             </div>
             <div class="item-info">
                 <h3 class="item-title-brand">${title}</h3>
@@ -329,3 +370,20 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+window.scrollCarousel = function(carouselId, idx) {
+    const track = document.getElementById(carouselId);
+    if (!track) return;
+    track.style.transform = `translateX(-${idx * 100}%)`;
+    
+    // Update dots indicator active class
+    const container = track.parentElement;
+    const dots = container.querySelectorAll('.carousel-dot');
+    dots.forEach((dot, dIdx) => {
+        if (dIdx === idx) {
+            dot.style.backgroundColor = 'var(--primary)';
+        } else {
+            dot.style.backgroundColor = '#bbb';
+        }
+    });
+};

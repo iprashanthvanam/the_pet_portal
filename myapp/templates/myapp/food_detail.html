@@ -116,8 +116,11 @@
                     <div class="amazon-thumbnails" id="detail-thumbnails-container">
                         <!-- Populated dynamically by JS -->
                     </div>
-                    <div class="amazon-main-image-frame">
-                        <img id="main-product-img" src="https://via.placeholder.com/400" alt="Product Image">
+                    <div class="amazon-main-image-frame" style="position: relative; overflow: hidden; width: 100%; display: flex; align-items: center; justify-content: center;">
+                        <div id="media-viewport" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                            <img id="main-product-img" src="https://via.placeholder.com/400" alt="Product Image" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                            <video id="main-product-video" style="display: none; max-width: 100%; max-height: 100%; object-fit: contain;" controls autoplay muted loop playsinline></video>
+                        </div>
                     </div>
                 </div>
 

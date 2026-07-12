@@ -31,12 +31,14 @@ class PetSerializer(serializers.ModelSerializer):
     adoption_ready = serializers.BooleanField(required=False, default=False)
     activity_level = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     image = serializers.ImageField(required=False, allow_null=True)
+    image2 = serializers.ImageField(required=False, allow_null=True)
+    video = serializers.FileField(required=False, allow_null=True)
 
     class Meta:
         model = Pet
         fields = [
             'id', 'name', 'species', 'description', 'price', 'mrp', 'discount_percentage',
-            'stock', 'is_prime_eligible', 'bought_past_month_count', 'image',
+            'stock', 'is_prime_eligible', 'bought_past_month_count', 'image', 'image2', 'video',
             'age', 'vaccinated', 'adoption_ready', 'activity_level', 'vendor'
         ]
 
@@ -124,6 +126,22 @@ class PetSerializer(serializers.ModelSerializer):
         else:
             ret['image'] = None
 
+        if instance.image2:
+            if request:
+                ret['image2'] = request.build_absolute_uri(instance.image2.url)
+            else:
+                ret['image2'] = instance.image2.url
+        else:
+            ret['image2'] = None
+
+        if instance.video:
+            if request:
+                ret['video'] = request.build_absolute_uri(instance.video.url)
+            else:
+                ret['video'] = instance.video.url
+        else:
+            ret['video'] = None
+
         from django.db.models import Avg
         reviews = instance.reviews.all()
         total_ratings = reviews.count()
@@ -135,13 +153,15 @@ class PetSerializer(serializers.ModelSerializer):
 
 class FoodSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(required=False, allow_null=True)
+    image2 = serializers.ImageField(required=False, allow_null=True)
+    video = serializers.FileField(required=False, allow_null=True)
 
     class Meta:
         model = Food
         fields = [
             'id', 'name', 'food_type', 'description', 'price', 'mrp', 'discount_percentage',
             'brand', 'weight_kg', 'stock', 'is_prime_eligible', 'bought_past_month_count',
-            'mfg_date', 'expire_date', 'image', 'vendor'
+            'mfg_date', 'expire_date', 'image', 'image2', 'video', 'vendor'
         ]
 
     def to_representation(self, instance):
@@ -154,6 +174,22 @@ class FoodSerializer(serializers.ModelSerializer):
                 ret['image'] = instance.image.url
         else:
             ret['image'] = None
+
+        if instance.image2:
+            if request:
+                ret['image2'] = request.build_absolute_uri(instance.image2.url)
+            else:
+                ret['image2'] = instance.image2.url
+        else:
+            ret['image2'] = None
+
+        if instance.video:
+            if request:
+                ret['video'] = request.build_absolute_uri(instance.video.url)
+            else:
+                ret['video'] = instance.video.url
+        else:
+            ret['video'] = None
 
         from django.db.models import Avg
         reviews = instance.reviews.all()
@@ -166,12 +202,14 @@ class FoodSerializer(serializers.ModelSerializer):
 
 class AccessorySerializer(serializers.ModelSerializer):
     image = serializers.ImageField(required=False, allow_null=True)
+    image2 = serializers.ImageField(required=False, allow_null=True)
+    video = serializers.FileField(required=False, allow_null=True)
 
     class Meta:
         model = Accessory
         fields = [
             "id", "name", "category", "pet_type", "description", "price", "mrp", "discount_percentage",
-            "brand", "stock", "size", "color", "is_prime_eligible", "bought_past_month_count", "image", "vendor"
+            "brand", "stock", "size", "color", "is_prime_eligible", "bought_past_month_count", "image", "image2", "video", "vendor"
         ]
 
     def to_representation(self, instance):
@@ -184,6 +222,22 @@ class AccessorySerializer(serializers.ModelSerializer):
                 ret['image'] = instance.image.url
         else:
             ret['image'] = None
+
+        if instance.image2:
+            if request:
+                ret['image2'] = request.build_absolute_uri(instance.image2.url)
+            else:
+                ret['image2'] = instance.image2.url
+        else:
+            ret['image2'] = None
+
+        if instance.video:
+            if request:
+                ret['video'] = request.build_absolute_uri(instance.video.url)
+            else:
+                ret['video'] = instance.video.url
+        else:
+            ret['video'] = None
 
         from django.db.models import Avg
         reviews = instance.reviews.all()
