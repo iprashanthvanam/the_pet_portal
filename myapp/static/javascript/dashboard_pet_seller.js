@@ -166,6 +166,14 @@ window.saveItem = function(e) {
     if (imgFile) {
         formData.append("image", imgFile);
     }
+    const img2File = document.getElementById("form-image2").files[0];
+    if (img2File) {
+        formData.append("image2", img2File);
+    }
+    const videoFile = document.getElementById("form-video").files[0];
+    if (videoFile) {
+        formData.append("video", videoFile);
+    }
 
     let endpoint = "/api/admin/pets/";
     let method = "POST";

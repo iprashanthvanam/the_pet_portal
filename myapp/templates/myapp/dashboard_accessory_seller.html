@@ -316,9 +316,20 @@
                     </div>
                 </div>
 
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Image 1 (Main)</label>
+                        <input type="file" id="form-image" accept="image/*" style="width: 100%; color: var(--text-muted);">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Image 2 (Secondary)</label>
+                        <input type="file" id="form-image2" accept="image/*" style="width: 100%; color: var(--text-muted);">
+                    </div>
+                </div>
+
                 <div style="margin-bottom: 20px;">
-                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Image</label>
-                    <input type="file" id="form-image" accept="image/*" style="width: 100%; color: var(--text-muted);">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Video Demo</label>
+                    <input type="file" id="form-video" accept="video/*" style="width: 100%; color: var(--text-muted);">
                 </div>
 
                 <button type="submit" class="btn-logout" style="width: 100%; border: none; background: var(--primary); text-align: center;">Save Listing</button>
