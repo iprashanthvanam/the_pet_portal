@@ -148,7 +148,7 @@ function fetchPetDetails() {
                 stockAlert.style.color = "#22c55e";
             }
             
-            // Render specifications table
+            // Render specifications table with comprehensive health profile fields
             const specsTable = document.getElementById("specs-grid-table");
             specsTable.innerHTML = `
                 <tr>
@@ -160,22 +160,45 @@ function fetchPetDetails() {
                     <td class="val-cell">${data.age !== null ? data.age + ' Years' : 'Puppy/Kitten'}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">Vaccination Status</td>
-                    <td class="val-cell">${data.vaccinated ? 'Yes' : 'No'}</td>
+                    <td class="label-cell">Gender</td>
+                    <td class="val-cell">${data.gender || 'Unknown'}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">Activity Requirement</td>
+                    <td class="label-cell">Weight (kg)</td>
+                    <td class="val-cell">${data.weight_kg !== null ? data.weight_kg + ' kg' : 'Unknown'}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Vaccination Status</td>
+                    <td class="val-cell">${data.vaccinated ? 'Vaccinated' : 'Not Vaccinated'}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Dewormed</td>
+                    <td class="val-cell">${data.dewormed ? 'Yes' : 'No'}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Neutered / Spayed</td>
+                    <td class="val-cell">${data.neutered_spayed ? 'Yes' : 'No'}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Microchip ID</td>
+                    <td class="val-cell">${data.microchip_id || 'N/A'}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Activity Level</td>
                     <td class="val-cell">${data.activity_level || 'Moderate'}</td>
                 </tr>
             `;
             
-            // Render Bullet points
+            // Render Bullet points showing details from the health profile
             const bullets = document.getElementById("bullet-details-list");
             bullets.innerHTML = `
-                <li>Beautiful and active ${data.species || "pet"} ready to bring joy to your home.</li>
-                <li>Fully checked and authenticated pedigree profile.</li>
-                <li>Comes with dynamic activity trackers and complete vaccination histories.</li>
-                <li>Fulfillment processed securely via PetPortal Local Adoption.</li>
+                <li><strong>Temperament:</strong> ${data.temperament || 'Friendly and active pet ready to bring joy.'}</li>
+                <li><strong>Diet Type:</strong> ${data.diet_type || 'Standard pet diet.'}</li>
+                ${data.medical_conditions ? `<li><strong>Medical Conditions:</strong> ${data.medical_conditions}</li>` : ''}
+                ${data.allergies ? `<li><strong>Allergies:</strong> ${data.allergies}</li>` : ''}
+                ${data.vet_name ? `<li><strong>Primary Vet:</strong> ${data.vet_name} ${data.vet_contact ? `(${data.vet_contact})` : ''}</li>` : ''}
+                ${data.last_vaccination_date ? `<li><strong>Last Vaccination:</strong> ${new Date(data.last_vaccination_date).toLocaleDateString('en-IN')}</li>` : ''}
+                <li>Pedigree profile verified and certified. Fulfillment processed securely via PetPortal Local Adoption.</li>
             `;
             
             // Render Rating summaries

@@ -111,12 +111,36 @@ class PetSerializer(serializers.ModelSerializer):
             ret['adoption_ready'] = instance.health_profile.adoption_ready
             ret['activity_level'] = instance.health_profile.activity_level
             ret['microchip_id'] = instance.health_profile.microchip_id
+            ret['birth_date'] = instance.health_profile.birth_date
+            ret['gender'] = instance.health_profile.gender
+            ret['weight_kg'] = float(instance.health_profile.weight_kg) if instance.health_profile.weight_kg is not None else None
+            ret['last_vaccination_date'] = instance.health_profile.last_vaccination_date
+            ret['dewormed'] = instance.health_profile.dewormed
+            ret['neutered_spayed'] = instance.health_profile.neutered_spayed
+            ret['medical_conditions'] = instance.health_profile.medical_conditions
+            ret['allergies'] = instance.health_profile.allergies
+            ret['vet_name'] = instance.health_profile.vet_name
+            ret['vet_contact'] = instance.health_profile.vet_contact
+            ret['diet_type'] = instance.health_profile.diet_type
+            ret['temperament'] = instance.health_profile.temperament
         else:
             ret['age'] = None
             ret['vaccinated'] = False
             ret['adoption_ready'] = False
             ret['activity_level'] = None
             ret['microchip_id'] = None
+            ret['birth_date'] = None
+            ret['gender'] = None
+            ret['weight_kg'] = None
+            ret['last_vaccination_date'] = None
+            ret['dewormed'] = False
+            ret['neutered_spayed'] = False
+            ret['medical_conditions'] = ""
+            ret['allergies'] = ""
+            ret['vet_name'] = ""
+            ret['vet_contact'] = ""
+            ret['diet_type'] = ""
+            ret['temperament'] = ""
 
         if instance.image:
             if request:
