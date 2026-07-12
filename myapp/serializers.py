@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from myapp.models import (
     Pet, Food, Accessory, UserProfile, PendingRegistration,
-    Review, ReviewReply, ReviewMedia, Order, OrderItem, DoctorAppointment, PetCareBooking, GroomingBooking, products,
+    Review, ReviewReply, Order, OrderItem, DoctorAppointment, PetCareBooking, GroomingBooking, products,
     CartItem, PetHealthProfile
 )
 
@@ -284,18 +284,22 @@ class ReviewReplySerializer(serializers.ModelSerializer):
     def get_is_master_admin(self, obj):
         return obj.user.is_superuser or (hasattr(obj.user, 'profile') and obj.user.profile.role == 'master_admin')
 
+from .models import ReviewMedia
+
 class ReviewMediaSerializer(serializers.ModelSerializer):
-    file_url = serializers.SerializerMethodField()
     class Meta:
         model = ReviewMedia
-        fields = ['id', 'file_url', 'is_video']
-    def get_file_url(self, obj):
+        fields = ['id', 'file', 'is_video']
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
         request = self.context.get('request')
-        if obj.file:
+        if instance.file:
             if request:
-                return request.build_absolute_uri(obj.file.url)
-            return obj.file.url
-        return None
+                ret['file'] = request.build_absolute_uri(instance.file.url)
+            else:
+                ret['file'] = instance.file.url
+        return ret
 
 class ReviewSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)

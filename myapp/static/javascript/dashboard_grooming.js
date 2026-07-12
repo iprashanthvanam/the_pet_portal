@@ -329,8 +329,8 @@ window.renderReviews = function() {
         if (review.image) rMedia.push({ type: 'image', url: review.image });
         if (review.video) rMedia.push({ type: 'video', url: review.video });
         if (review.media_files && review.media_files.length > 0) {
-            review.media_files.forEach(mf => {
-                rMedia.push({ type: mf.is_video ? 'video' : 'image', url: mf.file_url });
+            review.media_files.forEach(m => {
+                rMedia.push({ type: m.is_video ? 'video' : 'image', url: m.file });
             });
         }
 
@@ -368,13 +368,9 @@ window.renderReviews = function() {
                     }
                 }).join('');
 
-                let dotsHTML = '';
-                rMedia.forEach((_, idx) => {
-                    const offset = idx * -100;
-                    const isActive = idx === 0 ? 'active' : '';
-                    const bgColor = idx === 0 ? 'var(--primary)' : '#bbb';
-                    dotsHTML += `<span class="carousel-dot ${isActive}" onclick="event.stopPropagation(); document.getElementById('${carouselId}').style.transform='translateX(${offset}%)'; this.parentElement.querySelectorAll('span').forEach((s,i)=>s.style.backgroundColor=i===${idx}?'var(--primary)':'#bbb')" style="height: 6px; width: 6px; margin: 0 2px; background-color: ${bgColor}; border-radius: 50%; display: inline-block; cursor: pointer;"></span>`;
-                });
+                const dots = rMedia.map((_, idx) => {
+                    return `<span class="carousel-dot${idx === 0 ? ' active' : ''}" onclick="event.stopPropagation(); document.getElementById('${carouselId}').style.transform='translateX(-${idx * 100}%)'; this.parentElement.querySelectorAll('span').forEach((s,i)=>s.style.backgroundColor=i===${idx}?'var(--primary)':'#bbb')" style="height: 6px; width: 6px; margin: 0 2px; background-color: ${idx === 0 ? 'var(--primary)' : '#bbb'}; border-radius: 50%; display: inline-block; cursor: pointer;"></span>`;
+                }).join('');
 
                 reviewImageHTML = `
                     <div style="margin-top: 8px; position: relative; overflow: hidden; width: 160px; height: 120px; border-radius: 6px; border: 1px solid var(--border-color);">
@@ -382,7 +378,7 @@ window.renderReviews = function() {
                             ${slides}
                         </div>
                         <div style="position: absolute; bottom: 5px; width: 100%; text-align: center; z-index: 10;">
-                            ${dotsHTML}
+                            ${dots}
                         </div>
                     </div>
                 `;

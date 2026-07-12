@@ -1521,16 +1521,16 @@ def api_reviews(request):
         serializer = ReviewSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             review = serializer.save(user=request.user)
-            # Process multiple optional uploaded files dynamically
+            # Retrieve all files attached with key 'media_files' or individual 'image' and 'video' if any
             media_files = request.FILES.getlist('media_files')
-            from myapp.models import ReviewMedia
-            for file_item in media_files:
-                is_video = file_item.content_type.startswith('video/')
-                ReviewMedia.objects.create(
-                    review=review,
-                    file=file_item,
-                    is_video=is_video
-                )
+            from .models import ReviewMedia
+            for f in media_files:
+                # determine if video or image by content type or extension
+                is_video = False
+                ct = f.content_type or ""
+                if "video" in ct or f.name.lower().endswith(('.mp4', '.mov', '.avi', '.webm', '.mkv', '.3gp')):
+                    is_video = True
+                ReviewMedia.objects.create(review=review, file=f, is_video=is_video)
             return Response(ReviewSerializer(review, context={'request': request}).data, status=201)
         return Response(serializer.errors, status=400)
 

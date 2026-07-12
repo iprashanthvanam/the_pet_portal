@@ -222,13 +222,10 @@
                             <textarea id="review-comment" placeholder="Write feedback here..." required style="width: 100%; height: 100px; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; font-size: 14px; resize: none;"></textarea>
                         </div>
                         <div style="margin-bottom: 20px;">
-                             <label style="display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">Add Photos & Videos (Optional)</label>
-                             <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;" id="media-preview-container"></div>
-                             <div style="display: flex; gap: 10px; align-items: center;">
-                                 <button type="button" onclick="document.getElementById('review-media-input').click()" class="btn-moderate" style="background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); font-size: 12px; margin: 0; padding: 6px 12px;">+ Select Files</button>
-                                 <input type="file" id="review-media-input" accept="image/*,video/*" multiple style="display: none;" onchange="handleMediaSelection(this)">
-                             </div>
-                         </div>
+                            <label style="display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">Add Photos & Videos (Optional)</label>
+                            <input type="file" id="review-image" accept="image/*,video/*" multiple style="width: 100%; font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">
+                            <div id="review-media-preview" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+                        </div>
                         <button type="submit" class="btn-moderate" style="width: 100%; padding: 12px; font-size: 14px; font-weight: 600; background: var(--primary); border: none; color: white; border-radius: 6px; cursor: pointer;">Submit Feedback</button>
                     </form>
                 </div>

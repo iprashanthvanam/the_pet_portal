@@ -277,10 +277,16 @@ admin.site.register(PasswordReset)
 admin.site.register(CheckoutSetting)
 
 from .models import Review, ReviewReply, ReviewMedia
+
+class ReviewMediaInline(admin.TabularInline):
+    model = ReviewMedia
+    extra = 1
+
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "rating", "title", "is_reported", "created_at")
     list_filter = ("rating", "is_reported")
+    inlines = [ReviewMediaInline]
 
 admin.site.register(ReviewReply)
 admin.site.register(ReviewMedia)

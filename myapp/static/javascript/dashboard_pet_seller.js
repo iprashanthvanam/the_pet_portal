@@ -443,11 +443,6 @@ window.renderReviews = function() {
         const rMedia = [];
         if (review.image) rMedia.push({ type: 'image', url: review.image });
         if (review.video) rMedia.push({ type: 'video', url: review.video });
-        if (review.media_files && review.media_files.length > 0) {
-            review.media_files.forEach(mf => {
-                rMedia.push({ type: mf.is_video ? 'video' : 'image', url: mf.file_url });
-            });
-        }
 
         if (rMedia.length > 0) {
             if (rMedia.length === 1) {
@@ -483,21 +478,14 @@ window.renderReviews = function() {
                     }
                 }).join('');
 
-                let dotsHTML = '';
-                rMedia.forEach((_, idx) => {
-                    const offset = idx * -100;
-                    const isActive = idx === 0 ? 'active' : '';
-                    const bgColor = idx === 0 ? 'var(--primary)' : '#bbb';
-                    dotsHTML += `<span class="carousel-dot ${isActive}" onclick="event.stopPropagation(); document.getElementById('${carouselId}').style.transform='translateX(${offset}%)'; this.parentElement.querySelectorAll('span').forEach((s,i)=>s.style.backgroundColor=i===${idx}?'var(--primary)':'#bbb')" style="height: 6px; width: 6px; margin: 0 2px; background-color: ${bgColor}; border-radius: 50%; display: inline-block; cursor: pointer;"></span>`;
-                });
-
                 reviewImageHTML = `
                     <div style="margin-top: 8px; position: relative; overflow: hidden; width: 160px; height: 120px; border-radius: 6px; border: 1px solid var(--border-color);">
                         <div id="${carouselId}" style="display: flex; width: 100%; height: 100%; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);">
                             ${slides}
                         </div>
                         <div style="position: absolute; bottom: 5px; width: 100%; text-align: center; z-index: 10;">
-                            ${dotsHTML}
+                            <span class="carousel-dot active" onclick="event.stopPropagation(); document.getElementById('${carouselId}').style.transform='translateX(0%)'; this.parentElement.querySelectorAll('span').forEach((s,i)=>s.style.backgroundColor=i===0?'var(--primary)':'#bbb')" style="height: 6px; width: 6px; margin: 0 2px; background-color: var(--primary); border-radius: 50%; display: inline-block; cursor: pointer;"></span>
+                            <span class="carousel-dot" onclick="event.stopPropagation(); document.getElementById('${carouselId}').style.transform='translateX(-100%)'; this.parentElement.querySelectorAll('span').forEach((s,i)=>s.style.backgroundColor=i===1?'var(--primary)':'#bbb')" style="height: 6px; width: 6px; margin: 0 2px; background-color: #bbb; border-radius: 50%; display: inline-block; cursor: pointer;"></span>
                         </div>
                     </div>
                 `;
