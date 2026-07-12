@@ -187,7 +187,6 @@ function getItemCardHTML(item, itemType) {
         <span class="prime-badge"><i class="fa-solid fa-crown" style="color: #fbbf24;"></i> Prime</span>
     ` : '';
     
-    return `
     const mediaHtml = [];
     const mediaUrls = [];
     if (item.image) mediaUrls.push({ type: 'image', url: item.image });
@@ -225,7 +224,7 @@ function getItemCardHTML(item, itemType) {
 
     return `
         <div class="item-card" onclick="goToDetail(event, '${itemType}', ${item.id})">
-            <div class="item-image-container" style="position: relative; overflow: hidden; width: 100%; height: 200px; border-radius: 8px 8px 0 0;">
+            <div class="item-image-container" style="position: relative; overflow: hidden; width: 180px; height: 180px; min-width: 180px; border-radius: 8px;">
                 <div id="${carouselId}" class="carousel-track" style="display: flex; width: 100%; height: 100%; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);">
                     ${carouselItems}
                 </div>

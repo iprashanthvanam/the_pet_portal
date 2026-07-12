@@ -188,7 +188,7 @@
 
                         return `
                             <div class="item-card" data-item-key="${type}_${item.id}" onclick="window.location.href='/${type}/${item.id}/'">
-                                <div class="item-image-container" style="position: relative; overflow: hidden; width: 100%; height: 200px; border-radius: 8px 8px 0 0;">
+                                <div class="item-image-container" style="position: relative; overflow: hidden; width: 180px; height: 180px; min-width: 180px; border-radius: 8px;">
                                     <div id="${carouselId}" class="carousel-track" style="display: flex; width: 100%; height: 100%; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);">
                                         ${carouselItems}
                                     </div>
