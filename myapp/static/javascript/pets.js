@@ -537,7 +537,7 @@
                                 if (item.type === 'video') {
                                     reviewImageHTML = `
                                         <div style="margin-top: 10px; max-width: 250px; height: 150px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color);">
-                                            <video src="${item.url}" controls style="width: 100%; height: 100%; object-fit: cover;"></video>
+                                            <video src="${item.url}" controls preload="none" style="width: 100%; height: 100%; object-fit: cover;"></video>
                                         </div>
                                     `;
                                 } else {
@@ -553,7 +553,7 @@
                                     if (m.type === 'video') {
                                         return `
                                             <div style="flex: 0 0 100%; width: 100%; height: 100%; position: relative;">
-                                                <video src="${m.url}" controls muted style="width: 100%; height: 100%; object-fit: cover;"></video>
+                                                <video src="${m.url}" controls muted preload="none" style="width: 100%; height: 100%; object-fit: cover;"></video>
                                             </div>
                                         `;
                                     } else {
