@@ -1520,16 +1520,7 @@ def api_reviews(request):
 
         serializer = ReviewSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            # Handle uploaded image & video if present
-            review_img = request.FILES.get('image')
-            review_vid = request.FILES.get('video')
             review = serializer.save(user=request.user)
-            if review_img:
-                review.image = review_img
-            if review_vid:
-                review.video = review_vid
-            if review_img or review_vid:
-                review.save()
             return Response(ReviewSerializer(review, context={'request': request}).data, status=201)
         return Response(serializer.errors, status=400)
 
