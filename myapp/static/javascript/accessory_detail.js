@@ -216,12 +216,56 @@ function fetchAccessoryDetails() {
                         day: 'numeric', month: 'long', year: 'numeric'
                     });
                     let reviewImageHTML = '';
-                    if (review.image) {
-                        reviewImageHTML = `
-                            <div style="margin-top: 10px;">
-                                <img src="${review.image}" alt="Review image" style="max-width: 150px; max-height: 150px; border-radius: 4px; border: 1px solid var(--border-color); object-fit: cover; cursor: pointer;" onclick="window.open('${review.image}', '_blank')">
-                            </div>
-                        `;
+                    const rMedia = [];
+                    if (review.image) rMedia.push({ type: 'image', url: review.image });
+                    if (review.video) rMedia.push({ type: 'video', url: review.video });
+
+                    if (rMedia.length > 0) {
+                        if (rMedia.length === 1) {
+                            const item = rMedia[0];
+                            if (item.type === 'video') {
+                                reviewImageHTML = `
+                                    <div style="margin-top: 10px; max-width: 250px; height: 150px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color);">
+                                        <video src="${item.url}" controls style="width: 100%; height: 100%; object-fit: cover;"></video>
+                                    </div>
+                                `;
+                            } else {
+                                reviewImageHTML = `
+                                    <div style="margin-top: 10px;">
+                                        <img src="${item.url}" alt="Review image" style="max-width: 150px; max-height: 150px; border-radius: 4px; border: 1px solid var(--border-color); object-fit: cover; cursor: pointer;" onclick="window.open('${item.url}', '_blank')">
+                                    </div>
+                                `;
+                            }
+                        } else {
+                            const carouselId = `detail-review-carousel-${review.id}`;
+                            const slides = rMedia.map((m, idx) => {
+                                if (m.type === 'video') {
+                                    return `
+                                        <div style="flex: 0 0 100%; width: 100%; height: 100%; position: relative;">
+                                            <video src="${m.url}" controls muted style="width: 100%; height: 100%; object-fit: cover;"></video>
+                                        </div>
+                                    `;
+                                } else {
+                                    return `
+                                        <div style="flex: 0 0 100%; width: 100%; height: 100%; position: relative;">
+                                            <img src="${m.url}" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" onclick="window.open('${m.url}', '_blank')">
+                                        </div>
+                                    `;
+                                }
+                            }).join('');
+
+                            reviewImageHTML = `
+                                <div style="margin-top: 10px; position: relative; overflow: hidden; width: 200px; height: 150px; border-radius: 6px; border: 1px solid var(--border-color);">
+                                    <div id="${carouselId}" style="display: flex; width: 100%; height: 100%; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);">
+                                        ${slides}
+                                    </div>
+                                    <div style="position: absolute; bottom: 5px; width: 100%; text-align: center; z-index: 10;">
+                                        <span class="carousel-dot active" onclick="event.stopPropagation(); document.getElementById('${carouselId}').style.transform='translateX(0%)'; this.parentElement.querySelectorAll('span').forEach((s,i)=>s.style.backgroundColor=i===0?'var(--primary)':'#bbb')" style="height: 6px; width: 6px; margin: 0 2px; background-color: var(--primary); border-radius: 50%; display: inline-block; cursor: pointer;"></span>
+                                        <span class="carousel-dot" onclick="event.stopPropagation(); document.getElementById('${carouselId}').style.transform='translateX(-100%)'; this.parentElement.querySelectorAll('span').forEach((s,i)=>s.style.backgroundColor=i===1?'var(--primary)':'#bbb')" style="height: 6px; width: 6px; margin: 0 2px; background-color: #bbb; border-radius: 50%; display: inline-block; cursor: pointer;"></span>
+                                    </div>
+                                </div>
+                            `;
+                        }
                     }
 
                     let repliesHTML = '';
