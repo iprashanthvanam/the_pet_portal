@@ -1,0 +1,154 @@
+/* ================= WEASYPRINT A4 SPECIFIC CSS ================= */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-main);
+            background-color: var(--bg-card);
+            margin: 0;
+            padding: 0;
+            /* Forces colors to render in PDFs */
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important; 
+        }
+
+        .invoice-paper {
+            width: 100%;
+        }
+
+        /* --- Header --- */
+        .invoice-header {
+            width: 100%;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header-table { width: 100%; }
+        
+        .brand-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .brand-dot { color: #ec4899; } /* Locked Secondary Pink */
+        
+        .invoice-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #d1d5db;
+            text-align: right;
+            letter-spacing: 2px;
+        }
+
+        /* --- Info Grid --- */
+        .info-table {
+            width: 100%;
+            margin-bottom: 40px;
+        }
+        .info-col h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .info-col p {
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 3px 0;
+            color: var(--text-main);
+        }
+        .info-col strong { font-weight: 600; color: var(--text-main); }
+
+        /* Status Badges */
+        .status-badge {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-left: 5px;
+            display: inline-block;
+        }
+        .status-paid { background-color: #dcfce7; color: #166534; }
+        .status-pending { background-color: #fef3c7; color: #b45309; }
+        .status-cancelled { background-color: #fee2e2; color: #b91c1c; }
+
+        /* --- Items Table --- */
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .invoice-table th {
+            background-color: var(--bg-body);
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .invoice-table td {
+            padding: 15px;
+            font-size: 13px;
+            color: var(--text-main);
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .center { text-align: center !important; }
+        .right { text-align: right !important; }
+
+        /* --- Total Section --- */
+        .total-wrapper {
+            width: 100%;
+        }
+        .total-table {
+            width: 100%;
+        }
+        .total-box {
+            background-color: var(--bg-body);
+            padding: 20px 30px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            text-align: right;
+        }
+        .total-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-right: 15px;
+        }
+        .total-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: #6366f1; /* Locked Primary Indigo */
+        }
+
+        /* --- Footer --- */
+        .invoice-footer {
+            margin-top: 50px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 20px;
+            color: #9ca3af;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+    
+
+/* Premium Dark Form Input Overrides */
+input, select, textarea, .form-control {
+    background-color: var(--bg-body) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color, #1f2937) !important;
+}

@@ -1,237 +1,177 @@
-/* =========================================
-   1. GLOBAL VARIABLES & RESET (LOCKED)
-   ========================================= */
-:root {
-    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --secondary-color: #ff6b6b;
-    --text-dark: #1a202c;
-    --text-gray: #718096;
-    --white: #ffffff;
-    --shadow-sm: 0 4px 6px rgba(0,0,0,0.1);
-    --shadow-md: 0 10px 15px rgba(0,0,0,0.15);
-    --radius: 16px;
-    --success: #48bb78;
-    --error: #f56565;
-}
+/* ================= Advanced CSS Variables (LOCKED) ================= */
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #ec4899;
+            --bg-body: #090d16;
+            --bg-sidebar: #0f172a;
+            --bg-sidebar-hover: #1e293b;
+            --bg-card: #111827;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-light: #f9fafb;
+            --gradient-tech: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-width: 280px;
+        }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        /* ================= Reset & Typography (LOCKED) ================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
 
-body {
-    background: var(--primary-gradient);
-    background-attachment: fixed;
-    color: var(--text-dark);
-    line-height: 1.6;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow-x: hidden;
+            display: flex;
+        }
 
-a { text-decoration: none; color: inherit; transition: 0.3s; }
-ul { list-style: none; }
-img { max-width: 100%; display: block; }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
-/* =========================================
-   2. NAVBAR (LOCKED)
-   ========================================= */
-.navbar { height: 80px; background: var(--white); box-shadow: var(--shadow-sm); display: flex; align-items: center; position: sticky; top: 0; z-index: 1000; }
-.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-.nav-container { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-.logo { font-size: 1.6rem; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 8px; }
-.logo-icon { font-size: 1.8rem; }
-.logo .dot { color: #764ba2; font-size: 2rem; line-height: 0; }
-.nav-menu { display: flex; align-items: center; gap: 30px; }
-.nav-links { display: flex; gap: 30px; align-items: center; }
-.nav-links a:not(.btn) { font-weight: 500; color: var(--text-dark); font-size: 0.95rem; }
-.nav-links a:not(.btn):hover { color: #764ba2; }
-.hamburger { display: none; cursor: pointer; font-size: 1.8rem; color: var(--text-dark); }
+        /* ================= Layout Structure (LOCKED) ================= */
+        .dashboard-container { display: flex; width: 100%; min-height: 100vh; }
 
-/* Buttons */
-.btn { padding: 10px 24px; border-radius: 50px; font-weight: 600; font-size: 0.95rem; display: inline-block; text-align: center; border: none; cursor: pointer; transition: 0.3s; }
-.btn-primary { background: var(--primary-gradient); color: white; }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(118, 75, 162, 0.3); }
-.btn-white { background: white; color: #764ba2; }
-.btn-white:hover { background: #f8f9fa; }
-.btn-block { width: 100%; margin-top: 10px; }
+        /* ================= Sidebar Styles (LOCKED) ================= */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            color: var(--text-light);
+            height: 100vh;
+            position: fixed;
+            left: 0; top: 0;
+            display: flex; flex-direction: column;
+            transition: var(--transition); z-index: 1000;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
 
-/* =========================================
-   3. LOGIN SECTION
-   ========================================= */
-.login-section {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    min-height: calc(100vh - 160px);
-}
+        .sidebar-header {
+            padding: 25px 20px; display: flex; align-items: center; gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-header i { font-size: 24px; background: var(--gradient-tech); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sidebar-header h2 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
 
-.login-card {
-    background: var(--white);
-    padding: 40px;
-    border-radius: var(--radius);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    width: 100%;
-    max-width: 450px; /* Slightly narrower than register for login */
-    animation: fadeIn 0.5s ease-out;
-}
+        .sidebar-menu { flex: 1; padding: 20px 15px; overflow-y: auto; list-style: none; }
+        .sidebar-menu::-webkit-scrollbar { width: 4px; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+        .menu-label { font-size: 12px; text-transform: uppercase; color: #9ca3af; letter-spacing: 1px; margin: 15px 0 10px 10px; font-weight: 600; }
+        .menu-item { display: flex; align-items: center; padding: 12px 15px; border-radius: 10px; margin-bottom: 5px; color: #d1d5db; transition: var(--transition); font-weight: 500; }
+        .menu-item i { width: 20px; margin-right: 15px; font-size: 18px; }
+        .menu-item:hover, .menu-item.active { background-color: var(--bg-sidebar-hover); color: #ffffff; transform: translateX(5px); }
+        .menu-item.active { border-left: 4px solid var(--primary); }
+        
+        .badge-cart { background: var(--secondary); color: white; padding: 2px 8px; border-radius: 20px; font-size: 12px; margin-left: auto; }
 
-.form-header { text-align: center; margin-bottom: 30px; }
-.sub-title { text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; color: #764ba2; font-weight: 700; display: block; margin-bottom: 5px; }
-.form-header h1 { font-size: 2rem; color: var(--text-dark); margin: 0; }
+        .sidebar-auth { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); }
+        .auth-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; font-weight: 600; transition: var(--transition); cursor: pointer; border: none; text-decoration: none; }
+        .btn-google {
+            background-color: #ffffff !important;
+            color: #1f2937 !important;
+        }
+        .btn-google:hover { background-color: #f1f1f1 !important; }
+        .btn-google img { width: 18px; margin-right: 10px; }
+        .btn-signup { background: var(--gradient-tech); color: white; }
+        .btn-signup:hover { opacity: 0.9; box-shadow: 0 0 10px rgba(99, 102, 241, 0.5); }
+        .btn-login { background: transparent; border: 1px solid #4b5563; color: white; }
+        .btn-login:hover { background: #374151; }
 
-/* Form Elements */
-.form-group { margin-bottom: 20px; text-align: left; }
-.form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-dark); font-size: 0.95rem; }
+        /* ================= Main Content Styles (LOCKED) ================= */
+        .main-content { flex: 1; margin-left: var(--sidebar-width); display: flex; flex-direction: column; transition: var(--transition); }
 
-.form-group input {
-    width: 100%;
-    /* LOCKED FIX: Right padding prevents text from hiding behind eye icon */
-    padding: 12px 45px 12px 16px; 
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    outline: none;
-    background: #fff;
-}
+        .top-header { height: 80px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; }
+        .hamburger { display: none; font-size: 24px; cursor: pointer; color: var(--text-main); border: none; background: none; }
 
-.form-group input:focus {
-    border-color: #764ba2;
-    box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
-}
+        .profile-menu-container { position: relative; }
+        .profile-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-tech); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .profile-dropdown { display: none; position: absolute; top: 50px; right: 0; background: var(--bg-sidebar); width: 260px; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-lg); z-index: 1000; border: 1px solid rgba(255,255,255,0.1); }
+        .profile-dropdown.active { display: block; }
 
-/* --- PASSWORD TOGGLE (LOCKED FIX) --- */
-.input-wrapper { position: relative; }
+        @media (max-width: 850px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .hamburger { display: block; }
+        }
+        
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(3px); }
+        .sidebar-overlay.active { display: block; }
 
-.toggle-password {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #a0aec0;
-    transition: 0.2s;
-    /* LOCKED FIX: Z-Index ensures clickability */
-    z-index: 20; 
-    padding: 5px;
-}
+        /* ================= AUTHENTICATION FORM SPECIFIC CSS ================= */
+        .content-wrapper { padding: 30px; display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 80px); }
+        
+        .auth-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 450px;
+        }
 
-/* LOCKED FIX: SVG doesn't steal clicks */
-.toggle-password svg { pointer-events: none; }
+        .auth-header { text-align: center; margin-bottom: 30px; }
+        .auth-header h1 { font-size: 28px; font-weight: 700; color: var(--text-main); }
+        .auth-header p { color: var(--text-muted); font-size: 14px; margin-top: 5px; }
 
-.toggle-password:hover { color: #764ba2; }
-.toggle-password.active { color: #764ba2; }
-.eye-icon { width: 20px; height: 20px; }
+        .social-login-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 12px;
+            background: var(--bg-card); color: var(--text-main); font-weight: 600; font-size: 14px;
+            transition: var(--transition); cursor: pointer; text-decoration: none;
+        }
+        .social-login-btn:hover { background: var(--bg-body); border-color: #d1d5db; transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+        .social-login-btn svg { width: 20px; height: 20px; }
 
-/* Login Prompt */
-.login-prompt { margin-top: 25px; text-align: center; font-size: 0.95rem; color: var(--text-gray); }
-.link-highlight { color: #764ba2; font-weight: 600; text-decoration: underline; }
-.link-highlight:hover { color: var(--text-dark); }
+        .divider-or { display: flex; align-items: center; text-align: center; margin: 25px 0; color: var(--text-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        .divider-or::before, .divider-or::after { content: ''; flex: 1; border-bottom: 1px solid #e5e7eb; }
+        .divider-or span { padding: 0 15px; }
 
-/* Messages */
-.messages-container { margin-bottom: 20px; }
-.message { padding: 10px; border-radius: 8px; font-size: 0.9rem; text-align: center; margin-bottom: 10px; }
-.message.error { background: #fff5f5; color: var(--error); border: 1px solid var(--error); }
-.message.success { background: #f0fff4; color: var(--success); border: 1px solid var(--success); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
+        .input-wrapper { position: relative; }
+        .form-control {
+            width: 100%; padding: 14px 15px; border: 1px solid #e5e7eb; border-radius: 12px;
+            font-family: inherit; font-size: 14px; background: var(--bg-body); color: var(--text-main);
+            outline: none; transition: var(--transition);
+        }
+        .form-control:focus { border-color: var(--primary); background: var(--bg-card); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+        
+        .toggle-password {
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 16px; transition: var(--transition);
+        }
+        .toggle-password:hover, .toggle-password.active { color: var(--primary); }
 
-/* =========================================
-   4. FOOTER (LOCKED)
-   ========================================= */
-.footer { background: var(--white); height: 80px; display: flex; align-items: center; justify-content: center; margin-top: auto; }
-.footer .container { display: flex; justify-content: space-between; align-items: center; width: 100%; height: 100%; }
-.footer-brand { font-size: 1.2rem; font-weight: 700; color: var(--text-dark); }
-.footer-nav { display: flex; gap: 25px; margin: 0; }
-.footer-nav a { color: var(--text-dark); font-weight: 500; font-size: 0.9rem; }
-.footer-nav a:hover { color: #764ba2; }
-.copyright-text { margin: 0; font-size: 0.85rem; color: var(--text-gray); }
+        .btn-submit {
+            width: 100%; background: var(--gradient-tech); color: white; border: none;
+            padding: 14px; border-radius: 12px; font-weight: 600; font-size: 16px;
+            cursor: pointer; transition: var(--transition); margin-top: 10px;
+        }
+        .btn-submit:hover { box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3); transform: translateY(-2px); }
 
-/* =========================================
-   5. MOBILE RESPONSIVE
-   ========================================= */
-@media (max-width: 768px) {
-    .hamburger { display: block; }
-    .nav-menu { position: fixed; left: -100%; top: 80px; flex-direction: column; background-color: var(--white); width: 100%; height: calc(100vh - 80px); padding: 20px; gap: 0; transition: 0.3s ease-in-out; z-index: 999; box-shadow: 0 10px 10px rgba(0,0,0,0.1); }
-    .nav-menu.active { left: 0; }
-    .nav-links { flex-direction: column; width: 100%; gap: 15px; }
-    .nav-links li { width: 100%; }
-    .nav-links a:not(.btn) { display: block; width: 100%; padding: 15px; text-align: center; border-bottom: 1px solid #f0f0f0; }
-    .nav-links .btn { display: block; width: 100%; margin-top: 10px; padding: 15px; }
+        .auth-footer { text-align: center; margin-top: 25px; font-size: 14px; color: var(--text-muted); }
+        .auth-footer a { color: var(--primary); font-weight: 600; text-decoration: none; transition: var(--transition); }
+        .auth-footer a:hover { color: var(--primary-hover); text-decoration: underline; }
+
+        .messages-container { margin-bottom: 20px; }
+        .message { padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 500; text-align: center; }
+        .message.error { background: #fef2f2; color: #dc2626; border: 1px solid #f87171; }
+        .message.success { background: #f0fdf4; color: #16a34a; border: 1px solid #4ade80; }
     
-    .login-card { padding: 30px 20px; }
-    .footer { height: auto; padding: 20px 0; }
-    .footer .container { flex-direction: column; gap: 15px; text-align: center; }
-}
 
-
-
-
-
-
-/* =========================================
-   GOOGLE LOGIN BUTTON & DIVIDER
-   ========================================= */
-
-.social-login {
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
-
-.btn-social {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 12px;
-    border-radius: 50px; /* Pill shape */
-    border: 1px solid #4a5568; 
-    background-color: #2d3748; /* Dark theme matching your screenshot */
-    color: #ffffff;
-    font-weight: 500;
-    font-size: 1rem;
-    transition: 0.3s ease;
-    position: relative;
-    text-decoration: none;
-}
-
-.btn-social:hover {
-    background-color: #1a202c;
-    border-color: #2d3748;
-}
-
-.google-icon {
-    width: 20px;
-    height: 20px;
-    position: absolute;
-    left: 20px; /* Forces the icon to stay on the left side */
-}
-
-/* "OR" Divider Styling */
-.divider-or {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    margin: 25px 0 20px 0;
-    color: var(--text-gray);
-    font-size: 0.85rem;
-}
-
-.divider-or::before,
-.divider-or::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid #e2e8f0; /* Light gray lines */
-}
-
-.divider-or span {
-    padding: 0 15px; /* Spacing around the word "OR" */
+/* Premium Dark Form Input Overrides */
+input, select, textarea, .form-control {
+    background-color: var(--bg-body) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color, #1f2937) !important;
 }

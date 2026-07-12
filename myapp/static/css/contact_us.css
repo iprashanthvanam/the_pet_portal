@@ -1,0 +1,259 @@
+/* ================= Advanced CSS Variables (LOCKED) ================= */
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #ec4899;
+            --bg-body: #090d16;
+            --bg-sidebar: #0f172a;
+            --bg-sidebar-hover: #1e293b;
+            --bg-card: #111827;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-light: #f9fafb;
+            --gradient-tech: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-width: 280px;
+        }
+
+        /* ================= Reset & Typography (LOCKED) ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); overflow-x: hidden; display: flex; height: 100vh; }
+        a { text-decoration: none; color: inherit; }
+
+        /* ================= Layout Structure (LOCKED) ================= */
+        .dashboard-container { display: flex; width: 100%; min-height: 100vh; }
+
+        /* ================= Sidebar Styles (LOCKED) ================= */
+        .sidebar {
+            width: var(--sidebar-width); background-color: var(--bg-sidebar); color: var(--text-light);
+            height: 100vh; position: fixed; left: 0; top: 0; display: flex; flex-direction: column;
+            transition: var(--transition); z-index: 1000; box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+        .sidebar-header { padding: 25px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-header i { font-size: 24px; background: var(--gradient-tech); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sidebar-header h2 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+        .sidebar-menu { flex: 1; padding: 20px 15px; overflow-y: auto; list-style: none; }
+        .sidebar-menu::-webkit-scrollbar { width: 4px; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        .menu-label { font-size: 12px; text-transform: uppercase; color: #9ca3af; letter-spacing: 1px; margin: 15px 0 10px 10px; font-weight: 600; }
+        .menu-item { display: flex; align-items: center; padding: 12px 15px; border-radius: 10px; margin-bottom: 5px; color: #d1d5db; transition: var(--transition); font-weight: 500; }
+        .menu-item i { width: 20px; margin-right: 15px; font-size: 18px; }
+        .menu-item:hover, .menu-item.active { background-color: var(--bg-sidebar-hover); color: #ffffff; transform: translateX(5px); }
+        .menu-item.active { border-left: 4px solid var(--primary); }
+        .badge-cart { background: var(--secondary); color: white; padding: 2px 8px; border-radius: 20px; font-size: 12px; margin-left: auto; }
+        .sidebar-auth { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); }
+        .auth-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; font-weight: 600; transition: var(--transition); cursor: pointer; border: none; text-decoration: none; }
+        .btn-login { background: transparent; border: 1px solid #4b5563; color: white; }
+        .btn-login:hover { background: #374151; }
+
+        /* ================= Main Content Styles (LOCKED) ================= */
+        .main-content { flex: 1; margin-left: var(--sidebar-width); display: flex; flex-direction: column; transition: var(--transition); height: 100vh; overflow-y: auto; }
+        .top-header { height: 80px; min-height: 80px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; }
+        .hamburger { display: none; font-size: 24px; cursor: pointer; color: var(--text-main); border: none; background: none; }
+
+        /* Profile Icon UI */
+        .profile-menu-container { position: relative; }
+        .profile-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-tech); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; text-decoration: none; overflow: hidden; border: 2px solid white; box-shadow: var(--shadow-sm); }
+        .profile-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ================= CONTACT US SPECIFIC CSS ================= */
+        .content-wrapper { padding: 40px 30px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        
+        .page-header { margin-bottom: 30px; text-align: center; }
+        .sub-title { text-transform: uppercase; letter-spacing: 2px; font-size: 12px; font-weight: 600; color: var(--primary); display: block; margin-bottom: 5px; }
+        .page-header h1 { font-size: 32px; font-weight: 700; color: var(--text-main); margin-bottom: 10px; }
+        .page-header p { color: var(--text-muted); font-size: 15px; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+        .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; align-items: start; }
+
+        .contact-card { background: var(--bg-card); border-radius: 20px; padding: 40px; box-shadow: var(--shadow-lg); }
+        
+        /* Contact Info List */
+        .contact-list { display: flex; flex-direction: column; gap: 30px; }
+        .contact-item { display: flex; align-items: flex-start; gap: 20px; transition: var(--transition); padding: 15px; border-radius: 12px; border: 1px solid transparent; }
+        .contact-item:hover { background: var(--bg-body); border-color: #e5e7eb; transform: translateX(5px); }
+        
+        .icon-wrapper { 
+            width: 50px; height: 50px; border-radius: 12px; background: rgba(99, 102, 241, 0.1); 
+            display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--primary); flex-shrink: 0;
+        }
+        .contact-item:nth-child(2) .icon-wrapper { background: rgba(236, 72, 153, 0.1); color: var(--secondary); }
+        .contact-item:nth-child(3) .icon-wrapper { background: rgba(34, 197, 94, 0.1); color: #16a34a; }
+
+        .details h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 5px; }
+        .details p, .details a { font-size: 14px; color: var(--text-muted); font-weight: 500; transition: var(--transition); line-height: 1.5; }
+        .details a:hover { color: var(--primary); text-decoration: underline; }
+
+        /* Hours Note */
+        .support-note { margin-top: 20px; padding-top: 20px; border-top: 1px dashed #d1d5db; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 10px; }
+        .support-note i { color: var(--secondary); font-size: 16px; }
+
+        /* Map Card */
+        .map-card { background: var(--bg-card); border-radius: 20px; padding: 15px; box-shadow: var(--shadow-lg); display: flex; flex-direction: column; gap: 15px; }
+        .map-container { width: 100%; height: 350px; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; }
+        .map-container iframe { width: 100%; height: 100%; border: none; }
+        
+        .btn-map { 
+            display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; 
+            background: var(--gradient-tech); color: white; padding: 16px; border-radius: 12px; 
+            font-size: 15px; font-weight: 600; transition: var(--transition); box-shadow: var(--shadow-sm); 
+        }
+        .btn-map:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); color: white; }
+
+        /* ================= Responsive Design (LOCKED) ================= */
+        @media (max-width: 1024px) {
+            .contact-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 850px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .hamburger { display: block; }
+            .contact-card { padding: 25px; }
+        }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(3px); }
+        .sidebar-overlay.active { display: block; }
+    
+
+        /* ================= Advanced CSS Variables (LOCKED) ================= */
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #ec4899;
+            --bg-body: #090d16;
+            --bg-sidebar: #0f172a;
+            --bg-sidebar-hover: #1e293b;
+            --bg-card: #111827;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-light: #f9fafb;
+            --gradient-tech: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-width: 280px;
+        }
+
+        /* ================= Reset & Typography (LOCKED) ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); overflow-x: hidden; display: flex; height: 100vh; }
+        a { text-decoration: none; color: inherit; }
+
+        /* ================= Layout Structure (LOCKED) ================= */
+        .dashboard-container { display: flex; width: 100%; min-height: 100vh; }
+
+        /* ================= Sidebar Styles (LOCKED) ================= */
+        .sidebar {
+            width: var(--sidebar-width); background-color: var(--bg-sidebar); color: var(--text-light);
+            height: 100vh; position: fixed; left: 0; top: 0; display: flex; flex-direction: column;
+            transition: var(--transition); z-index: 1000; box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+        .sidebar-header { padding: 25px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-header i { font-size: 24px; background: var(--gradient-tech); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sidebar-header h2 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+        .sidebar-menu { flex: 1; padding: 20px 15px; overflow-y: auto; list-style: none; }
+        .sidebar-menu::-webkit-scrollbar { width: 4px; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        .menu-label { font-size: 12px; text-transform: uppercase; color: #9ca3af; letter-spacing: 1px; margin: 15px 0 10px 10px; font-weight: 600; }
+        .menu-item { display: flex; align-items: center; padding: 12px 15px; border-radius: 10px; margin-bottom: 5px; color: #d1d5db; transition: var(--transition); font-weight: 500; }
+        .menu-item i { width: 20px; margin-right: 15px; font-size: 18px; }
+        .menu-item:hover, .menu-item.active { background-color: var(--bg-sidebar-hover); color: #ffffff; transform: translateX(5px); }
+        .menu-item.active { border-left: 4px solid var(--primary); }
+        .badge-cart { background: var(--secondary); color: white; padding: 2px 8px; border-radius: 20px; font-size: 12px; margin-left: auto; }
+        .sidebar-auth { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); }
+        .auth-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; font-weight: 600; transition: var(--transition); cursor: pointer; border: none; text-decoration: none; }
+        .btn-login { background: transparent; border: 1px solid #4b5563; color: white; }
+        .btn-login:hover { background: #374151; }
+
+        /* ================= Main Content Styles (LOCKED) ================= */
+        .main-content { flex: 1; margin-left: var(--sidebar-width); display: flex; flex-direction: column; transition: var(--transition); height: 100vh; overflow-y: auto; }
+        .top-header { height: 80px; min-height: 80px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; }
+        .hamburger { display: none; font-size: 24px; cursor: pointer; color: var(--text-main); border: none; background: none; }
+
+        /* Profile Icon UI */
+        .profile-menu-container { position: relative; }
+        .profile-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-tech); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; text-decoration: none; overflow: hidden; border: 2px solid white; box-shadow: var(--shadow-sm); }
+        .profile-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ================= CONTACT US SPECIFIC CSS ================= */
+        .content-wrapper { padding: 40px 30px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        
+        .page-header { margin-bottom: 30px; text-align: center; }
+        .sub-title { text-transform: uppercase; letter-spacing: 2px; font-size: 12px; font-weight: 600; color: var(--primary); display: block; margin-bottom: 5px; }
+        .page-header h1 { font-size: 32px; font-weight: 700; color: var(--text-main); margin-bottom: 10px; }
+        .page-header p { color: var(--text-muted); font-size: 15px; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+        /* FIXED: Grid now handles flexible sizing better */
+        .contact-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1.2fr; 
+            gap: 30px; 
+            align-items: start; 
+            width: 100%;
+        }
+
+        .contact-card { background: var(--bg-card); border-radius: 20px; padding: 40px; box-shadow: var(--shadow-lg); width: 100%; }
+        
+        /* Contact Info List */
+        .contact-list { display: flex; flex-direction: column; gap: 30px; }
+        .contact-item { display: flex; align-items: flex-start; gap: 20px; transition: var(--transition); padding: 15px; border-radius: 12px; border: 1px solid transparent; width: 100%; }
+        .contact-item:hover { background: var(--bg-body); border-color: #e5e7eb; transform: translateX(5px); }
+        
+        .icon-wrapper { 
+            width: 50px; height: 50px; border-radius: 12px; background: rgba(99, 102, 241, 0.1); 
+            display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--primary); flex-shrink: 0;
+        }
+        .contact-item:nth-child(2) .icon-wrapper { background: rgba(236, 72, 153, 0.1); color: var(--secondary); }
+        .contact-item:nth-child(3) .icon-wrapper { background: rgba(34, 197, 94, 0.1); color: #16a34a; }
+
+        .details { word-break: break-word; } /* Ensure long emails don't overflow */
+        .details h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 5px; }
+        .details p, .details a { font-size: 14px; color: var(--text-muted); font-weight: 500; transition: var(--transition); line-height: 1.5; }
+        .details a:hover { color: var(--primary); text-decoration: underline; }
+
+        /* Hours Note */
+        .support-note { margin-top: 20px; padding-top: 20px; border-top: 1px dashed #d1d5db; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 10px; }
+        .support-note i { color: var(--secondary); font-size: 16px; }
+
+        /* Map Card - FIXED RESPONSIVENESS */
+        .map-card { background: var(--bg-card); border-radius: 20px; padding: 15px; box-shadow: var(--shadow-lg); display: flex; flex-direction: column; gap: 15px; width: 100%; }
+        .map-container { width: 100%; height: 350px; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; position: relative; }
+        .map-container iframe { width: 100%; height: 100%; border: none; }
+        
+        .btn-map { 
+            display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; 
+            background: var(--gradient-tech); color: white; padding: 16px; border-radius: 12px; 
+            font-size: 15px; font-weight: 600; transition: var(--transition); box-shadow: var(--shadow-sm); 
+        }
+        .btn-map:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); color: white; }
+
+        /* ================= Responsive Design (LOCKED + FIXED) ================= */
+        @media (max-width: 1024px) {
+            .contact-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 850px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; width: 100%; }
+            .hamburger { display: block; }
+            
+            /* FIXED: Padding and Widths for Mobile */
+            .content-wrapper { padding: 30px 15px; width: 100%; overflow-x: hidden; }
+            .contact-card, .map-card { padding: 25px; width: 100%; }
+            .page-header h1 { font-size: 26px; }
+            .contact-item:hover { transform: none; } /* Disable hover slide on mobile */
+        }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(3px); }
+        .sidebar-overlay.active { display: block; }
+    
+
+/* Premium Dark Form Input Overrides */
+input, select, textarea, .form-control {
+    background-color: var(--bg-body) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color, #1f2937) !important;
+}

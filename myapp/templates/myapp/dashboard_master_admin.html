@@ -1,0 +1,1088 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Admin Control Console | Pet Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/dashboard_master_admin.css' %}">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fa-solid fa-shield-halved"></i> Master Admin
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item active" onclick="switchPanel('dashboard')">
+                <i class="fa-solid fa-chart-line"></i> Dashboard Logs
+            </li>
+            <li class="nav-item" onclick="switchPanel('orders')">
+                <i class="fa-solid fa-truck-ramp-box"></i> Order Operations
+            </li>
+            <li class="nav-item" onclick="switchPanel('reviews')">
+                <i class="fa-solid fa-comments"></i> Review Moderation
+            </li>
+            <li class="nav-item" onclick="switchPanel('pets')">
+                <i class="fa-solid fa-paw"></i> Manage Pets
+            </li>
+            <li class="nav-item" onclick="switchPanel('foods')">
+                <i class="fa-solid fa-bowl-food"></i> Manage Foods
+            </li>
+            <li class="nav-item" onclick="switchPanel('accessories')">
+                <i class="fa-solid fa-tags"></i> Manage Accessories
+            </li>
+            <li class="nav-item" onclick="switchPanel('users')">
+                <i class="fa-solid fa-users"></i> Manage Users
+            </li>
+            <li class="nav-item" onclick="switchPanel('cartitems')">
+                <i class="fa-solid fa-cart-shopping"></i> Manage Cart Items
+            </li>
+            <li class="nav-item" onclick="switchPanel('healthprofiles')">
+                <i class="fa-solid fa-heart-pulse"></i> Pet Health Profiles
+            </li>
+            <li class="nav-item" onclick="switchPanel('appointments')">
+                <i class="fa-solid fa-calendar-days"></i> Manage Bookings
+            </li>
+            <li class="nav-item">
+                <a href="/admin-ai-dashboard/" style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 10px; width: 100%;">
+                    <i class="fa-solid fa-brain" style="width: 20px;"></i> AI Analysis
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header-top">
+            <h2>Operations Control Console</h2>
+            <a href="/logout/" style="color: #ef4444; text-decoration: none;"><i class="fa-solid fa-power-off"></i> Logout</a>
+        </div>
+
+        <!-- Dashboard Panel -->
+        <div id="panel-dashboard" class="panel active">
+            <div class="stats-grid" id="stats-grid">
+                <div class="stat-card">
+                    <h3>Marketplace Orders</h3>
+                    <p id="stat-orders">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Doctor Appointments</h3>
+                    <p id="stat-appointments">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Care Boarding</h3>
+                    <p id="stat-care">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Grooming Sessions</h3>
+                    <p id="stat-grooming">0</p>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="margin: 0;">Global Operational Status</h3>
+                    <input type="text" id="search-logs-order-id" placeholder="Search by Order ID..." oninput="filterDashboardLogs()" style="padding: 8px 12px; background: var(--bg-body); border: 1px solid var(--border-color, #1f2937); color: var(--text-main); border-radius: 6px; font-size: 13px; outline: none; min-width: 250px;">
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Operation Type</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-tbody">
+                            <tr>
+                                <td colspan="3" style="text-align: center; color: var(--text-muted)">Loading logs...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Panel -->
+        <div id="panel-orders" class="panel">
+            <div class="section-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="margin: 0;">Order Dispatch Desk</h3>
+                    <input type="text" id="search-orders" placeholder="Search by Order ID, Name, Email or Phone..." oninput="filterOrders()" style="padding: 8px 12px; background: var(--bg-body); border: 1px solid var(--border-color, #1f2937); color: var(--text-main); border-radius: 6px; font-size: 13px; outline: none; min-width: 320px;">
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer Details</th>
+                                <th>Marketplace Cost</th>
+                                <th>Payment Method</th>
+                                <th>Pipeline Stage</th>
+                                <th>Dispatch Stage Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-tbody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-muted)">Loading orders...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Moderation Panel -->
+        <div id="panel-reviews" class="panel">
+            <div class="section-box">
+                <h3>Central Review Moderation Desk</h3>
+                <div class="filter-bar">
+                    <select class="filter-select" id="filter-rating" onchange="loadReviews()">
+                        <option value="">All Ratings</option>
+                        <option value="5">⭐⭐⭐⭐⭐ (5 Stars)</option>
+                        <option value="4">⭐⭐⭐⭐ (4 Stars)</option>
+                        <option value="3">⭐⭐⭐ (3 Stars)</option>
+                        <option value="2">⭐⭐ (2 Stars)</option>
+                        <option value="1">⭐ (1 Star)</option>
+                    </select>
+                    <select class="filter-select" id="filter-reported" onchange="loadReviews()">
+                        <option value="">Report Status (All)</option>
+                        <option value="true">Flagged / Reported Only</option>
+                        <option value="false">Clear Reviews</option>
+                    </select>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Rating</th>
+                                <th>Comment</th>
+                                <th>Target Asset</th>
+                                <th>Report Status</th>
+                                <th>Moderation Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reviews-tbody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-muted)">Loading customer feedback...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pets Panel -->
+        <div id="panel-pets" class="panel">
+            <div class="section-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="margin: 0;">Manage Pet Listings</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                        <input type="text" id="search-pets" placeholder="Search by Name, Species, Microchip..." oninput="filterPets()" style="padding: 8px 12px; background: var(--bg-body); border: 1px solid var(--border-color, #1f2937); color: var(--text-main); border-radius: 6px; font-size: 13px; outline: none; min-width: 250px;">
+                        <button class="btn-moderate" onclick="openModal('pet')"><i class="fa-solid fa-plus"></i> Add Pet</button>
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Species</th>
+                                <th>Microchip ID</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pets-tbody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-muted)">Loading pets...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Foods Panel -->
+        <div id="panel-foods" class="panel">
+            <div class="section-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="margin: 0;">Manage Food Products</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                        <input type="text" id="search-foods" placeholder="Search by Name or Type..." oninput="filterFoods()" style="padding: 8px 12px; background: var(--bg-body); border: 1px solid var(--border-color, #1f2937); color: var(--text-main); border-radius: 6px; font-size: 13px; outline: none; min-width: 250px;">
+                        <button class="btn-moderate" onclick="openModal('food')"><i class="fa-solid fa-plus"></i> Add Food</button>
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="foods-tbody">
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: var(--text-muted)">Loading foods...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accessories Panel -->
+        <div id="panel-accessories" class="panel">
+            <div class="section-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="margin: 0;">Manage Accessories</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                        <input type="text" id="search-accessories" placeholder="Search by Name or Category..." oninput="filterAccessories()" style="padding: 8px 12px; background: var(--bg-body); border: 1px solid var(--border-color, #1f2937); color: var(--text-main); border-radius: 6px; font-size: 13px; outline: none; min-width: 250px;">
+                        <button class="btn-moderate" onclick="openModal('accessory')"><i class="fa-solid fa-plus"></i> Add Accessory</button>
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="accessories-tbody">
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: var(--text-muted)">Loading accessories...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Panel -->
+        <div id="panel-users" class="panel">
+            <div class="section-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="margin: 0;">Manage User Accounts</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                        <input type="text" id="search-users" placeholder="Search by Username, Phone, Email..." oninput="filterUsers()" style="padding: 8px 12px; background: var(--bg-body); border: 1px solid var(--border-color, #1f2937); color: var(--text-main); border-radius: 6px; font-size: 13px; outline: none; min-width: 250px;">
+                        <button class="btn-moderate" onclick="openUserModal()"><i class="fa-solid fa-user-plus"></i> Add User</button>
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Details</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-tbody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-muted)">Loading users...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart Items Panel -->
+        <div id="panel-cartitems" class="panel">
+            <div class="section-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="margin: 0;">Manage Cart Items</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                        <input type="text" id="search-cartitems" placeholder="Search by User, Type, ID, Name..." oninput="filterCartItems()" style="padding: 8px 12px; background: var(--bg-body); border: 1px solid var(--border-color, #1f2937); color: var(--text-main); border-radius: 6px; font-size: 13px; outline: none; min-width: 250px;">
+                        <button class="btn-moderate" onclick="openCartItemModal()"><i class="fa-solid fa-cart-plus"></i> Add Cart Item</button>
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Item Type</th>
+                                <th>Item ID</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cartitems-tbody">
+                            <tr>
+                                <td colspan="7" style="text-align: center; color: var(--text-muted)">Loading cart items...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pet Health Profiles Panel -->
+        <div id="panel-healthprofiles" class="panel">
+            <div class="section-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="margin: 0;">Manage Pet Health Profiles</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                        <input type="text" id="search-healthprofiles" placeholder="Search by Pet Name, Microchip..." oninput="filterHealthProfiles()" style="padding: 8px 12px; background: var(--bg-body); border: 1px solid var(--border-color, #1f2937); color: var(--text-main); border-radius: 6px; font-size: 13px; outline: none; min-width: 250px;">
+                        <button class="btn-moderate" onclick="openHealthProfileModal()"><i class="fa-solid fa-plus"></i> Add Health Profile</button>
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Pet Name</th>
+                                <th>Microchip ID</th>
+                                <th>Birth Date</th>
+                                <th>Gender</th>
+                                <th>Weight (kg)</th>
+                                <th>Vaccinated</th>
+                                <th>Adoption Ready</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="healthprofiles-tbody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; color: var(--text-muted)">Loading health profiles...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointments Panel -->
+        <div id="panel-appointments" class="panel">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                <input type="text" id="search-bookings" placeholder="Search Bookings by Client or Pet..." oninput="filterBookings()" style="padding: 8px 12px; background: var(--bg-card); border: 1px solid var(--border-color, #1f2937); color: var(--text-main); border-radius: 6px; font-size: 13px; outline: none; min-width: 300px;">
+            </div>
+
+            <!-- Doctor Appointments -->
+            <div class="section-box" style="margin-bottom: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3>Doctor Appointments</h3>
+                    <button class="btn-logout" style="background-color: var(--secondary); color: white; padding: 8px 16px;" onclick="openDoctorBookingModal()"><i class="fa-solid fa-plus"></i> Add Doctor Appointment</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Client / Pet</th>
+                                <th>Date & Time</th>
+                                <th>Symptoms</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="doctor-tbody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-muted)">Loading doctor appointments...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Care Bookings -->
+            <div class="section-box" style="margin-bottom: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3>Pet Care Boarding Bookings</h3>
+                    <button class="btn-logout" style="background-color: var(--secondary); color: white; padding: 8px 16px;" onclick="openCareBookingModal()"><i class="fa-solid fa-plus"></i> Add Boarding Booking</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Client / Pet</th>
+                                <th>Duration</th>
+                                <th>Options</th>
+                                <th>Total Price</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="care-tbody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-muted)">Loading boarding bookings...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Grooming Bookings -->
+            <div class="section-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3>Grooming Sessions</h3>
+                    <button class="btn-logout" style="background-color: var(--secondary); color: white; padding: 8px 16px;" onclick="openGroomingBookingModal()"><i class="fa-solid fa-plus"></i> Add Grooming Session</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Client / Pet</th>
+                                <th>Package & Visit</th>
+                                <th>Date & Time</th>
+                                <th>Groomer</th>
+                                <th>Total Price</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="grooming-tbody">
+                            <tr>
+                                <td colspan="7" style="text-align: center; color: var(--text-muted)">Loading grooming sessions...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="item-modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); align-items: center; justify-content: center; padding: 20px;">
+        <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; max-width: 500px; width: 100%; padding: 30px; box-shadow: var(--shadow); position: relative;">
+            <span onclick="closeModal()" style="position: absolute; right: 20px; top: 20px; font-size: 24px; cursor: pointer; color: var(--text-muted);">&times;</span>
+            <h3 id="modal-title" style="margin-bottom: 20px; font-weight: 600;">Add Item</h3>
+            <form id="modal-form" onsubmit="saveItem(event)">
+                <input type="hidden" id="item-id">
+                <input type="hidden" id="item-class">
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Name</label>
+                    <input type="text" id="form-name" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                </div>
+
+                <div id="field-species" style="margin-bottom: 15px;">
+                    <label id="label-species" style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Species</label>
+                    <input type="text" id="form-species" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                </div>
+
+                <div id="field-category" style="margin-bottom: 15px; display: none;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Category</label>
+                    <select id="form-category" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                        <option value="TOY">Toys</option>
+                        <option value="BED">Beds</option>
+                        <option value="LEASH">Leashes</option>
+                        <option value="CLOTHING">Clothing</option>
+                        <option value="COLLAR">Collars</option>
+                        <option value="SUPPLEMENT">Supplements</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Price (INR)</label>
+                    <input type="number" step="0.01" id="form-price" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Description</label>
+                    <textarea id="form-description" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; height: 80px; resize: none;"></textarea>
+                </div>
+
+                <div id="extra-pet-fields" style="display: none; margin-bottom: 15px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Age</label>
+                            <input type="text" id="form-age" placeholder="e.g. 2 years" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Activity Level</label>
+                            <input type="text" id="form-activity" placeholder="e.g. Active" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 20px; align-items: center; margin-top: 10px;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                            <input type="checkbox" id="form-vaccinated"> Vaccinated
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                            <input type="checkbox" id="form-adoption"> Adoption Ready
+                        </label>
+                    </div>
+                </div>
+
+                <div id="extra-food-fields" style="display: none; margin-bottom: 15px; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Mfg Date</label>
+                        <input type="date" id="form-mfg" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Expiry Date</label>
+                        <input type="date" id="form-expiry" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Image</label>
+                    <input type="file" id="form-image" accept="image/*" style="width: 100%; color: var(--text-muted);">
+                </div>
+
+                <button type="submit" class="btn-moderate" style="width: 100%; padding: 12px; font-weight: 600; background: var(--primary); border: none; color: white;">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div id="user-modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); align-items: center; justify-content: center; padding: 20px;">
+        <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; max-width: 500px; width: 100%; padding: 30px; position: relative;">
+            <span onclick="closeUserModal()" style="position: absolute; right: 20px; top: 20px; font-size: 24px; cursor: pointer; color: var(--text-muted);">&times;</span>
+            <h3 id="user-modal-title" style="margin-bottom: 20px; font-weight: 600;">Add User</h3>
+            <form id="user-form" onsubmit="saveUser(event)">
+                <input type="hidden" id="user-profile-id">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Username</label>
+                        <input type="text" id="user-username" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Email</label>
+                        <input type="email" id="user-email" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Password <span id="pwd-note" style="font-size: 11px; color: var(--text-muted);">(Leave blank to keep current)</span></label>
+                    <input type="password" id="user-password" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">First Name</label>
+                        <input type="text" id="user-firstname" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Last Name</label>
+                        <input type="text" id="user-lastname" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Role / Classification</label>
+                    <select id="user-role" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                        <option value="customer">Normal Customer</option>
+                        <option value="pet_care">Pet Care Provider</option>
+                        <option value="pet_grooming">Pet Grooming Provider</option>
+                        <option value="doctor">Doctor/Veterinary Consultant</option>
+                        <option value="pet_seller">Pet Center/Adoption Seller</option>
+                        <option value="product_seller">Product Seller</option>
+                        <option value="accessory_seller">Accessories Seller</option>
+                        <option value="master_admin">Master Admin</option>
+                    </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Phone</label>
+                        <input type="text" id="user-phone" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">City</label>
+                        <input type="text" id="user-city" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 20px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Address</label>
+                        <input type="text" id="user-address" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Postal Code</label>
+                        <input type="text" id="user-postal" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-moderate" style="width: 100%; padding: 12px; font-weight: 600; background: var(--primary); border: none; color: white;">Save Account Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Edit Modal -->
+    <div id="order-modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); align-items: center; justify-content: center; padding: 20px;">
+        <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; max-width: 600px; width: 100%; padding: 30px; position: relative; max-height: 90vh; overflow-y: auto;">
+            <span onclick="closeOrderModal()" style="position: absolute; right: 20px; top: 20px; font-size: 24px; cursor: pointer; color: var(--text-muted);">&times;</span>
+            <h3 id="order-modal-title" style="margin-bottom: 5px; font-weight: 600;">Edit Order Details</h3>
+            <p id="order-modal-id-subtitle" style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px; font-family: monospace;"></p>
+            <form id="order-modal-form" onsubmit="saveOrderDetails(event)">
+                <input type="hidden" id="order-edit-id">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Full Name</label>
+                        <input type="text" id="order-fullname" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Email</label>
+                        <input type="email" id="order-email" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Mobile Number</label>
+                        <input type="text" id="order-mobile" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">City</label>
+                        <input type="text" id="order-city" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Address</label>
+                        <input type="text" id="order-address" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Postal Code</label>
+                        <input type="text" id="order-postal" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Payment Method</label>
+                        <select id="order-paymethod" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                            <option value="COD">Cash On Delivery</option>
+                            <option value="RAZORPAY">Razorpay Payment Gateway</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Payment Status</label>
+                        <select id="order-paystatus" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                            <option value="UNPAID">UNPAID</option>
+                            <option value="PAID">PAID</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Order Status</label>
+                        <select id="order-status" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                            <option value="CONFIRMED">CONFIRMED</option>
+                            <option value="PROCESSING">PROCESSING</option>
+                            <option value="SHIPPED">SHIPPED</option>
+                            <option value="DELIVERED">DELIVERED</option>
+                            <option value="CANCELLED">CANCELLED</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Razorpay Refund ID</label>
+                        <input type="text" id="order-refund-id" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Razorpay Order ID</label>
+                        <input type="text" id="order-razorpay-order-id" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Razorpay Payment ID</label>
+                        <input type="text" id="order-razorpay-payment-id" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="border-top: 1px solid var(--border-color); margin-top: 15px; padding-top: 15px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 10px; font-size: 14px; color: var(--primary);">Pipeline Status Timestamps</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 3px;">Confirmed At</label>
+                            <input type="datetime-local" id="order-confirmed-at" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px; border-radius: 6px; font-size: 12px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 3px;">Processing At</label>
+                            <input type="datetime-local" id="order-processing-at" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px; border-radius: 6px; font-size: 12px;">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 3px;">Shipped At</label>
+                            <input type="datetime-local" id="order-shipped-at" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px; border-radius: 6px; font-size: 12px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 3px;">Delivered At</label>
+                            <input type="datetime-local" id="order-delivered-at" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px; border-radius: 6px; font-size: 12px;">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                        <div>
+                            <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 3px;">Cancelled At</label>
+                            <input type="datetime-local" id="order-cancelled-at" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px; border-radius: 6px; font-size: 12px;">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-moderate" style="width: 100%; padding: 12px; font-weight: 600; background: var(--primary); border: none; color: white;">Save Order Details</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Doctor Booking Edit Modal -->
+    <div id="doctor-booking-modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); align-items: center; justify-content: center; padding: 20px;">
+        <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; max-width: 500px; width: 100%; padding: 30px; position: relative;">
+            <span onclick="closeDoctorBookingModal()" style="position: absolute; right: 20px; top: 20px; font-size: 24px; cursor: pointer; color: var(--text-muted);">&times;</span>
+            <h3 style="margin-bottom: 20px; font-weight: 600;">Edit Doctor Appointment</h3>
+            <form id="doctor-booking-form" onsubmit="saveDoctorBooking(event)">
+                <input type="hidden" id="doctor-booking-id">
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Pet Name</label>
+                    <input type="text" id="doc-pet-name" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Pet Type</label>
+                    <input type="text" id="doc-pet-type" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Date</label>
+                        <input type="date" id="doc-date" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Time</label>
+                        <input type="time" id="doc-time" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Symptoms</label>
+                    <textarea id="doc-symptoms" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; height: 80px; resize: none;"></textarea>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Status</label>
+                    <select id="doc-status" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                        <option value="PENDING">Pending</option>
+                        <option value="CONFIRMED">Confirmed</option>
+                        <option value="CANCELLED">Cancelled</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-moderate" style="width: 100%; padding: 12px; font-weight: 600; background: var(--primary); border: none; color: white;">Save Appointment Details</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Care Booking Edit Modal -->
+    <div id="care-booking-modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); align-items: center; justify-content: center; padding: 20px;">
+        <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; max-width: 600px; width: 100%; padding: 30px; position: relative; max-height: 90vh; overflow-y: auto;">
+            <span onclick="closeCareBookingModal()" style="position: absolute; right: 20px; top: 20px; font-size: 24px; cursor: pointer; color: var(--text-muted);">&times;</span>
+            <h3 style="margin-bottom: 20px; font-weight: 600;">Edit Boarding Booking</h3>
+            <form id="care-booking-form" onsubmit="saveCareBooking(event)">
+                <input type="hidden" id="care-booking-id">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Pet Name</label>
+                        <input type="text" id="care-pet-name" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Pet Species</label>
+                        <input type="text" id="care-pet-species" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Pet Age</label>
+                        <input type="number" id="care-pet-age" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Pet Gender</label>
+                        <input type="text" id="care-pet-gender" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Health Notes</label>
+                    <textarea id="care-notes" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; height: 60px; resize: none;"></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Start Date/Time</label>
+                        <input type="datetime-local" id="care-start" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">End Date/Time</label>
+                        <input type="datetime-local" id="care-end" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border: 1px solid var(--border-color); padding: 10px; border-radius: 8px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                        <input type="checkbox" id="care-vaccinated"> Vaccinated
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                        <input type="checkbox" id="care-special-diet"> Special Diet
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                        <input type="checkbox" id="care-injection"> Injection Req
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                        <input type="checkbox" id="care-vaccine"> Vaccine Req
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                        <input type="checkbox" id="care-extra"> Extra Care
+                    </label>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Status</label>
+                    <select id="care-status" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                        <option value="PENDING">Pending</option>
+                        <option value="CONFIRMED">Confirmed</option>
+                        <option value="ACTIVE">Active</option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="CANCELLED">Cancelled</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-moderate" style="width: 100%; padding: 12px; font-weight: 600; background: var(--primary); border: none; color: white;">Save Booking Details</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Grooming Booking Edit Modal -->
+    <div id="grooming-booking-modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); align-items: center; justify-content: center; padding: 20px;">
+        <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; max-width: 500px; width: 100%; padding: 30px; position: relative; max-height: 90vh; overflow-y: auto;">
+            <span onclick="closeGroomingBookingModal()" style="position: absolute; right: 20px; top: 20px; font-size: 24px; cursor: pointer; color: var(--text-muted);">&times;</span>
+            <h3 style="margin-bottom: 20px; font-weight: 600;">Edit Grooming Booking</h3>
+            <form id="grooming-booking-form" onsubmit="saveGroomingBooking(event)">
+                <input type="hidden" id="grooming-booking-id">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Pet Name</label>
+                        <input type="text" id="groom-pet-name" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Pet Type</label>
+                        <input type="text" id="groom-pet-type" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Pet Size</label>
+                        <select id="groom-pet-size" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                            <option value="SMALL">Small</option>
+                            <option value="MEDIUM">Medium</option>
+                            <option value="LARGE">Large</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Visit Type</label>
+                        <select id="groom-visit-type" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                            <option value="CENTER">Center Visit</option>
+                            <option value="HOME">Home Visit</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Package Type</label>
+                    <select id="groom-package" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                        <option value="BASIC_BATH">Basic Bath</option>
+                        <option value="HAIRCUT">Hair Cut & Styling</option>
+                        <option value="NAIL_CLIP">Nail Clipping</option>
+                        <option value="EAR_CLEAN">Ear Cleaning</option>
+                        <option value="TICK_TREATMENT">Tick Treatment</option>
+                        <option value="FULL_GROOM">Full Grooming Package</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Preferred Groomer</label>
+                    <input type="text" id="groom-groomer" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Appointment Date & Time</label>
+                    <input type="datetime-local" id="groom-datetime" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Status</label>
+                    <select id="groom-status" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                        <option value="PENDING">Pending Approval</option>
+                        <option value="APPROVED">Approved</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="CANCELLED">Cancelled</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-moderate" style="width: 100%; padding: 12px; font-weight: 600; background: var(--primary); border: none; color: white;">Save Session Details</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Cart Item Modal -->
+    <div id="cartitem-modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); align-items: center; justify-content: center; padding: 20px;">
+        <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; max-width: 500px; width: 100%; padding: 30px; position: relative;">
+            <span onclick="closeCartItemModal()" style="position: absolute; right: 20px; top: 20px; font-size: 24px; cursor: pointer; color: var(--text-muted);">&times;</span>
+            <h3 id="cartitem-modal-title" style="margin-bottom: 20px; font-weight: 600;">Add Cart Item</h3>
+            <form id="cartitem-form" onsubmit="saveCartItem(event)">
+                <input type="hidden" id="cartitem-id">
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">User (ID)</label>
+                    <input type="number" id="cartitem-user" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Item Type</label>
+                        <select id="cartitem-type" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                            <option value="pet">Pet</option>
+                            <option value="food">Food</option>
+                            <option value="accessory">Accessory</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Item ID</label>
+                        <input type="number" id="cartitem-itemid" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Name</label>
+                    <input type="text" id="cartitem-name" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Price (INR)</label>
+                        <input type="number" step="0.01" id="cartitem-price" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Quantity</label>
+                        <input type="number" id="cartitem-qty" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+                <button type="submit" class="btn-moderate" style="width: 100%; padding: 12px; font-weight: 600; background: var(--primary); border: none; color: white;">Save Cart Item</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Health Profile Modal -->
+    <div id="healthprofile-modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); align-items: center; justify-content: center; padding: 20px;">
+        <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; max-width: 600px; width: 100%; padding: 30px; position: relative; max-height: 90vh; overflow-y: auto;">
+            <span onclick="closeHealthProfileModal()" style="position: absolute; right: 20px; top: 20px; font-size: 24px; cursor: pointer; color: var(--text-muted);">&times;</span>
+            <h3 id="healthprofile-modal-title" style="margin-bottom: 20px; font-weight: 600;">Add Health Profile</h3>
+            <form id="healthprofile-form" onsubmit="saveHealthProfile(event)">
+                <input type="hidden" id="healthprofile-id">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Pet (ID)</label>
+                        <input type="number" id="health-pet" required style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Birth Date</label>
+                        <input type="date" id="health-birth" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Gender</label>
+                        <select id="health-gender" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Weight (kg)</label>
+                        <input type="number" step="0.01" id="health-weight" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; border: 1px solid var(--border-color); padding: 10px; border-radius: 8px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                        <input type="checkbox" id="health-vaccinated"> Vaccinated
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                        <input type="checkbox" id="health-dewormed"> Dewormed
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                        <input type="checkbox" id="health-neutered"> Neutered/Spayed
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                        <input type="checkbox" id="health-adoption"> Adoption Ready
+                    </label>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Last Vaccination Date</label>
+                        <input type="date" id="health-lastvac" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Microchip ID</label>
+                        <input type="text" id="health-microchip" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Vet Name</label>
+                        <input type="text" id="health-vetname" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Vet Contact</label>
+                        <input type="text" id="health-vetcontact" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Diet Type</label>
+                        <input type="text" id="health-diet" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Activity Level</label>
+                        <select id="health-activity" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                            <option value="">Select Level</option>
+                            <option value="Low">Low</option>
+                            <option value="Moderate">Moderate</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Temperament</label>
+                    <input type="text" id="health-temperament" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px;">
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Medical Conditions</label>
+                    <textarea id="health-conditions" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; height: 60px; resize: none;"></textarea>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Allergies</label>
+                    <textarea id="health-allergies" style="width: 100%; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; height: 60px; resize: none;"></textarea>
+                </div>
+
+                <button type="submit" class="btn-moderate" style="width: 100%; padding: 12px; font-weight: 600; background: var(--primary); border: none; color: white;">Save Health Profile</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{% static 'javascript/dashboard_master_admin.js' %}"></script>
+</body>
+</html>

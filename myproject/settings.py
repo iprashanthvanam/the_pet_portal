@@ -108,7 +108,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # LOGIN
 # ==========================
 
-LOGIN_REDIRECT_URL = '/pets/'
+LOGIN_REDIRECT_URL = '/accounts/login-redirect/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 
@@ -141,6 +141,8 @@ SOCIALACCOUNT_EMAIL_REQUIRED = True
 SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_QUERY_EMAIL = True
 
+SOCIALACCOUNT_ADAPTER = 'myapp.adapters.MySocialAccountAdapter'
+
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': ['profile', 'email'],
@@ -155,6 +157,21 @@ SOCIALACCOUNT_PROVIDERS = {
 # ==========================
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+# ==========================
+# EMAIL SMTP / GMAIL
+# ==========================
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "prashanthvanam61@gmail.com")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 

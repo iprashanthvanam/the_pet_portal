@@ -242,4 +242,29 @@ admin.site.register(PetHealthProfile)
 admin.site.register(Food)
 admin.site.register(CartItem)
 admin.site.register(products)
-admin.site.register(UserProfile)
+
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.models import User
+
+# Inline UserProfile editor inside User details screen
+class UserProfileInline(admin.StackedInline):
+    model = UserProfile
+    can_delete = False
+    verbose_name_plural = 'User Profile Details'
+
+# Custom UserAdmin to show Role column in User list
+class UserAdmin(BaseUserAdmin):
+    inlines = (UserProfileInline,)
+    list_display = BaseUserAdmin.list_display + ('get_role',)
+
+    def get_role(self, obj):
+        try:
+            return obj.profile.role
+        except UserProfile.DoesNotExist:
+            return '-'
+    get_role.short_description = 'Role'
+
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
+from .models import PasswordReset
+admin.site.register(PasswordReset)

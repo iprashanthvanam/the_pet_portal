@@ -9,228 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <style>
-        /* ================= Advanced CSS Variables (LOCKED) ================= */
-        :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --secondary: #ec4899;
-            --bg-body: #f3f4f6;
-            --bg-sidebar: #111827;
-            --bg-sidebar-hover: #1f2937;
-            --bg-card: #ffffff;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --text-light: #f9fafb;
-            --gradient-tech: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --sidebar-width: 280px;
-        }
-
-        /* ================= Reset & Typography (LOCKED) ================= */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: var(--bg-body); color: var(--text-main); overflow-x: hidden; display: flex; }
-        a { text-decoration: none; color: inherit; }
-
-        /* ================= Layout Structure (LOCKED) ================= */
-        .dashboard-container { display: flex; width: 100%; min-height: 100vh; }
-
-        /* ================= Sidebar Styles (LOCKED) ================= */
-        .sidebar {
-            width: var(--sidebar-width); background-color: var(--bg-sidebar); color: var(--text-light);
-            height: 100vh; position: fixed; left: 0; top: 0; display: flex; flex-direction: column;
-            transition: var(--transition); z-index: 1000; box-shadow: 4px 0 10px rgba(0,0,0,0.1);
-        }
-        .sidebar-header { padding: 25px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sidebar-header i { font-size: 24px; background: var(--gradient-tech); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .sidebar-header h2 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
-        .sidebar-menu { flex: 1; padding: 20px 15px; overflow-y: auto; list-style: none; }
-        .sidebar-menu::-webkit-scrollbar { width: 4px; }
-        .sidebar-menu::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
-        .menu-label { font-size: 12px; text-transform: uppercase; color: #9ca3af; letter-spacing: 1px; margin: 15px 0 10px 10px; font-weight: 600; }
-        .menu-item { display: flex; align-items: center; padding: 12px 15px; border-radius: 10px; margin-bottom: 5px; color: #d1d5db; transition: var(--transition); font-weight: 500; }
-        .menu-item i { width: 20px; margin-right: 15px; font-size: 18px; }
-        .menu-item:hover, .menu-item.active { background-color: var(--bg-sidebar-hover); color: #ffffff; transform: translateX(5px); }
-        .menu-item.active { border-left: 4px solid var(--primary); }
-        .badge-cart { background: var(--secondary); color: white; padding: 2px 8px; border-radius: 20px; font-size: 12px; margin-left: auto; }
-        .sidebar-auth { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); }
-        .auth-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; font-weight: 600; transition: var(--transition); cursor: pointer; border: none; text-decoration: none; }
-        .btn-login { background: transparent; border: 1px solid #4b5563; color: white; }
-        .btn-login:hover { background: #374151; }
-
-        /* ================= Main Content Styles (LOCKED) ================= */
-        .main-content { flex: 1; margin-left: var(--sidebar-width); display: flex; flex-direction: column; transition: var(--transition); }
-        .top-header { height: 80px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; }
-        .hamburger { display: none; font-size: 24px; cursor: pointer; color: var(--text-main); border: none; background: none; }
-
-        /* Search Form UI */
-        .search-form { display: flex; align-items: center; gap: 10px; background: #f9fafb; padding: 5px; border-radius: 12px; border: 1px solid #e5e7eb; position: relative; }
-        .search-input { border: none; background: transparent; padding: 10px 15px; outline: none; width: 250px; }
-        .search-select { border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; outline: none; color: var(--text-muted); }
-        .btn-search { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: var(--transition); font-weight: 500; }
-        .btn-search:hover { background: var(--primary-hover); }
-        .suggestions-box { position: absolute; top: 100%; left: 0; width: 300px; background: white; border-radius: 8px; box-shadow: var(--shadow-lg); display: none; z-index: 999; margin-top: 5px; overflow: hidden; border: 1px solid #e5e7eb; }
-        .suggestion-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #f3f4f6; font-size: 14px; transition: var(--transition); }
-        .suggestion-item:hover { background: #f9fafb; color: var(--primary); }
-
-        /* Profile Icon UI */
-        .profile-menu-container { position: relative; }
-        .profile-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-tech); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; text-decoration: none; overflow: hidden; border: 2px solid white; box-shadow: var(--shadow-sm); }
-        .profile-icon img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* --- Content Area & Services Grid (LOCKED 2x3 FIX) --- */
-        .content-wrapper { padding: 30px; }
-        .section-title { font-size: 24px; font-weight: 700; margin-bottom: 20px; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
-        
-        /* STRICT 3 COLUMN GRID TO PREVENT BREAKING */
-        .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
-        
-        .service-card { background: var(--bg-card); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-md); transition: var(--transition); display: flex; align-items: center; gap: 15px; border: 1px solid transparent; cursor: pointer; }
-        .service-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
-        .service-icon { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(99, 102, 241, 0.1); color: var(--primary); }
-        .service-card:nth-child(2) .service-icon { background: rgba(236, 72, 153, 0.1); color: var(--secondary); }
-        .service-card:nth-child(3) .service-icon { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
-        .service-card:nth-child(4) .service-icon { background: rgba(234, 179, 8, 0.1); color: #eab308; }
-        .service-info h3 { font-size: 16px; font-weight: 600; }
-        .service-info p { font-size: 13px; color: var(--text-muted); margin-top: 5px; }
-
-        /* --- Dynamic API Grids (LOCKED) --- */
-        .dynamic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; margin-bottom: 40px; }
-        .item-card { background: var(--bg-card); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-md); transition: var(--transition); display: flex; flex-direction: column;}
-        .item-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
-        .item-image { width: 100%; height: 180px; object-fit: cover; }
-        .item-body { padding: 20px; display: flex; flex-direction: column; flex: 1; }
-        .item-subtitle { font-size: 12px; color: var(--primary); font-weight: 600; text-transform: uppercase; margin-bottom: 5px; }
-        .item-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
-        .item-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 15px; line-height: 1.5; flex: 1; }
-        
-        .item-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f3f4f6; padding-top: 15px; margin-top: auto; }
-        .item-price { font-size: 18px; font-weight: 700; color: var(--text-main); }
-
-        /* --- Quantity Controls UI --- */
-        .qty-control { display: flex; align-items: center; gap: 8px; background: var(--bg-body); padding: 4px; border-radius: 8px; }
-        .qty-btn { width: 26px; height: 26px; border-radius: 6px; border: none; background: white; color: var(--text-main); font-weight: bold; cursor: pointer; box-shadow: var(--shadow-sm); transition: var(--transition); display: flex; align-items: center; justify-content: center;}
-        .qty-btn:hover:not(:disabled) { background: var(--primary); color: white; }
-        .qty-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .qty-val { font-size: 14px; font-weight: 600; width: 20px; text-align: center; }
-
-        /* --- Chatbot UI (FIXED SEND BUTTON DISTORTION) --- */
-        /* #chatbot-toggle { position: fixed; bottom: 20px; right: 20px; width: 55px; height: 55px; border-radius: 50%; background: var(--gradient-tech); color: white; border: none; font-size: 24px; cursor: pointer; box-shadow: var(--shadow-lg); z-index: 1000; transition: var(--transition); display: flex; align-items: center; justify-content: center; } */
-        #chatbot-toggle:hover { transform: scale(1.05); }
-        /* #chatbot-container { position: fixed; bottom: 85px; right: 20px; width: 320px; height: 400px; background: var(--bg-card); border-radius: 16px; box-shadow: var(--shadow-lg); display: none; flex-direction: column; overflow: hidden; z-index: 1000; border: 1px solid #e5e7eb; } */
-        /* --- Chatbot UI FIXED --- */
-#chatbot-toggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    background: var(--gradient-tech);
-    color: white;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    box-shadow: var(--shadow-lg);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#chatbot-container {
-    position: fixed;
-    bottom: 85px;
-
-    /* 👇 THIS FIXES DESKTOP ISSUE */
-    right: 30px;
-
-    width: 320px;
-    max-width: calc(100vw - 60px);
-
-    height: 400px;
-    max-height: 80vh;
-
-    background: var(--bg-card);
-    border-radius: 16px;
-    box-shadow: var(--shadow-lg);
-
-    display: none;
-    flex-direction: column;
-
-    overflow: visible;   /* ✅ remove hidden clipping */
-    z-index: 2000;
-
-    border: 1px solid #e5e7eb;
-}
-#chatbot-input-area {
-    display: flex;
-    align-items: center;
-    padding: 12px;
-    background: white;
-    border-top: 1px solid #e5e7eb;
-    gap: 10px;
-    width: 100%;
-    box-sizing: border-box;
-}
-#chatbot-send {
-    flex-shrink: 0;  /* prevents shrinking */
-}
-
-@media (max-width: 480px) {
-
-    #chatbot-container {
-        right: 10px;
-        left: 10px;         /* ✅ makes it fully visible */
-        width: auto;
-        bottom: 75px;
-        height: 70vh;
-    }
-
-    #chatbot-toggle {
-        right: 15px;
-        bottom: 15px;
-    }
-}
-
-        #chatbot-header { background: var(--gradient-tech); color: white; padding: 15px; font-weight: 600; text-align: center; font-size: 15px; }
-        #chatbot-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #f9fafb; }
-        .chat-msg { padding: 10px 14px; border-radius: 12px; font-size: 13px; max-width: 85%; line-height: 1.4; }
-        .user-msg { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .bot-msg { background: #e5e7eb; color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 2px; }
-        
-        /* Fixed Input Area & Button CSS */
-        #chatbot-input-area { display: flex; align-items: center; padding: 10px; background: white; border-top: 1px solid #e5e7eb; gap: 10px; }
-        #chatbot-input { flex: 1; border: 1px solid #e5e7eb; border-radius: 20px; padding: 8px 15px; outline: none; font-size: 13px; transition: var(--transition); }
-        #chatbot-input:focus { border-color: var(--primary); }
-        #chatbot-send { 
-            background: var(--primary); color: white; border: none; border-radius: 50%; 
-            width: 36px; height: 36px; min-width: 36px; /* min-width prevents flexbox squish */
-            cursor: pointer; display: flex; align-items: center; justify-content: center; 
-            transition: var(--transition); outline: none; padding: 0;
-        }
-        #chatbot-send:hover { background: var(--primary-hover); transform: translateY(-1px); }
-        #chatbot-send i { font-size: 14px; color: white; transform: translateX(-1px); /* perfectly aligns the paperplane */ }
-
-        /* ================= Responsive Design (LOCKED + GRID FIX) ================= */
-        @media (max-width: 1024px) {
-            .search-input { width: 150px; }
-            .services-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 850px) {
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.active { transform: translateX(0); }
-            .main-content { margin-left: 0; }
-            .hamburger { display: block; }
-            .search-form { display: none; }
-            .services-grid { grid-template-columns: 1fr; }
-        }
-        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(3px); }
-        .sidebar-overlay.active { display: block; }
-    </style>
+    
+    <link rel="stylesheet" href="{% static 'css/pets.css' %}">
+    <link rel="stylesheet" href="{% static 'css/global_chatbot.css' %}">
 </head>
 <body>
 
@@ -384,271 +165,94 @@
 
             <div id="pets-section" style="padding-top: 20px;">
                 <div class="section-title">Available Pets 🐶</div>
-                <div class="dynamic-grid">
-                    {% for pet in pets %}
-                    <div class="item-card" data-id="{{ pet.id }}" data-type="pet">
-                        <a href="{% url 'pet_detail' pet.id %}">
-                            <img src="{{ pet.image.url }}" class="item-image" alt="{{ pet.name }}">
-                        </a>
-                        <div class="item-body">
-                            <div class="item-subtitle">{{ pet.breed|default:"Lovely Pet" }}</div>
-                            <h3 class="item-title">{{ pet.name }}</h3>
-                            <p class="item-desc">{{ pet.description|truncatechars:60 }}</p>
-                            <div class="item-footer">
-                                <span class="item-price">₹{{ pet.price }}</span>
-                                <div class="qty-control">
-                                    <button class="qty-btn minus" {% if pet.cart_qty == 0 %}disabled{% endif %}>−</button>
-                                    <span class="qty-val">{{ pet.cart_qty }}</span>
-                                    <button class="qty-btn plus" {% if pet.cart_qty >= 1 %}disabled{% endif %}>+</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <p style="color: var(--text-muted);">No pets available right now.</p>
-                    {% endfor %}
+                <div class="dynamic-grid" id="pets-grid">
+                    <p style="color: var(--text-muted);">Loading pets...</p>
                 </div>
             </div>
 
             <div id="food-section" style="padding-top: 20px;">
                 <div class="section-title">Premium Food 🦴</div>
-                <div class="dynamic-grid">
-                    {% for food in foods %}
-                    <div class="item-card" data-id="{{ food.id }}" data-type="food">
-                        <a href="{% url 'food_detail' food.id %}">
-                            <img src="{{ food.image.url }}" class="item-image" alt="{{ food.name }}">
-                        </a>
-                        <div class="item-body">
-                            <div class="item-subtitle">Nutrition</div>
-                            <h3 class="item-title">{{ food.name }}</h3>
-                            <p class="item-desc">{{ food.description|truncatechars:60 }}</p>
-                            <div class="item-footer">
-                                <span class="item-price">₹{{ food.price }}</span>
-                                <div class="qty-control">
-                                    <button class="qty-btn minus" {% if food.cart_qty == 0 %}disabled{% endif %}>−</button>
-                                    <span class="qty-val">{{ food.cart_qty }}</span>
-                                    <button class="qty-btn plus">+</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <p style="color: var(--text-muted);">No food items available right now.</p>
-                    {% endfor %}
+                <div class="dynamic-grid" id="food-grid">
+                    <p style="color: var(--text-muted);">Loading food items...</p>
                 </div>
             </div>
 
             <div id="accessories-section" style="padding-top: 20px;">
                 <div class="section-title">Pet Accessories 🛍</div>
-                <div class="dynamic-grid">
-                    {% for accessory in accessories %}
-                    <div class="item-card" data-id="{{ accessory.id }}" data-type="accessory">
-                        <a href="{% url 'accessory_detail' accessory.id %}">
-                            <img src="{{ accessory.image.url }}" class="item-image" alt="{{ accessory.name }}">
-                        </a>
-                        <div class="item-body">
-                            <div class="item-subtitle">{{ accessory.category }}</div>
-                            <h3 class="item-title">{{ accessory.name }}</h3>
-                            <p class="item-desc">{{ accessory.description|truncatechars:60 }}</p>
-                            <div class="item-footer">
-                                <span class="item-price">₹{{ accessory.price }}</span>
-                                <div class="qty-control">
-                                    <button class="qty-btn minus" {% if accessory.cart_qty == 0 %}disabled{% endif %}>−</button>
-                                    <span class="qty-val">{{ accessory.cart_qty }}</span>
-                                    <button class="qty-btn plus">+</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <p style="color: var(--text-muted);">No accessories available right now.</p>
-                    {% endfor %}
+                <div class="dynamic-grid" id="accessories-grid">
+                    <p style="color: var(--text-muted);">Loading accessories...</p>
                 </div>
             </div>
 
-        </div>
-
-        <button id="chatbot-toggle"><i class="fa-regular fa-comment-dots"></i></button>
-        <div id="chatbot-container">
-            <div id="chatbot-header">PetPortal AI Assistant</div>
-            <div id="chatbot-messages"></div>
-            <div id="chatbot-input-area">
-                <input type="text" id="chatbot-input" placeholder="Ask something..." autocomplete="off" />
-                <button id="chatbot-send"><i class="fa-solid fa-paper-plane"></i></button>
+            <!-- Customer reviews aggregate showing section -->
+            <div class="overall-portal-reviews" style="width: 100%; margin-top: 50px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 20px;">
+                <h3 style="font-weight: 600; color: var(--text-main); font-size: 20px; margin-bottom: 5px;">Customer reviews</h3>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span id="overall-stars-agg-container" style="font-size: 24px; color: #f59e0b; display: flex; gap: 4px;"></span>
+                    <span id="overall-average-rating-text" style="font-size: 18px; font-weight: 600; color: var(--text-main); margin-left: 8px;">0 out of 5</span>
+                </div>
+                <div id="overall-total-ratings-text" style="font-size: 14px; color: var(--text-muted); margin-bottom: 10px;">0 global ratings</div>
+                
+                <div class="overall-distribution-bars" id="overall-distribution-bars" style="display: flex; flex-direction: column; gap: 10px; max-width: 500px;">
+                    <!-- stars breakdown bars will render here dynamically -->
+                </div>
             </div>
-        </div>
+
+            <!-- Overall Review Giving & History Section -->
+            <div class="overall-portal-reviews" style="width: 100%; margin-top: 30px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 30px;">
+                <div class="write-portal-review-wrapper" style="width: 100%;">
+                    <h3 style="margin-bottom: 20px; font-weight: 600; color: var(--text-main); font-size: 20px;">Share Portal Experience</h3>
+                    <div style="background: var(--bg-body); padding: 25px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <form id="write-review-form" onsubmit="submitOverallReview(event)" enctype="multipart/form-data">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">Portal Rating</label>
+                                <div class="rating-stars-input" style="display: flex; gap: 8px; font-size: 24px; color: #f59e0b; cursor: pointer;">
+                                    <i class="fa-regular fa-star star-option" data-val="1"></i>
+                                    <i class="fa-regular fa-star star-option" data-val="2"></i>
+                                    <i class="fa-regular fa-star star-option" data-val="3"></i>
+                                    <i class="fa-regular fa-star star-option" data-val="4"></i>
+                                    <i class="fa-regular fa-star star-option" data-val="5"></i>
+                                </div>
+                                <input type="hidden" id="review-rating-val" required value="">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">Headline / Summary</label>
+                                <input type="text" id="review-title" placeholder="Summarize your portal experience..." required style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; font-size: 14px;">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">Detailed Review</label>
+                                <textarea id="review-comment" placeholder="Write details here..." required style="width: 100%; height: 100px; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; font-size: 14px; resize: none;"></textarea>
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">Add Photo (Optional)</label>
+                                <input type="file" id="review-image" accept="image/*" style="width: 100%; font-size: 13px; color: var(--text-muted);">
+                            </div>
+                            <button type="submit" class="btn-moderate" style="width: 100%; padding: 12px; font-size: 14px; font-weight: 600; background: var(--primary); border: none; color: white; border-radius: 6px; cursor: pointer;">Submit Feedback</button>
+                        </form>
+                    </div>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 10px 0;">
+
+                <div class="portal-reviews-history-wrapper" style="width: 100%;">
+                    <h3 style="margin-bottom: 20px; font-weight: 600; color: var(--text-main); font-size: 20px;">Portal Feedback History</h3>
+                    <div id="reviews-feed" style="display: flex; flex-direction: column; gap: 20px; max-height: 600px; overflow-y: auto; padding-right: 10px;">
+                        <!-- Global chronological feedback feed will render here -->
+                    </div>
+                </div>
+            </div>
 
     </main>
 
 </div>
 
-<script>
-    // --- Mobile Sidebar Toggle Logic ---
-    function toggleMenu() {
-        document.getElementById('sidebar').classList.toggle('active');
-        document.getElementById('sidebarOverlay').classList.toggle('active');
-    }
 
-    // --- Dynamic Search Suggestions Autocomplete ---
-    const searchInput = document.getElementById("searchInput");
-    const suggestionsBox = document.getElementById("suggestionsBox");
-
-    searchInput.addEventListener("keyup", function() {
-        const query = this.value;
-
-        if (query.length < 2) {
-            suggestionsBox.style.display = "none";
-            return;
-        }
-
-        fetch(`/search-suggestions/?q=${query}`)
-            .then(res => res.json())
-            .then(data => {
-                suggestionsBox.innerHTML = "";
-
-                if (data.suggestions.length === 0) {
-                    suggestionsBox.style.display = "none";
-                    return;
-                }
-
-                data.suggestions.forEach(item => {
-                    const div = document.createElement("div");
-                    div.className = "suggestion-item";
-                    div.innerHTML = `<i class="fa-solid fa-magnifying-glass" style="margin-right:8px; color:#9ca3af;"></i> ${item}`;
-                    div.addEventListener("click", () => {
-                        searchInput.value = item;
-                        suggestionsBox.style.display = "none";
-                        document.querySelector('.search-form').submit(); 
-                    });
-                    suggestionsBox.appendChild(div);
-                });
-
-                suggestionsBox.style.display = "block";
-            });
-    });
-
-    // Close suggestions on outside click
-    document.addEventListener('click', function(e) {
-        if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
-            suggestionsBox.style.display = 'none';
-        }
-    });
-
-    // --- Cart Quantity AJAX Logic ---
-    document.addEventListener('DOMContentLoaded', function() {
-        const cards = document.querySelectorAll('.item-card');
-
-        cards.forEach(card => {
-            const plusBtn = card.querySelector('.plus');
-            const minusBtn = card.querySelector('.minus');
-            const qtyDisplay = card.querySelector('.qty-val');
-            
-            if (!plusBtn || !minusBtn) return; 
-
-            const itemId = card.dataset.id;
-            const itemType = card.dataset.type;
-
-            plusBtn.addEventListener('click', () => {
-                if (itemType === 'pet' && parseInt(qtyDisplay.textContent) >= 1) return;
-                updateCart(itemId, itemType, 'add', qtyDisplay, plusBtn, minusBtn);
-            });
-
-            minusBtn.addEventListener('click', () => {
-                if (parseInt(qtyDisplay.textContent) <= 0) return;
-                updateCart(itemId, itemType, 'remove', qtyDisplay, plusBtn, minusBtn);
-            });
-        });
-
-        function updateCart(id, type, action, qtyEl, plusBtn, minusBtn) {
-            const csrfToken = '{{ csrf_token }}'; 
-
-            fetch("{% url 'update_cart_ajax' %}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": csrfToken
-                },
-                body: JSON.stringify({
-                    item_id: id,
-                    item_type: type,
-                    action: action
-                })
-            })
-            .then(response => {
-                if(!response.ok) throw new Error("Network response was not ok");
-                return response.json();
-            })
-            .then(data => {
-                qtyEl.textContent = data.qty;
-                minusBtn.disabled = (data.qty === 0);
-                if (type === 'pet') {
-                    plusBtn.disabled = (data.qty >= 1);
-                }
-                const badge = document.getElementById('cartBadge');
-                if (badge) {
-                    badge.textContent = data.cart_count;
-                    badge.style.display = data.cart_count > 0 ? 'inline-block' : 'none';
-                }
-            })
-            .catch(error => console.error("Error updating cart:", error));
-        }
-    });
-
-    // --- Chatbot Logic ---
-    const toggleBtn = document.getElementById("chatbot-toggle");
-    const container = document.getElementById("chatbot-container");
-    const messagesBox = document.getElementById("chatbot-messages");
-    const inputField = document.getElementById("chatbot-input");
-    const sendBtn = document.getElementById("chatbot-send");
-
-    toggleBtn.onclick = () => {
-        container.style.display = container.style.display === "flex" ? "none" : "flex";
-    };
-
-    function addMessage(text, className) {
-        const msg = document.createElement("div");
-        msg.classList.add("chat-msg", className);
-        msg.innerText = text;
-        messagesBox.appendChild(msg);
-        messagesBox.scrollTop = messagesBox.scrollHeight;
-    }
-
-    function sendMessage() {
-        const message = inputField.value.trim();
-        if (!message) return;
-
-        addMessage(message, "user-msg");
-        inputField.value = "";
-
-        const typing = document.createElement("div");
-        typing.classList.add("chat-msg", "bot-msg");
-        typing.innerText = "Typing...";
-        messagesBox.appendChild(typing);
-
-        fetch("/api/chatbot/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: message })
-        })
-        .then(res => res.json())
-        .then(data => {
-            typing.remove();
-            if (data.reply) {
-                addMessage(data.reply, "bot-msg");
-            } else {
-                addMessage("Sorry, something went wrong.", "bot-msg");
-            }
-        })
-        .catch(() => {
-            typing.remove();
-            addMessage("Server error. Try again later.", "bot-msg");
-        });
-    }
-
-    sendBtn.onclick = sendMessage;
-    inputField.addEventListener("keypress", function(e) {
-        if (e.key === "Enter") sendMessage();
-    });
-</script>
+    <script>
+        window.currentUserRole = "{{ request.user.profile.role|default:'' }}";
+        window.currentUserIsSuperuser = {% if request.user.is_superuser %}true{% else %}false{% endif %};
+        window.currentUsername = "{{ request.user.username|default:'anonymous' }}";
+    </script>
+    <script src="{% static 'javascript/pets.js' %}"></script>
+    <script src="{% static 'javascript/global_chatbot.js' %}"></script>
 </body>
 </html>

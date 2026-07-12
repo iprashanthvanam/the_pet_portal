@@ -12,16 +12,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 import uuid
-import uuid
-from datetime import timedelta
-from django.db import models
-from django.contrib.auth.models import User
+from datetime import timedelta, time
 from django.utils import timezone
-
-
 from django.core.exceptions import ValidationError
-from django.utils import timezone
-from datetime import time
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 
@@ -37,12 +31,29 @@ class Pet(models.Model):
     name = models.CharField(max_length=100)
     species = models.CharField(max_length=50)
     description = models.TextField(blank=True)
+    
+    # Pricing Metrics
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    mrp = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Maximum Retail Price", default=0.00)
+    
+    # Badges & Stock Metrics
+    stock = models.PositiveIntegerField(default=1)
+    is_prime_eligible = models.BooleanField(default=True, verbose_name="Eligible for Prime Fast Delivery")
+    bought_past_month_count = models.PositiveIntegerField(default=0, verbose_name="Estimated units bought last month")
+    
     date_added = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='pets/', blank=True, null=True)
+    vendor = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='vendor_pets')
 
     def __str__(self):
         return f"{self.name} ({self.species})"
+
+    @property
+    def discount_percentage(self):
+        if self.mrp > self.price:
+            discount = ((self.mrp - self.price) / self.mrp) * 100
+            return int(round(discount))
+        return 0
 
 # =========================
 # PET HEALTH PROFILE MODEL
@@ -107,16 +118,35 @@ class PetHealthProfile(models.Model):
 
 
 class Food(models.Model):
-    name = models.CharField(max_length=100)
-    food_type = models.CharField(max_length=50)
+    name = models.CharField(max_length=250) # Extended length for descriptive Amazon-style titles
+    food_type = models.CharField(max_length=50) # e.g., Dry Kibble, Wet Food
     description = models.TextField(blank=True)
+    
+    # Pricing Metrics
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    mrp = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Maximum Retail Price", default=0.00)
+    
+    # Specifications & Logistics
+    brand = models.CharField(max_length=100, blank=True)
+    weight_kg = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    stock = models.PositiveIntegerField(default=0)
+    is_prime_eligible = models.BooleanField(default=True)
+    bought_past_month_count = models.PositiveIntegerField(default=0)
+    
     mfg_date = models.DateField()
     expire_date = models.DateField()
     image = models.ImageField(upload_to='foods/', blank=True, null=True)
+    vendor = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='vendor_foods')
 
     def __str__(self):
-        return f"{self.name} ({self.food_type})"
+        return self.name
+
+    @property
+    def discount_percentage(self):
+        if self.mrp > self.price:
+            discount = ((self.mrp - self.price) / self.mrp) * 100
+            return int(round(discount))
+        return 0
 
 
 # =========================
@@ -194,20 +224,7 @@ class Order(models.Model):
     
 
     
-    
-    # def timeline(self):
-    #     base = self.created_at
-    #     return {
-    #         'CONFIRMED': base,
-    #         'PROCESSING': base + timedelta(days=1),
-    #         'SHIPPED': base + timedelta(days=2),
-    #         'DELIVERED': base + timedelta(days=3),
-    #         'CANCELLED': None
-            
-    #     }
-
-
-
+   
 
 
 
@@ -295,6 +312,15 @@ class CartItem(models.Model):
 # =========================
 
 class UserProfile(models.Model):
+    ROLE_CHOICES = (
+        ('customer', 'Normal Customer'),
+        ('pet_care', 'Pet Care Provider'),
+        ('pet_grooming', 'Pet Grooming Provider'),
+        ('doctor', 'Doctor/Veterinary Consultant'),
+        ('pet_seller', 'Pet Center/Adoption Seller'),
+        ('product_seller', 'Product Seller'),
+        ('accessory_seller', 'Accessories Seller'),
+    )
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
 
     profile_image = models.ImageField(upload_to="profiles/", blank=True, null=True)
@@ -303,6 +329,7 @@ class UserProfile(models.Model):
     address = models.CharField(max_length=250, blank=True)
     city = models.CharField(max_length=100, blank=True)
     postal_code = models.CharField(max_length=20, blank=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='customer')
 
     def __str__(self):
         return f"{self.user.username} Profile"
@@ -344,6 +371,7 @@ class DoctorAppointment(models.Model):
     STATUS_CHOICES = (
         ("PENDING", "Pending"),
         ("CONFIRMED", "Confirmed"),
+        ("COMPLETED", "Completed"),
         ("CANCELLED", "Cancelled"),
     )
 
@@ -381,121 +409,6 @@ class DoctorAppointment(models.Model):
             raise ValidationError("Use 30-minute slots (10:00 or 10:30).")
 
 
-
-
-
-# =========================
-# PET CARE BOARDING MODEL
-# =========================
-
-# class PetCareBooking(models.Model):
-
-#     STATUS_CHOICES = (
-#         ("PENDING", "Pending"),
-#         ("CONFIRMED", "Confirmed"),
-#         ("ACTIVE", "Active"),
-#         ("COMPLETED", "Completed"),
-#         ("CANCELLED", "Cancelled"),
-#     )
-
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="pet_care_bookings")
-
-#     # Pet Details (Owner's own pet)
-#     pet_name = models.CharField(max_length=100)
-#     pet_species = models.CharField(max_length=50)
-#     pet_age = models.PositiveIntegerField()
-#     pet_gender = models.CharField(max_length=20, blank=True)
-
-#     health_notes = models.TextField(blank=True)
-#     vaccinated = models.BooleanField(default=False)
-
-#     # Care Options
-#     special_diet = models.BooleanField(default=False)
-#     injection_required = models.BooleanField(default=False)
-#     vaccine_required = models.BooleanField(default=False)
-#     extra_care = models.BooleanField(default=False)
-
-#     # Stay Duration
-#     start_datetime = models.DateTimeField()
-#     end_datetime = models.DateTimeField()
-
-#     total_days = models.PositiveIntegerField(default=1)
-#     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-
-#     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="PENDING")
-
-#     created_at = models.DateTimeField(auto_now_add=True)
-
-#     def clean(self):
-#         if not self.start_datetime or not self.end_datetime:
-#             raise ValidationError("Start and End date/time required.")
-
-#         if self.start_datetime < timezone.now():
-#             raise ValidationError("Start date cannot be in the past.")
-
-#         if self.end_datetime <= self.start_datetime:
-#             raise ValidationError("End date must be after start date.")
-
-#     def calculate_price(self):
-#         duration = self.end_datetime - self.start_datetime
-#         days = duration.days
-#         if duration.seconds > 0:
-#             days += 1
-
-#         if days < 1:
-#             days = 1
-
-#         self.total_days = days
-
-#         # Pricing Engine
-#         base_price = 0
-
-#         if days == 1:
-#             base_price = 500
-#         elif days == 2:
-#             base_price = 950
-#         else:
-#             base_price = 950 + (days - 2) * 450
-
-#         extra = 0
-#         if self.special_diet:
-#             extra += 250
-#         if self.injection_required:
-#             extra += 200
-#         if self.vaccine_required:
-#             extra += 300
-#         if self.extra_care:
-#             extra += 400
-
-#         self.total_price = base_price + extra
-
-#     # def save(self, *args, **kwargs):
-#     #     self.clean()
-#     #     self.calculate_price()
-#     #     super().save(*args, **kwargs)
-
-
-
-
-#     def save(self, *args, **kwargs):
-#     # Auto-set confirmed time when order first created
-#         if not self.confirmed_at:
-#             self.confirmed_at = self.created_at or timezone.now()
-
-#         # When status changes → set timestamp
-#         if self.status == "PROCESSING" and not self.processing_at:
-#             self.processing_at = timezone.now()
-
-#         if self.status == "SHIPPED" and not self.shipped_at:
-#             self.shipped_at = timezone.now()
-
-#         if self.status == "DELIVERED" and not self.delivered_at:
-#             self.delivered_at = timezone.now()
-
-#         super().save(*args, **kwargs)
-
-#     def __str__(self):
-#         return f"{self.pet_name} - {self.user.username} ({self.status})"
 
 
 class PetCareBooking(models.Model):
@@ -708,27 +621,36 @@ class Accessory(models.Model):
         ("BOTH", "Both"),
     )
 
-    name = models.CharField(max_length=150)
+    name = models.CharField(max_length=250) # Long title structure
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     pet_type = models.CharField(max_length=10, choices=PET_TYPE_CHOICES, default="BOTH")
-
     description = models.TextField(blank=True)
+    
+    # Pricing Metrics
     price = models.DecimalField(max_digits=10, decimal_places=2)
-
+    mrp = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Maximum Retail Price", default=0.00)
+    
+    # Specifications & Logistics
     brand = models.CharField(max_length=100, blank=True)
     stock = models.PositiveIntegerField(default=0)
-
     size = models.CharField(max_length=50, blank=True)
     color = models.CharField(max_length=50, blank=True)
-
-    rating = models.DecimalField(max_digits=2, decimal_places=1, default=4.5)
+    is_prime_eligible = models.BooleanField(default=True)
+    bought_past_month_count = models.PositiveIntegerField(default=0)
 
     image = models.ImageField(upload_to="accessories/", blank=True, null=True)
-
     date_added = models.DateTimeField(auto_now_add=True)
+    vendor = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='vendor_accessories')
 
     def __str__(self):
-        return f"{self.name} ({self.category})"
+        return self.name
+
+    @property
+    def discount_percentage(self):
+        if self.mrp > self.price:
+            discount = ((self.mrp - self.price) / self.mrp) * 100
+            return int(round(discount))
+        return 0
 
 
 
@@ -746,9 +668,70 @@ class products (models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     date_added = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='products/', blank=True, null=True)
+    vendor = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='vendor_products')
 
     def __str__(self):
         return self.name
+
+class PendingRegistration(models.Model):
+    username = models.CharField(max_length=150, unique=True)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=128)
+    role = models.CharField(max_length=50, default='customer')
+    first_name = models.CharField(max_length=150, blank=True)
+    last_name = models.CharField(max_length=150, blank=True)
+    phone = models.CharField(max_length=15, blank=True)
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Pending {self.username} ({self.email})"
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_petportal_reviews')
+    rating = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    title = models.CharField(max_length=150, blank=True)
+    comment = models.TextField(blank=True)
+    image = models.ImageField(upload_to='reviews/', blank=True, null=True)
+    is_reported = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # Relationships across all types
+    pet = models.ForeignKey(Pet, on_delete=models.CASCADE, null=True, blank=True, related_name='reviews')
+    product = models.ForeignKey(products, on_delete=models.CASCADE, null=True, blank=True, related_name='reviews')
+    food = models.ForeignKey(Food, on_delete=models.CASCADE, null=True, blank=True, related_name='reviews')
+    accessory = models.ForeignKey(Accessory, on_delete=models.CASCADE, null=True, blank=True, related_name='reviews')
+    
+    # Keep service reviews general/flexible by checking if they relate to specific service category strings instead of strict DB IDs
+    service_type = models.CharField(max_length=50, blank=True, null=True) # "DOCTOR", "PET_CARE", "GROOMING"
+
+    def __str__(self):
+        return f"{self.user.username} - {self.rating} Stars"
+
+class ReviewReply(models.Model):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='replies')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    reply_text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Reply by {self.user.username} on Review #{self.review.id}"
+
+class AICachedReport(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    report_data = models.JSONField()
+
+    def __str__(self):
+        return f"AI Report {self.created_at}"
+
+class PasswordReset(models.Model):
+    email = models.EmailField(unique=True)
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_verified = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Reset OTP for {self.email}"
     
 
 
