@@ -191,12 +191,68 @@
                             });
                             
                             let reviewImageHTML = '';
-                            if (review.image) {
-                                reviewImageHTML = `
-                                    <div style="margin-top: 10px;">
-                                        <img src="${review.image}" alt="Review image" style="max-width: 120px; max-height: 120px; border-radius: 4px; object-fit: cover; cursor: pointer;" onclick="window.open('${review.image}', '_blank')">
-                                    </div>
-                                `;
+                            const rMedia = [];
+                            if (review.image) rMedia.push({ type: 'image', url: review.image });
+                            if (review.video) rMedia.push({ type: 'video', url: review.video });
+                            if (review.media_files && review.media_files.length > 0) {
+                                review.media_files.forEach(mf => {
+                                    rMedia.push({ type: mf.is_video ? 'video' : 'image', url: mf.file_url });
+                                });
+                            }
+
+                            if (rMedia.length > 0) {
+                                if (rMedia.length === 1) {
+                                    const item = rMedia[0];
+                                    if (item.type === 'video') {
+                                        reviewImageHTML = `
+                                            <div style="margin-top: 10px; max-width: 250px; height: 150px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color);">
+                                                <video src="${item.url}" controls style="width: 100%; height: 100%; object-fit: cover;"></video>
+                                            </div>
+                                        `;
+                                    } else {
+                                        reviewImageHTML = `
+                                            <div style="margin-top: 10px;">
+                                                <img src="${item.url}" alt="Review image" style="max-width: 150px; max-height: 150px; border-radius: 4px; border: 1px solid var(--border-color); object-fit: cover; cursor: pointer;" onclick="window.open('${item.url}', '_blank')">
+                                            </div>
+                                        `;
+                                    }
+                                } else {
+                                    const carouselId = `pet-care-review-carousel-${review.id}`;
+                                    const slides = rMedia.map((m, idx) => {
+                                        if (m.type === 'video') {
+                                            return `
+                                                <div style="flex: 0 0 100%; width: 100%; height: 100%; position: relative;">
+                                                    <video src="${m.url}" controls muted style="width: 100%; height: 100%; object-fit: cover;"></video>
+                                                </div>
+                                            `;
+                                        } else {
+                                            return `
+                                                <div style="flex: 0 0 100%; width: 100%; height: 100%; position: relative;">
+                                                    <img src="${m.url}" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" onclick="window.open('${m.url}', '_blank')">
+                                                </div>
+                                            `;
+                                        }
+                                    }).join('');
+
+                                    let dotsHTML = '';
+                                    rMedia.forEach((_, idx) => {
+                                        const offset = idx * -100;
+                                        const isActive = idx === 0 ? 'active' : '';
+                                        const bgColor = idx === 0 ? 'var(--primary)' : '#bbb';
+                                        dotsHTML += `<span class="carousel-dot ${isActive}" onclick="event.stopPropagation(); document.getElementById('${carouselId}').style.transform='translateX(${offset}%)'; this.parentElement.querySelectorAll('span').forEach((s,i)=>s.style.backgroundColor=i===${idx}?'var(--primary)':'#bbb')" style="height: 6px; width: 6px; margin: 0 2px; background-color: ${bgColor}; border-radius: 50%; display: inline-block; cursor: pointer;"></span>`;
+                                    });
+
+                                    reviewImageHTML = `
+                                        <div style="margin-top: 10px; position: relative; overflow: hidden; width: 200px; height: 150px; border-radius: 6px; border: 1px solid var(--border-color);">
+                                            <div id="${carouselId}" style="display: flex; width: 100%; height: 100%; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);">
+                                                ${slides}
+                                            </div>
+                                            <div style="position: absolute; bottom: 5px; width: 100%; text-align: center; z-index: 10;">
+                                                ${dotsHTML}
+                                            </div>
+                                        </div>
+                                    `;
+                                }
                             }
 
                             let repliesHTML = '';
@@ -308,22 +364,60 @@
                 setTimeout(() => msg.remove(), 4000);
             }
 
+            let stagedFiles = [];
+            window.handleMediaSelection = function(input) {
+                const previewContainer = document.getElementById("media-preview-container");
+                if (input.files) {
+                    Array.from(input.files).forEach(file => {
+                        stagedFiles.push(file);
+                        const isVideo = file.type.startsWith("video/");
+                        const itemWrapper = document.createElement("div");
+                        itemWrapper.style.cssText = "position: relative; width: 60px; height: 60px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color); background: #000;";
+                        
+                        if (isVideo) {
+                            itemWrapper.innerHTML = `
+                                <video src="${URL.createObjectURL(file)}" style="width: 100%; height: 100%; object-fit: cover;"></video>
+                            `;
+                        } else {
+                            itemWrapper.innerHTML = `
+                                <img src="${URL.createObjectURL(file)}" style="width: 100%; height: 100%; object-fit: cover;">
+                            `;
+                        }
+
+                        const removeBtn = document.createElement("span");
+                        removeBtn.innerHTML = "&times;";
+                        removeBtn.style.cssText = "position: absolute; top: 0; right: 0; background: rgba(0,0,0,0.6); color: #fff; width: 16px; height: 16px; font-size: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold;";
+                        removeBtn.onclick = function() {
+                            const index = stagedFiles.indexOf(file);
+                            if (index > -1) {
+                                stagedFiles.splice(index, 1);
+                            }
+                            itemWrapper.remove();
+                        };
+                        itemWrapper.appendChild(removeBtn);
+                        previewContainer.appendChild(itemWrapper);
+                    });
+                }
+                input.value = "";
+            };
+
             if (!rating) {
                 showStatus("error", "Please select a rating!");
                 return;
             }
             const title = document.getElementById("review-title").value;
             const comment = document.getElementById("review-comment").value;
-            const imgFile = document.getElementById("review-image").files[0];
 
             const formData = new FormData();
             formData.append("rating", rating);
             formData.append("title", title);
             formData.append("comment", comment);
             formData.append("service_type", "PET_CARE");
-            if (imgFile) {
-                formData.append("image", imgFile);
-            }
+
+            // Attach all files staged by user
+            stagedFiles.forEach(file => {
+                formData.append("media_files", file);
+            });
 
             if (submitBtn) {
                 submitBtn.disabled = true;
@@ -350,6 +444,8 @@
                 }
                 document.getElementById("write-review-form").reset();
                 document.getElementById("review-rating-val").value = "";
+                stagedFiles = [];
+                document.getElementById("media-preview-container").innerHTML = "";
                 starOptions.forEach(s => {
                     s.classList.remove("fa-solid");
                     s.classList.add("fa-regular");

@@ -276,10 +276,11 @@ from .models import PasswordReset, CheckoutSetting
 admin.site.register(PasswordReset)
 admin.site.register(CheckoutSetting)
 
-from .models import Review, ReviewReply
+from .models import Review, ReviewReply, ReviewMedia
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "rating", "title", "is_reported", "created_at")
     list_filter = ("rating", "is_reported")
 
 admin.site.register(ReviewReply)
+admin.site.register(ReviewMedia)

@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from myapp.models import (
     Pet, Food, Accessory, UserProfile, PendingRegistration,
-    Review, ReviewReply, Order, OrderItem, DoctorAppointment, PetCareBooking, GroomingBooking, products,
+    Review, ReviewReply, ReviewMedia, Order, OrderItem, DoctorAppointment, PetCareBooking, GroomingBooking, products,
     CartItem, PetHealthProfile
 )
 
@@ -284,12 +284,26 @@ class ReviewReplySerializer(serializers.ModelSerializer):
     def get_is_master_admin(self, obj):
         return obj.user.is_superuser or (hasattr(obj.user, 'profile') and obj.user.profile.role == 'master_admin')
 
+class ReviewMediaSerializer(serializers.ModelSerializer):
+    file_url = serializers.SerializerMethodField()
+    class Meta:
+        model = ReviewMedia
+        fields = ['id', 'file_url', 'is_video']
+    def get_file_url(self, obj):
+        request = self.context.get('request')
+        if obj.file:
+            if request:
+                return request.build_absolute_uri(obj.file.url)
+            return obj.file.url
+        return None
+
 class ReviewSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     user_role = serializers.CharField(source='user.profile.role', read_only=True)
     image = serializers.ImageField(required=False, allow_null=True)
     video = serializers.FileField(required=False, allow_null=True)
     replies = ReviewReplySerializer(many=True, read_only=True)
+    media_files = ReviewMediaSerializer(many=True, read_only=True)
 
     user_profile_id = serializers.SerializerMethodField()
 
@@ -297,7 +311,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = [
             'id', 'user', 'username', 'user_role', 'user_profile_id', 'rating', 'title', 'comment', 'image', 'video',
-            'is_reported', 'created_at', 'pet', 'product', 'food', 'accessory', 'service_type', 'replies'
+            'is_reported', 'created_at', 'pet', 'product', 'food', 'accessory', 'service_type', 'replies', 'media_files'
         ]
         read_only_fields = ['user', 'is_reported']
 

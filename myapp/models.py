@@ -716,6 +716,15 @@ class Review(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.rating} Stars"
 
+class ReviewMedia(models.Model):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='media_files')
+    file = models.FileField(upload_to='reviews/media/')
+    is_video = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Media for Review #{self.review.id} ({'Video' if self.is_video else 'Image'})"
+
 class ReviewReply(models.Model):
     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='replies')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
