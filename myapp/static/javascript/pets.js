@@ -525,6 +525,11 @@
                         const rMedia = [];
                         if (review.image) rMedia.push({ type: 'image', url: review.image });
                         if (review.video) rMedia.push({ type: 'video', url: review.video });
+                        if (review.media_files && review.media_files.length > 0) {
+                            review.media_files.forEach(m => {
+                                rMedia.push({ type: m.is_video ? 'video' : 'image', url: m.file });
+                            });
+                        }
 
                         if (rMedia.length > 0) {
                             if (rMedia.length === 1) {
@@ -560,14 +565,17 @@
                                     }
                                 }).join('');
 
+                                const dots = rMedia.map((_, idx) => {
+                                    return `<span class="carousel-dot${idx === 0 ? ' active' : ''}" onclick="event.stopPropagation(); document.getElementById('${carouselId}').style.transform='translateX(-${idx * 100}%)'; this.parentElement.querySelectorAll('span').forEach((s,i)=>s.style.backgroundColor=i===${idx}?'var(--primary)':'#bbb')" style="height: 6px; width: 6px; margin: 0 2px; background-color: ${idx === 0 ? 'var(--primary)' : '#bbb'}; border-radius: 50%; display: inline-block; cursor: pointer;"></span>`;
+                                }).join('');
+
                                 reviewImageHTML = `
                                     <div style="margin-top: 10px; position: relative; overflow: hidden; width: 200px; height: 150px; border-radius: 6px; border: 1px solid var(--border-color);">
                                         <div id="${carouselId}" style="display: flex; width: 100%; height: 100%; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);">
                                             ${slides}
                                         </div>
                                         <div style="position: absolute; bottom: 5px; width: 100%; text-align: center; z-index: 10;">
-                                            <span class="carousel-dot active" onclick="event.stopPropagation(); document.getElementById('${carouselId}').style.transform='translateX(0%)'; this.parentElement.querySelectorAll('span').forEach((s,i)=>s.style.backgroundColor=i===0?'var(--primary)':'#bbb')" style="height: 6px; width: 6px; margin: 0 2px; background-color: var(--primary); border-radius: 50%; display: inline-block; cursor: pointer;"></span>
-                                            <span class="carousel-dot" onclick="event.stopPropagation(); document.getElementById('${carouselId}').style.transform='translateX(-100%)'; this.parentElement.querySelectorAll('span').forEach((s,i)=>s.style.backgroundColor=i===1?'var(--primary)':'#bbb')" style="height: 6px; width: 6px; margin: 0 2px; background-color: #bbb; border-radius: 50%; display: inline-block; cursor: pointer;"></span>
+                                            ${dots}
                                         </div>
                                     </div>
                                 `;
