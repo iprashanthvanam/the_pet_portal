@@ -266,5 +266,6 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
-from .models import PasswordReset
+from .models import PasswordReset, CheckoutSetting
 admin.site.register(PasswordReset)
+admin.site.register(CheckoutSetting)

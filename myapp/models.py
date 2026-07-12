@@ -196,19 +196,20 @@ class Order(models.Model):
     payment_status = models.CharField(max_length=10, choices=PAYMENT_STATUS, default='UNPAID')
 
     total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    tax = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    gst = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    platform_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     razorpay_order_id = models.CharField(max_length=100, blank=True, null=True)
     razorpay_payment_id = models.CharField(max_length=100, blank=True, null=True)
     razorpay_refund_id = models.CharField(max_length=100, blank=True, null=True)
-
-
 
     confirmed_at = models.DateTimeField(null=True, blank=True)
     processing_at = models.DateTimeField(null=True, blank=True)
     shipped_at = models.DateTimeField(null=True, blank=True)
     delivered_at = models.DateTimeField(null=True, blank=True)
     cancelled_at = models.DateTimeField(null=True, blank=True)
-
 
     def __str__(self):
         return f"Order {self.order_id}"
@@ -732,6 +733,16 @@ class PasswordReset(models.Model):
 
     def __str__(self):
         return f"Reset OTP for {self.email}"
+
+class CheckoutSetting(models.Model):
+    name = models.CharField(max_length=100, default="Default Settings")
+    tax = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, help_text="Fixed tax fee in INR")
+    delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, help_text="Delivery fee in INR")
+    gst_percent = models.DecimalField(max_digits=5, decimal_places=2, default=0.00, help_text="GST Percentage")
+    platform_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, help_text="Platform fee in INR")
+
+    def __str__(self):
+        return self.name
     
 
 

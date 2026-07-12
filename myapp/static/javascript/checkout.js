@@ -19,10 +19,11 @@
                     return;
                 }
                 data.items.forEach(item => {
+                    const imgUrl = item.image_url ? item.image_url : `https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&background=f3f4f6&color=6366f1`;
                     summaryItems.innerHTML += `
                         <div class="summary-item">
                             <div class="item-details">
-                                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&background=f3f4f6&color=6366f1" class="item-img">
+                                <img src="${imgUrl}" class="item-img" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
                                 <div class="item-text">
                                     <span class="item-name">${item.name}</span>
                                     <span class="item-qty">Qty: ${item.quantity}</span>
@@ -33,6 +34,12 @@
                     `;
                 });
                 summaryTotal.innerText = "₹" + data.total_price;
+                document.getElementById("summary-subtotal").innerText = "₹" + data.subtotal;
+                document.getElementById("summary-gst-rate").innerText = `(${data.gst_percent}%)`;
+                document.getElementById("summary-gst-amount").innerText = "₹" + data.gst_amount;
+                document.getElementById("summary-tax").innerText = "₹" + data.tax;
+                document.getElementById("summary-platform").innerText = "₹" + data.platform_fee;
+                document.getElementById("summary-delivery").innerText = "₹" + data.delivery_fee;
             });
 
         // Pre-fill Shipping Details from User Profile

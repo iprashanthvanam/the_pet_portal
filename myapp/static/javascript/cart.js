@@ -33,10 +33,12 @@
                         const plusDisabled = (isPet && item.quantity >= 1) ? 'disabled' : '';
                         const plusBtnClass = (isPet && item.quantity >= 1) ? 'qty-btn qty-btn-disabled' : 'qty-btn';
 
+                        const imgUrl = item.image_url ? item.image_url : `https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&background=f3f4f6&color=6366f1`;
                         tbody.innerHTML += `
                             <tr id="row-${item.id}-${item.type}">
                                 <td class="product-cell" data-label="Product">
-                                    <div class="product-info">
+                                    <div class="product-info" style="display: flex; align-items: center; gap: 12px;">
+                                        <img src="${imgUrl}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
                                         <span class="product-name">${item.name}</span>
                                     </div>
                                 </td>
@@ -63,6 +65,12 @@
                     });
 
                     totalEl.innerText = "₹" + data.total_price;
+                    document.getElementById("cart-subtotal").innerText = "₹" + data.subtotal;
+                    document.getElementById("cart-gst-rate").innerText = `(${data.gst_percent}%)`;
+                    document.getElementById("cart-gst-amount").innerText = "₹" + data.gst_amount;
+                    document.getElementById("cart-tax").innerText = "₹" + data.tax;
+                    document.getElementById("cart-platform").innerText = "₹" + data.platform_fee;
+                    document.getElementById("cart-delivery").innerText = "₹" + data.delivery_fee;
                     updateBadge(data.cart_count || data.items.length);
                 })
                 .catch(err => console.error("Error loading cart details:", err));

@@ -50,14 +50,33 @@ from myapp.permissions import (
 
 def normalize_cart(cart):
     normalized = {}
+    from myapp.models import Pet, Food, Accessory
     for key, item in cart.items():
         try:
+            item_type = item.get('type')
+            item_id = int(item.get('id'))
+            
+            image_url = None
+            if item_type == 'pet':
+                p = Pet.objects.filter(id=item_id).first()
+                if p and p.image:
+                    image_url = p.image.url
+            elif item_type == 'food':
+                f = Food.objects.filter(id=item_id).first()
+                if f and f.image:
+                    image_url = f.image.url
+            elif item_type == 'accessory':
+                a = Accessory.objects.filter(id=item_id).first()
+                if a and a.image:
+                    image_url = a.image.url
+
             normalized[key] = {
-                'id': int(item.get('id')),
-                'type': item.get('type'),
+                'id': item_id,
+                'type': item_type,
                 'name': item.get('name'),
                 'price': float(item.get('price')),
                 'quantity': int(item.get('quantity', 1)),
+                'image_url': image_url
             }
         except (ValueError, TypeError):
             continue
@@ -795,9 +814,31 @@ def api_cart(request):
     cart = normalize_cart(request.session.get('cart', {}))
 
     if request.method == 'GET':
+        from myapp.models import CheckoutSetting
+        settings_obj = CheckoutSetting.objects.first()
+        if not settings_obj:
+            # Create a default settings instance if none exists
+            settings_obj = CheckoutSetting.objects.create(
+                name="Default Settings",
+                tax=10.00,
+                delivery_fee=50.00,
+                gst_percent=18.00,
+                platform_fee=5.00
+            )
+        
+        subtotal = sum(item['price'] * item['quantity'] for item in cart.values())
+        gst_amount = round((subtotal * float(settings_obj.gst_percent)) / 100, 2)
+        total_price = subtotal + float(settings_obj.tax) + float(settings_obj.delivery_fee) + gst_amount + float(settings_obj.platform_fee)
+
         return Response({
             "items": list(cart.values()),
-            "total_price": sum(item['price'] * item['quantity'] for item in cart.values()),
+            "subtotal": subtotal,
+            "tax": float(settings_obj.tax),
+            "delivery_fee": float(settings_obj.delivery_fee),
+            "gst_percent": float(settings_obj.gst_percent),
+            "gst_amount": gst_amount,
+            "platform_fee": float(settings_obj.platform_fee),
+            "total_price": total_price,
             "cart_count": len(cart)
         })
 
@@ -828,6 +869,7 @@ def api_cart(request):
             name = item.name
             price = float(item.price)
 
+        image_url = item.image.url if (hasattr(item, 'image') and item.image) else None
         key = f"{item_type}_{item_id}"
         if key in cart:
             cart[key]['quantity'] = quantity
@@ -837,7 +879,8 @@ def api_cart(request):
                 'type': item_type,
                 'name': name,
                 'price': price,
-                'quantity': quantity
+                'quantity': quantity,
+                'image_url': image_url
             }
 
         request.session['cart'] = cart
@@ -871,7 +914,20 @@ def api_checkout(request):
     if not cart:
         return Response({"error": "Cart is empty"}, status=400)
 
-    total_price = sum(item['price'] * item['quantity'] for item in cart.values())
+    from myapp.models import CheckoutSetting
+    settings_obj = CheckoutSetting.objects.first()
+    if not settings_obj:
+        settings_obj = CheckoutSetting.objects.create(
+            name="Default Settings",
+            tax=10.00,
+            delivery_fee=50.00,
+            gst_percent=18.00,
+            platform_fee=5.00
+        )
+    
+    subtotal = sum(item['price'] * item['quantity'] for item in cart.values())
+    gst_amount = round((subtotal * float(settings_obj.gst_percent)) / 100, 2)
+    final_total_price = subtotal + float(settings_obj.tax) + float(settings_obj.delivery_fee) + gst_amount + float(settings_obj.platform_fee)
 
     full_name = request.data.get('full_name')
     email = request.data.get('email')
@@ -893,7 +949,11 @@ def api_checkout(request):
             address=address,
             city=city,
             postal_code=postal_code,
-            total_cost=total_price,
+            total_cost=final_total_price,
+            tax=settings_obj.tax,
+            delivery_fee=settings_obj.delivery_fee,
+            gst=gst_amount,
+            platform_fee=settings_obj.platform_fee,
             payment_method='COD',
             payment_status='UNPAID',
             status='CONFIRMED',
@@ -920,7 +980,7 @@ def api_checkout(request):
     elif payment_method == 'RAZORPAY':
         client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
         razorpay_order = client.order.create({
-            "amount": int(total_price * 100),
+            "amount": int(final_total_price * 100),
             "currency": settings.RAZORPAY_CURRENCY,
             "payment_capture": 1
         })
@@ -935,7 +995,11 @@ def api_checkout(request):
                 "postal_code": postal_code
             },
             "cart": cart,
-            "total_price": float(total_price),
+            "total_price": float(final_total_price),
+            "tax": float(settings_obj.tax),
+            "delivery_fee": float(settings_obj.delivery_fee),
+            "gst": float(gst_amount),
+            "platform_fee": float(settings_obj.platform_fee),
             "razorpay_order_id": razorpay_order['id']
         }
         request.session.modified = True
@@ -944,7 +1008,7 @@ def api_checkout(request):
             "success": True,
             "razorpay": {
                 "key": settings.RAZORPAY_KEY_ID,
-                "amount": int(total_price * 100),
+                "amount": int(final_total_price * 100),
                 "order_id": razorpay_order['id'],
                 "currency": settings.RAZORPAY_CURRENCY,
                 "callback_url": request.build_absolute_uri('/payment/verify/')
@@ -995,6 +1059,10 @@ def api_payment_verify(request):
                 city=form_data["city"],
                 postal_code=form_data["postal_code"],
                 total_cost=total_price,
+                tax=pending_order.get("tax", 0.0),
+                delivery_fee=pending_order.get("delivery_fee", 0.0),
+                gst=pending_order.get("gst", 0.0),
+                platform_fee=pending_order.get("platform_fee", 0.0),
                 payment_method="RAZORPAY",
                 payment_status="PAID",
                 razorpay_order_id=razorpay_order_id,
