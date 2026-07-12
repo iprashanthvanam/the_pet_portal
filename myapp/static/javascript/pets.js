@@ -666,6 +666,7 @@
         const title = document.getElementById("review-title").value;
         const comment = document.getElementById("review-comment").value;
         const imgFile = document.getElementById("review-image").files[0];
+        const vidFile = document.getElementById("review-video") ? document.getElementById("review-video").files[0] : null;
 
         const formData = new FormData();
         formData.append("rating", rating);
@@ -674,6 +675,9 @@
         // Leave GFK/Service type empty to submit as a global portal experience review
         if (imgFile) {
             formData.append("image", imgFile);
+        }
+        if (vidFile) {
+            formData.append("video", vidFile);
         }
 
         function getCookie(name) {

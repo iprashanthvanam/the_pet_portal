@@ -700,6 +700,7 @@ class Review(models.Model):
     title = models.CharField(max_length=150, blank=True)
     comment = models.TextField(blank=True)
     image = models.ImageField(upload_to='reviews/', blank=True, null=True)
+    video = models.FileField(upload_to='reviews/videos/', blank=True, null=True)
     is_reported = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

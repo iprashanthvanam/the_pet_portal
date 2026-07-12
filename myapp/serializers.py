@@ -288,6 +288,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     user_role = serializers.CharField(source='user.profile.role', read_only=True)
     image = serializers.ImageField(required=False, allow_null=True)
+    video = serializers.FileField(required=False, allow_null=True)
     replies = ReviewReplySerializer(many=True, read_only=True)
 
     user_profile_id = serializers.SerializerMethodField()
@@ -295,7 +296,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = [
-            'id', 'user', 'username', 'user_role', 'user_profile_id', 'rating', 'title', 'comment', 'image',
+            'id', 'user', 'username', 'user_role', 'user_profile_id', 'rating', 'title', 'comment', 'image', 'video',
             'is_reported', 'created_at', 'pet', 'product', 'food', 'accessory', 'service_type', 'replies'
         ]
         read_only_fields = ['user', 'is_reported']
@@ -313,6 +314,14 @@ class ReviewSerializer(serializers.ModelSerializer):
                 ret['image'] = instance.image.url
         else:
             ret['image'] = None
+
+        if instance.video:
+            if request:
+                ret['video'] = request.build_absolute_uri(instance.video.url)
+            else:
+                ret['video'] = instance.video.url
+        else:
+            ret['video'] = None
         return ret
 
 # =========================
