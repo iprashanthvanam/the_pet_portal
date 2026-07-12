@@ -322,6 +322,14 @@ class ReviewSerializer(serializers.ModelSerializer):
     def get_user_profile_id(self, obj):
         return obj.user.profile.id if hasattr(obj.user, 'profile') else None
 
+    def validate(self, attrs):
+        # Clean empty strings passed by browser FormData for image/video files
+        if 'image' in attrs and attrs['image'] == '':
+            attrs['image'] = None
+        if 'video' in attrs and attrs['video'] == '':
+            attrs['video'] = None
+        return attrs
+
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         request = self.context.get('request')
