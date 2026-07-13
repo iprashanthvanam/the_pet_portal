@@ -17,7 +17,7 @@ cryptography==41.0.7
 # cupshelpers==1.0 (CUPS printing subsystem wrapper, commented out)
 # dbus-python==1.3.2 (D-Bus bindings, commented out)
 # defer==1.0.6 (Ubuntu-specific defer implementation, commented out)
-demjson==2.2.4
+# demjson==2.2.4 (Fails to install on Python 3.10+ due to deprecated use_2to3 setuptools parameter, not used in code)
 distro==1.9.0
 # distro-info==1.7+build1 (OS info utility, commented out)
 httplib2==0.20.4
