@@ -17,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 # ==========================
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-fallback-secret-key-328b462bb")
 DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'petmarketplace.pythonanywhere.com']
 
