@@ -1,10 +1,85 @@
+argcomplete==3.1.4
+asyncpg==0.31.0
+attrs==23.2.0
+Babel==2.10.3
+# bcc==0.29.1 (OS-level kernel tool, commented out for PythonAnywhere compatibility)
+bcrypt==4.0.1
+blinker==1.7.0
+# Brlapi==0.8.5 (Braille display access API, commented out for compatibility)
+certifi==2023.11.17
+chardet==5.2.0
+click==8.1.6
+# cloud-init==25.3 (OS configuration package, commented out)
+colorama==0.4.6
+# command-not-found==0.3 (Ubuntu helper tool, commented out)
+configobj==5.0.8
+cryptography==41.0.7
+# cupshelpers==1.0 (CUPS printing subsystem wrapper, commented out)
+# dbus-python==1.3.2 (D-Bus bindings, commented out)
+defer==1.0.6
+demjson==2.2.4
+distro==1.9.0
+# distro-info==1.7+build1 (OS info utility, commented out)
+httplib2==0.20.4
+idna==3.6
+Jinja2==3.1.2
+jsonpatch==1.32
+jsonpointer==2.0
+jsonschema==4.10.3
+# language-selector==0.1 (OS language settings package, commented out)
+# launchpadlib==1.11.0 (Ubuntu Launchpad API library, commented out)
+# lazr.restfulclient==0.14.6 (Commented out)
+# lazr.uri==1.0.6 (Commented out)
+# louis==3.29.0 (Braille translation library, commented out)
+markdown-it-py==3.0.0
+MarkupSafe==2.1.5
+mdurl==0.1.2
+netaddr==0.8.0
+oauthlib==3.2.2
+olefile==0.46
+packaging==24.0
+passlib==1.7.4
+pexpect==4.9.0
+pillow==10.2.0
+# pipx==1.4.3 (System-level app runner, commented out)
+platformdirs==4.2.0
+psutil==5.9.8
+ptyprocess==0.7.0
+# pycairo==1.25.1 (OS Cairo graphics bindings, commented out)
+# pycups==2.0.1 (OS Cups printing bindings, commented out)
+Pygments==2.17.2
+# PyGObject==3.48.2 (OS GNOME bindings, commented out)
+PyJWT==2.7.0
+pyparsing==3.1.1
+pyrsistent==0.20.0
+pyserial==3.5
+# python-apt==2.7.7+ubuntu5.2 (Ubuntu APT wrapper, commented out)
+python-dateutil==2.8.2
+# python-debian==0.1.49+ubuntu2 (Debian pkg parser, commented out)
+pytz==2024.1
+pyxdg==0.28
+PyYAML==6.0.1
+requests==2.31.0
+rich==13.7.1
+setuptools==68.1.2
+six==1.16.0
+structlog==25.5.0
+# systemd-python==235 (Ubuntu systemd wrapper, commented out)
+typing_extensions==4.10.0
+# ubuntu-drivers-common==0.0.0 (Commented out)
+# ubuntu-pro-client==8001 (Commented out)
+# ufw==0.36.2 (Uncomplicated Firewall wrapper, commented out)
+# unattended-upgrades==0.1 (Commented out)
+urllib3==2.0.7
+userpath==1.9.1
+# wadllib==1.3.6 (Commented out)
+wheel==0.42.0
+xdg==5
+# xkit==0.0.0 (Commented out)
+
 Django>=5.0,<6.0
 djangorestframework>=3.14.0
 django-allauth>=0.61.0
 razorpay>=1.3.0
-requests>=2.31.0
-pillow>=10.2.0
 python-dotenv>=1.0.0
-PyJWT>=2.7.0
-cryptography>=41.0.0
 weasyprint>=60.0
