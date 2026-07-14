@@ -787,6 +787,12 @@ def api_verify_otp(request):
     except PendingRegistration.DoesNotExist:
         return Response({"error": "Invalid verification code or email."}, status=400)
 
+    # Enforce 10 minutes OTP expiration
+    time_elapsed = timezone.now() - pending.created_at
+    if time_elapsed > timedelta(minutes=10):
+        pending.delete()
+        return Response({"error": "This verification code has expired. Please register again to get a new code."}, status=400)
+
     with transaction.atomic():
         # Prevent race condition where email or username was taken right after registration
         if User.objects.filter(email=pending.email).exists():
@@ -864,6 +870,12 @@ def api_verify_reset_otp(request):
     except PasswordReset.DoesNotExist:
         return Response({"error": "Invalid verification code or email."}, status=400)
     
+    # Enforce 10 minutes expiration check
+    time_elapsed = timezone.now() - reset_obj.created_at
+    if time_elapsed > timedelta(minutes=10):
+        reset_obj.delete()
+        return Response({"error": "This verification code has expired. Please request a new code."}, status=400)
+
     reset_obj.is_verified = True
     reset_obj.save()
     
@@ -881,6 +893,12 @@ def api_reset_password(request):
         reset_obj = PasswordReset.objects.get(email=email, is_verified=True)
     except PasswordReset.DoesNotExist:
         return Response({"error": "Verification session has expired or is invalid. Please start over."}, status=400)
+
+    # Double check that verification session was created in the last 15 minutes max
+    time_elapsed = timezone.now() - reset_obj.created_at
+    if time_elapsed > timedelta(minutes=15):
+        reset_obj.delete()
+        return Response({"error": "Verification session has expired. Please request a new code."}, status=400)
     
     try:
         user = User.objects.get(email=email)
