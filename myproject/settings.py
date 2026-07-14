@@ -117,10 +117,10 @@ LOGIN_URL = '/login/'
 # RAZORPAY
 # ==========================
 
-RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
-RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
-RAZORPAY_WEBHOOK_SECRET = os.getenv("RAZORPAY_WEBHOOK_SECRET")
-RAZORPAY_CURRENCY = os.getenv("RAZORPAY_CURRENCY")
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "rzp_test_fallback_id")
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "fallback_secret")
+RAZORPAY_WEBHOOK_SECRET = os.getenv("RAZORPAY_WEBHOOK_SECRET", "webhook_fallback")
+RAZORPAY_CURRENCY = os.getenv("RAZORPAY_CURRENCY", "INR")
 
 # ==========================
 # ALLAUTH
