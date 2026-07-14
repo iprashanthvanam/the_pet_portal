@@ -1529,8 +1529,14 @@ def api_cancel_order(request, order_id):
     order = get_object_or_404(Order, order_id=order_id)
     if order.user != request.user and not request.user.is_superuser:
         return Response({"error": "Denied"}, status=403)
+    if order.status == "CANCELLED":
+        return Response({"error": "This order is already cancelled"}, status=400)
+    if order.status == "DELIVERED":
+        return Response({"error": "Delivered orders cannot be cancelled. Please contact customer support for return options."}, status=400)
+    if order.status == "SHIPPED":
+        return Response({"error": "This order has already been shipped and cannot be cancelled in transit."}, status=400)
     if not order.can_cancel():
-        return Response({"error": "Cannot cancel order in current state"}, status=400)
+        return Response({"error": f"Cannot cancel order in current state ({order.status})"}, status=400)
 
     # Process Automatic Razorpay Refund
     if order.payment_method == 'RAZORPAY' and order.payment_status == 'PAID' and order.razorpay_payment_id:
