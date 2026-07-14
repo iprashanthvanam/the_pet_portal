@@ -64,24 +64,41 @@ def normalize_cart(cart):
             item_id = int(item.get('id'))
             
             image_url = None
+            db_price = 0.00
+            db_name = ""
+            
             if item_type == 'pet':
                 p = Pet.objects.filter(id=item_id).first()
-                if p and p.image:
+                if not p:
+                    continue
+                db_name = p.name
+                db_price = float(p.price)
+                if p.image:
                     image_url = p.image.url
             elif item_type == 'food':
                 f = Food.objects.filter(id=item_id).first()
-                if f and f.image:
+                if not f:
+                    continue
+                db_name = f.name
+                db_price = float(f.price)
+                if f.image:
                     image_url = f.image.url
             elif item_type == 'accessory':
                 a = Accessory.objects.filter(id=item_id).first()
-                if a and a.image:
+                if not a:
+                    continue
+                db_name = a.name
+                db_price = float(a.price)
+                if a.image:
                     image_url = a.image.url
+            else:
+                continue
 
             normalized[key] = {
                 'id': item_id,
                 'type': item_type,
-                'name': item.get('name'),
-                'price': float(item.get('price')),
+                'name': db_name,
+                'price': db_price,
                 'quantity': int(item.get('quantity', 1)),
                 'image_url': image_url
             }
@@ -1191,6 +1208,7 @@ def api_checkout(request):
             platform_fee=5.00
         )
     
+    cart = normalize_cart(cart)
     subtotal = sum(item['price'] * item['quantity'] for item in cart.values())
     gst_amount = round((subtotal * float(settings_obj.gst_percent)) / 100, 2)
     final_total_price = subtotal + float(settings_obj.tax) + float(settings_obj.delivery_fee) + gst_amount + float(settings_obj.platform_fee)
