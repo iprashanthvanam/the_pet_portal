@@ -768,11 +768,7 @@ def api_register(request):
 
     send_otp_email(email, otp)
     
-    from django.conf import settings
-    response_data = {"success": True, "message": "OTP has been emailed. Please verify."}
-    if not getattr(settings, 'EMAIL_HOST_PASSWORD', ''):
-        response_data["dev_otp"] = otp
-    return Response(response_data)
+    return Response({"success": True, "message": "OTP has been emailed. Please verify."})
 
 @api_view(['POST'])
 def api_verify_otp(request):
@@ -853,10 +849,7 @@ def api_forgot_password(request):
         fail_silently=True
     )
     
-    response_data = {"success": True, "message": "OTP has been emailed. Please verify."}
-    if not getattr(settings, 'EMAIL_HOST_PASSWORD', ''):
-        response_data["dev_otp"] = otp
-    return Response(response_data)
+    return Response({"success": True, "message": "OTP has been emailed. Please verify."})
 
 @api_view(['POST'])
 def api_verify_reset_otp(request):
