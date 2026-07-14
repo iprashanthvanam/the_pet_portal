@@ -1629,10 +1629,31 @@ def api_update_order_status(request, order_id):
 
     if not is_authorized:
         return Response({"error": "Permission denied"}, status=403)
-
     new_status = request.data.get('status')
     if new_status not in [choice[0] for choice in Order.STATUS_CHOICES]:
         return Response({"error": "Invalid status"}, status=400)
+
+    # SECURE STATUS TRANSITIONS LOGIC CHECKS:
+    current_status = order.status
+    
+    if current_status == "CANCELLED":
+        return Response({"error": "Cannot change status. Order has already been cancelled."}, status=400)
+        
+    if current_status == "DELIVERED":
+        return Response({"error": "Cannot change status. Order has already been delivered."}, status=400)
+        
+    # Enforce standard order progression: CONFIRMED -> PROCESSING -> SHIPPED -> DELIVERED
+    allowed_transitions = {
+        'CONFIRMED': ['PROCESSING', 'CANCELLED'],
+        'PROCESSING': ['SHIPPED', 'CANCELLED'],
+        'SHIPPED': ['DELIVERED', 'CANCELLED'],
+        'DELIVERED': [],
+        'CANCELLED': []
+    }
+    
+    allowed = allowed_transitions.get(current_status, [])
+    if new_status != current_status and new_status not in allowed:
+        return Response({"error": f"Invalid transition. Cannot change order status from {current_status} directly to {new_status}."}, status=400)
 
     order.status = new_status
     if new_status == 'PROCESSING':
