@@ -1498,8 +1498,20 @@ def api_order_detail(request, order_id):
 
     if request.method == 'GET':
         return Response(OrderSerializer(order).data)
-        
     elif request.method == 'PUT':
+        # Determine client role
+        profile = getattr(request.user, 'profile', None)
+        role = profile.role if profile else 'customer'
+        is_staff_or_vendor = request.user.is_superuser or request.user.is_staff or role in ['pet_seller', 'product_seller', 'accessory_seller']
+
+        # Block customers from modifying status and payment fields directly
+        if not is_staff_or_vendor:
+            restricted_fields = ['status', 'payment_status', 'payment_method', 'razorpay_refund_id', 'razorpay_order_id', 'razorpay_payment_id', 'confirmed_at', 'processing_at', 'shipped_at', 'delivered_at', 'cancelled_at']
+            for field in restricted_fields:
+                if field in request.data:
+                    return Response({"error": f"You do not have permission to modify the '{field}' of this order."}, status=403)
+
+        # Apply basic shipping fields updates
         order.full_name = request.data.get('full_name', order.full_name)
         order.email = request.data.get('email', order.email)
         order.mobile_number = request.data.get('mobile_number', order.mobile_number)
@@ -1507,52 +1519,53 @@ def api_order_detail(request, order_id):
         order.city = request.data.get('city', order.city)
         order.postal_code = request.data.get('postal_code', order.postal_code)
         
-        status_val = request.data.get('status', order.status)
-        if status_val in [choice[0] for choice in Order.STATUS_CHOICES]:
-            # Auto-set timestamps when status changes
-            if status_val != order.status:
-                if status_val == 'CONFIRMED' and not order.confirmed_at:
-                    order.confirmed_at = timezone.now()
-                elif status_val == 'PROCESSING' and not order.processing_at:
-                    order.processing_at = timezone.now()
-                elif status_val == 'SHIPPED' and not order.shipped_at:
-                    order.shipped_at = timezone.now()
-                elif status_val == 'DELIVERED' and not order.delivered_at:
-                    order.delivered_at = timezone.now()
-                elif status_val == 'CANCELLED' and not order.cancelled_at:
-                    order.cancelled_at = timezone.now()
-            order.status = status_val
+        # Only staff or vendors can update status, payment parameters, and timestamps
+        if is_staff_or_vendor:
+            status_val = request.data.get('status', order.status)
+            if status_val in [choice[0] for choice in Order.STATUS_CHOICES]:
+                # Auto-set timestamps when status changes
+                if status_val != order.status:
+                    if status_val == 'CONFIRMED' and not order.confirmed_at:
+                        order.confirmed_at = timezone.now()
+                    elif status_val == 'PROCESSING' and not order.processing_at:
+                        order.processing_at = timezone.now()
+                    elif status_val == 'SHIPPED' and not order.shipped_at:
+                        order.shipped_at = timezone.now()
+                    elif status_val == 'DELIVERED' and not order.delivered_at:
+                        order.delivered_at = timezone.now()
+                    elif status_val == 'CANCELLED' and not order.cancelled_at:
+                        order.cancelled_at = timezone.now()
+                order.status = status_val
+                
+            order.payment_method = request.data.get('payment_method', order.payment_method)
+            order.payment_status = request.data.get('payment_status', order.payment_status)
+            order.razorpay_refund_id = request.data.get('razorpay_refund_id', order.razorpay_refund_id)
+            order.razorpay_order_id = request.data.get('razorpay_order_id', order.razorpay_order_id)
+            order.razorpay_payment_id = request.data.get('razorpay_payment_id', order.razorpay_payment_id)
             
-        order.payment_method = request.data.get('payment_method', order.payment_method)
-        order.payment_status = request.data.get('payment_status', order.payment_status)
-        order.razorpay_refund_id = request.data.get('razorpay_refund_id', order.razorpay_refund_id)
-        order.razorpay_order_id = request.data.get('razorpay_order_id', order.razorpay_order_id)
-        order.razorpay_payment_id = request.data.get('razorpay_payment_id', order.razorpay_payment_id)
-        
-        # DateTime helper
-        def parse_dt(val, current):
-            if val == '':
-                return None
-            if not val:
-                return current
-            try:
-                # Handle ISO formatting
-                cleaned = val.replace('Z', '').split('.')[0]
-                return timezone.make_aware(datetime.fromisoformat(cleaned))
-            except Exception as e:
-                print("Error parsing datetime:", e)
-                return current
+            # DateTime helper
+            def parse_dt(val, current):
+                if val == '':
+                    return None
+                if not val:
+                    return current
+                try:
+                    cleaned = val.replace('Z', '').split('.')[0]
+                    return timezone.make_aware(datetime.fromisoformat(cleaned))
+                except Exception as e:
+                    print("Error parsing datetime:", e)
+                    return current
 
-        order.confirmed_at = parse_dt(request.data.get('confirmed_at'), order.confirmed_at)
-        order.processing_at = parse_dt(request.data.get('processing_at'), order.processing_at)
-        order.shipped_at = parse_dt(request.data.get('shipped_at'), order.shipped_at)
-        order.delivered_at = parse_dt(request.data.get('delivered_at'), order.delivered_at)
-        order.cancelled_at = parse_dt(request.data.get('cancelled_at'), order.cancelled_at)
+            order.confirmed_at = parse_dt(request.data.get('confirmed_at'), order.confirmed_at)
+            order.processing_at = parse_dt(request.data.get('processing_at'), order.processing_at)
+            order.shipped_at = parse_dt(request.data.get('shipped_at'), order.shipped_at)
+            order.delivered_at = parse_dt(request.data.get('delivered_at'), order.delivered_at)
+            order.cancelled_at = parse_dt(request.data.get('cancelled_at'), order.cancelled_at)
 
         order.save()
-        
         send_status_update_email(order.user, f"Order {order.order_id}", order.status)
         return Response(OrderSerializer(order).data)
+
 @api_view(['POST'])
 def api_cancel_order(request, order_id):
     order = get_object_or_404(Order, order_id=order_id)
@@ -1955,12 +1968,12 @@ def api_reviews(request):
         return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def api_report_review(request, pk):
     review = get_object_or_404(Review, id=pk)
     review.is_reported = True
     review.save()
     return Response({"success": True, "message": "Review reported."})
-
 @api_view(['POST', 'DELETE'])
 def api_moderate_review(request, pk):
     if not request.user.is_superuser:
