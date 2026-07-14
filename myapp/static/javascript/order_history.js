@@ -43,6 +43,11 @@
 
                         // Payment Status Badges
                         let paymentBadge = "";
+                        let razorpayPaymentIdHtml = "";
+                        if (order.razorpay_payment_id) {
+                            razorpayPaymentIdHtml = `<p style="margin-top: 5px; font-size: 13px;"><strong>Payment ID:</strong> <span style="font-family: monospace; color: var(--text-main);">${order.razorpay_payment_id}</span></p>`;
+                        }
+
                         if (order.status === "CANCELLED") {
                             paymentBadge = `<span class="badge-cancelled"><i class="fa-solid fa-xmark"></i> Order Cancelled</span>`;
                         } else if (order.payment_status === "PAID") {
@@ -55,10 +60,17 @@
 
                         // Refund details
                         let refundDetailsHtml = "";
-                        if (order.payment_status === "REFUNDED" && order.refund_rrn) {
+                        if (order.razorpay_refund_id) {
                             refundDetailsHtml = `
-                                <div class="refund-info">
-                                    <strong>Refund Reference (RRN):</strong> ${order.refund_rrn}
+                                <div class="refund-info" style="margin-top: 10px; padding: 10px; border-left: 3px solid var(--danger); background: rgba(239, 68, 68, 0.1); border-radius: 4px;">
+                                    <p style="margin: 0; font-size: 13px;"><strong>Refund Status:</strong> Processed</p>
+                                    <p style="margin: 5px 0 0 0; font-size: 13px;"><strong>Refund ID:</strong> <span style="font-family: monospace; color: var(--text-main);">${order.razorpay_refund_id}</span></p>
+                                </div>
+                            `;
+                        } else if (order.status === "CANCELLED" && order.payment_method === "RAZORPAY" && order.payment_status === "PAID") {
+                            refundDetailsHtml = `
+                                <div class="refund-info" style="margin-top: 10px; padding: 10px; border-left: 3px solid var(--warning); background: rgba(245, 158, 11, 0.1); border-radius: 4px;">
+                                    <p style="margin: 0; font-size: 13px;"><strong>Refund Status:</strong> Refund Initiated / Pending Processing</p>
                                 </div>
                             `;
                         }
@@ -72,7 +84,7 @@
                         }
                         if (order.payment_status === "PAID" || order.status === "DELIVERED") {
                             actionButtonsHtml += `
-                                <a href="/order/${order.order_id}/invoice/download/" class="btn-sm btn-outline"><i class="fa-solid fa-download"></i> Download Invoice</a>
+                                <a href="/order/invoice/${order.order_id}/" class="btn-sm btn-outline"><i class="fa-solid fa-download"></i> Download Invoice</a>
                             `;
                         }
                         if (["CONFIRMED", "PENDING"].includes(order.status)) {
@@ -133,6 +145,7 @@
                                             <div class="payment-row">
                                                 <div class="payment-status-badge">
                                                     ${paymentBadge}
+                                                    ${razorpayPaymentIdHtml}
                                                 </div>
                                                 ${refundDetailsHtml}
                                                 <div class="action-buttons">

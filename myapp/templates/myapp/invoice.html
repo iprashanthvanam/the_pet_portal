@@ -38,12 +38,20 @@
                 </td>
                 <td style="width: 50%; vertical-align: top; text-align: right;" class="info-col">
                     <h3>Order Details</h3>
-                    <p><strong>Order ID:</strong> #{{ order.order_id|truncatechars:15 }}</p>
+                    <p><strong>Order ID:</strong> #{{ order.order_id }}</p>
                     <p><strong>Date:</strong> {{ order.created_at|date:"M d, Y" }}</p>
                     <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
+                    {% if order.razorpay_payment_id %}
+                    <p><strong>Payment ID:</strong> {{ order.razorpay_payment_id }}</p>
+                    {% endif %}
+                    {% if order.razorpay_refund_id %}
+                    <p><strong>Refund ID:</strong> {{ order.razorpay_refund_id }}</p>
+                    {% endif %}
                     <p style="margin-top: 10px;">
                         <strong>Status:</strong> 
-                        {% if order.payment_status == "PAID" %}
+                        {% if order.status == "CANCELLED" %}
+                            <span class="status-badge status-cancelled">CANCELLED</span>
+                        {% elif order.payment_status == "PAID" %}
                             <span class="status-badge status-paid">&#10003; PAID</span>
                         {% elif order.payment_status == "REFUNDED" %}
                             <span class="status-badge status-cancelled">REFUNDED</span>

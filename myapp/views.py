@@ -172,19 +172,24 @@ Pet Portal Team"""
     pdf_file = None
     try:
         html_string = render_to_string('myapp/invoice.html', {'order': order})
-        pdf_file = HTML(string=html_string).write_pdf()
+        # Add basic base_url configuration in case stylesheet files need to resolve
+        pdf_file = HTML(string=html_string, base_url=settings.STATIC_ROOT).write_pdf()
     except Exception as e:
         print("Error generating invoice PDF for email:", e)
 
-    email = EmailMessage(
-        subject,
-        body,
-        settings.DEFAULT_FROM_EMAIL,
-        [order.email]
-    )
-    if pdf_file:
-        email.attach(f"Invoice_{order.order_id}.pdf", pdf_file, "application/pdf")
-    email.send(fail_silently=True)
+    try:
+        email = EmailMessage(
+            subject,
+            body,
+            settings.DEFAULT_FROM_EMAIL,
+            [order.email]
+        )
+        if pdf_file:
+            email.attach(f"Invoice_{order.order_id}.pdf", pdf_file, "application/pdf")
+        email.send(fail_silently=False)
+        print(f"Successfully sent invoice email for order {order.order_id} to {order.email}")
+    except Exception as e:
+        print("Failed to send invoice email:", e)
 
 def get_dashboard_redirect_url(role):
     redirects = {
@@ -1192,7 +1197,6 @@ def api_order_detail(request, order_id):
         
         send_status_update_email(order.user, f"Order {order.order_id}", order.status)
         return Response(OrderSerializer(order).data)
-
 @api_view(['POST'])
 def api_cancel_order(request, order_id):
     order = get_object_or_404(Order, order_id=order_id)
@@ -1200,6 +1204,21 @@ def api_cancel_order(request, order_id):
         return Response({"error": "Denied"}, status=403)
     if not order.can_cancel():
         return Response({"error": "Cannot cancel order in current state"}, status=400)
+
+    # Process Automatic Razorpay Refund
+    if order.payment_method == 'RAZORPAY' and order.payment_status == 'PAID' and order.razorpay_payment_id:
+        try:
+            client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+            # Refund full amount
+            refund = client.refund.create({
+                "payment_id": order.razorpay_payment_id,
+                "amount": int(order.total_cost * 100)
+            })
+            order.razorpay_refund_id = refund.get('id')
+            order.payment_status = 'REFUNDED'
+        except Exception as e:
+            print("Automatic Razorpay refund failed:", e)
+            # Log the error but continue cancelling the order; admin can manually refund if needed
 
     order.status = "CANCELLED"
     order.cancelled_at = timezone.now()
