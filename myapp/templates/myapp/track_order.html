@@ -119,58 +119,14 @@
                     </div>
                 {% endif %}
 
-                <form method="post" class="search-box">
-                    {% csrf_token %}
-                    <input type="text" name="order_id" class="search-input" placeholder="e.g. 550e8400-e29b..." required autocomplete="off">
+                <form id="trackOrderForm" class="search-box">
+                    <input type="text" id="orderIdInput" class="search-input" placeholder="e.g. 550e8400-e29b..." required autocomplete="off">
                     <button type="submit" class="track-btn"><i class="fa-solid fa-magnifying-glass" style="margin-right: 5px;"></i> Track</button>
                 </form>
 
-                {% if order %}
-                    
-                    {% if order.status == "CANCELLED" %}
-                        <div class="cancelled-banner">
-                            <i class="fa-solid fa-circle-exclamation"></i>
-                            <div>
-                                <strong>Order Cancelled</strong><br>
-                                This order was cancelled. If you made a payment, please check your order history for refund details.
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="status-timeline">
-    {% for step in timeline %}
-        <div class="timeline-step 
-            {% if step.completed %}completed{% endif %}
-            {% if step.active %}active{% endif %}
-        ">
-            <div class="step-marker">
-                {% if step.completed %}
-                    <i class="fa-solid fa-check"></i>
-                {% endif %}
-            </div>
+                <div id="trackingResultContainer" style="margin-top: 25px;"></div>
 
-            <div class="step-content">
-                <h3 class="step-title">{{ step.label }}</h3>
 
-                {% if step.desc %}
-                    <p class="step-desc">{{ step.desc }}</p>
-                {% endif %}
-
-                {% if step.time %}
-                    <div class="step-time">
-                        <i class="fa-regular fa-calendar"></i>
-                        {{ step.time|date:"d M Y" }}
-                        &nbsp;
-                        <i class="fa-regular fa-clock"></i>
-                        {{ step.time|date:"h:i A" }}
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-    {% endfor %}
-</div>
-                    {% endif %}
-
-                {% endif %}
 
             </div>
 

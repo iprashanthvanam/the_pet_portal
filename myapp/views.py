@@ -534,68 +534,15 @@ def cart_detail(request):
 @login_required
 def checkout(request):
     return render(request, 'myapp/checkout.html')
-
 @login_required
 def order_success(request, order_id):
-    order = get_object_or_404(Order, order_id=order_id, user=request.user)
-    return render(request, 'myapp/order_success.html', {'order': order})
-
+    return render(request, 'myapp/order_success.html')
 @login_required
 def order_history(request):
     return render(request, 'myapp/order_history.html')
-
 @login_required
 def track_order(request):
-    order = None
-    timeline = []
-
-    if request.method == 'POST':
-        order_id_input = request.POST.get('order_id', '').strip()
-        if order_id_input:
-            try:
-                order = Order.objects.get(order_id=order_id_input, user=request.user)
-            except (Order.DoesNotExist, ValueError):
-                from django.contrib import messages as msg
-                msg.error(request, 'No order found with that ID. Please check and try again.')
-
-    if order and order.status != 'CANCELLED':
-        # Build the timeline steps like Amazon/Flipkart
-        STATUS_FLOW = [
-            ('CONFIRMED', 'Order Confirmed', 'Your order has been placed and confirmed successfully.', order.confirmed_at),
-            ('PROCESSING', 'Processing', 'Your order is being prepared and packed.', order.processing_at),
-            ('SHIPPED', 'Shipped', 'Your package is on its way to the delivery hub.', order.shipped_at),
-            ('DELIVERED', 'Delivered', 'Your order has been delivered. Enjoy!', order.delivered_at),
-        ]
-
-        # Find current status index
-        status_order = ['CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED']
-        current_index = status_order.index(order.status) if order.status in status_order else -1
-
-        for i, (status_key, label, desc, timestamp) in enumerate(STATUS_FLOW):
-            step = {
-                'label': label,
-                'desc': desc,
-                'time': timestamp,
-                'completed': i < current_index or (i == current_index and timestamp),
-                'active': i == current_index and not (i < current_index),
-            }
-            # The current step is active; steps before it are completed
-            if i < current_index:
-                step['completed'] = True
-                step['active'] = False
-            elif i == current_index:
-                step['completed'] = True
-                step['active'] = True
-            else:
-                step['completed'] = False
-                step['active'] = False
-            timeline.append(step)
-
-    return render(request, 'myapp/track_order.html', {
-        'order': order,
-        'timeline': timeline,
-    })
-
+    return render(request, 'myapp/track_order.html')
 @login_required
 def profile_view(request):
     return render(request, 'myapp/profile.html')
