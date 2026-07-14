@@ -100,6 +100,7 @@ urlpatterns = [
     path('api/cart/', views.api_cart, name='api_cart'),
     path('api/checkout/', views.api_checkout, name='api_checkout'),
     path('api/payment/verify/', views.api_payment_verify, name='api_payment_verify'),
+    path('api/payment/webhook/', views.api_payment_webhook, name='api_payment_webhook'),
     
     path('api/orders/', views.api_orders_list, name='api_orders_list'),
     path('api/orders/<uuid:order_id>/', views.api_order_detail, name='api_order_detail'),

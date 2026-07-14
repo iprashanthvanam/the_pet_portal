@@ -1281,6 +1281,8 @@ def api_checkout(request):
             }
         })
 
+
+
 @api_view(['POST'])
 def api_payment_verify(request):
     razorpay_payment_id = request.data.get("razorpay_payment_id")
@@ -1289,6 +1291,10 @@ def api_payment_verify(request):
 
     pending_order = request.session.get("pending_order")
     if not pending_order:
+        # Check if order was already processed via Webhook as a safe fallback
+        order = Order.objects.filter(razorpay_order_id=razorpay_order_id).first()
+        if order:
+            return Response({"success": True, "order_id": str(order.order_id)})
         return Response({"error": "Session expired or invalid"}, status=400)
 
     client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
@@ -1298,6 +1304,13 @@ def api_payment_verify(request):
             "razorpay_order_id": razorpay_order_id,
             "razorpay_signature": razorpay_signature,
         })
+
+        # Double check if Webhook already processed the order
+        existing_processed_order = Order.objects.filter(razorpay_order_id=razorpay_order_id).first()
+        if existing_processed_order:
+            request.session.pop('pending_order', None)
+            request.session.modified = True
+            return Response({"success": True, "order_id": str(existing_processed_order.order_id)})
 
         # Check if this is a retry payment for an existing order
         existing_order_id = pending_order.get("existing_order_id")
@@ -1358,6 +1371,59 @@ def api_payment_verify(request):
         return Response({"success": True, "order_id": str(order.order_id)})
     except razorpay.errors.SignatureVerificationError:
         return Response({"error": "Signature verification failed"}, status=400)
+
+@csrf_exempt
+@api_view(['POST'])
+def api_payment_webhook(request):
+    """
+    Direct server-to-server Razorpay Webhook callback handler.
+    Secures payment verification against frontend API spoofing.
+    """
+    payload = request.body.decode('utf-8')
+    signature = request.META.get('HTTP_X_RAZORPAY_SIGNATURE', '')
+    webhook_secret = settings.RAZORPAY_WEBHOOK_SECRET
+
+    if not signature or not webhook_secret:
+        return Response({"error": "Signature or Webhook Secret missing"}, status=400)
+
+    # Verify Webhook signature using HMAC-SHA256
+    expected_signature = hmac.new(
+        webhook_secret.encode('utf-8'),
+        payload.encode('utf-8'),
+        hashlib.sha256
+    ).hexdigest()
+
+    if not hmac.compare_digest(expected_signature, signature):
+        return Response({"error": "Invalid signature"}, status=400)
+
+    try:
+        event_data = json.loads(payload)
+    except Exception:
+        return Response({"error": "Invalid JSON"}, status=400)
+
+    event = event_data.get("event")
+    
+    if event == "payment.captured":
+        payment_entity = event_data.get("payload", {}).get("payment", {}).get("entity", {})
+        razorpay_order_id = payment_entity.get("order_id")
+        razorpay_payment_id = payment_entity.get("id")
+
+        if razorpay_order_id:
+            # Check if order already exists (created by frontend signature verification)
+            order = Order.objects.filter(razorpay_order_id=razorpay_order_id).first()
+            if order:
+                if order.payment_status != "PAID":
+                    order.payment_status = "PAID"
+                    order.razorpay_payment_id = razorpay_payment_id
+                    order.save()
+                    threading.Thread(target=send_invoice_email, args=(order,), daemon=True).start()
+            else:
+                # If backend Webhook fires first, we can process order directly if metadata is fetched
+                # (Standard practice is fallback sync, return 200 OK so Razorpay knows we received it)
+                pass
+
+    return Response({"status": "ok"})
+
 
 @api_view(['GET'])
 def api_orders_list(request):
