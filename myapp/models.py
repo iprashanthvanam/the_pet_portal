@@ -413,6 +413,10 @@ class DoctorAppointment(models.Model):
         if self.appointment_time.minute not in [0, 30]:
             raise ValidationError("Use 30-minute slots (10:00 or 10:30).")
 
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
 
 
 
