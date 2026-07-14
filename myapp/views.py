@@ -1707,6 +1707,7 @@ def api_doctor_bookings(request):
                 return Response({"error": '; '.join(msgs)}, status=400)
         return Response(serializer.errors, status=400)
 
+
 @api_view(['POST'])
 def api_cancel_doctor_booking(request, pk):
     appointment = get_object_or_404(DoctorAppointment, id=pk)
@@ -1714,6 +1715,12 @@ def api_cancel_doctor_booking(request, pk):
         profile = getattr(request.user, 'profile', None)
         if not profile or profile.role != 'doctor':
             return Response({"error": "Permission denied"}, status=403)
+            
+    if appointment.status == 'COMPLETED':
+        return Response({"error": "Completed doctor appointments cannot be cancelled."}, status=400)
+    if appointment.status == 'CANCELLED':
+        return Response({"error": "This doctor appointment is already cancelled."}, status=400)
+
     appointment.status = 'CANCELLED'
     appointment.save()
     threading.Thread(target=send_status_update_email, args=(appointment.user, f"Doctor Appointment ({appointment.appointment_date})", "CANCELLED"), daemon=True).start()
@@ -1772,6 +1779,14 @@ def api_cancel_pet_care(request, pk):
         profile = getattr(request.user, 'profile', None)
         if not profile or profile.role != 'pet_care':
             return Response({"error": "Permission denied"}, status=403)
+            
+    if booking.status == 'COMPLETED':
+        return Response({"error": "Completed pet care bookings cannot be cancelled."}, status=400)
+    if booking.status == 'ACTIVE':
+        return Response({"error": "Active pet care boarding sessions cannot be cancelled."}, status=400)
+    if booking.status == 'CANCELLED':
+        return Response({"error": "This booking is already cancelled."}, status=400)
+
     booking.status = 'CANCELLED'
     booking.save()
     threading.Thread(target=send_status_update_email, args=(booking.user, f"Pet Care Boarding ({booking.start_datetime.date()})", "CANCELLED"), daemon=True).start()
@@ -1825,10 +1840,19 @@ def api_cancel_grooming(request, pk):
         profile = getattr(request.user, 'profile', None)
         if not profile or profile.role != 'pet_grooming':
             return Response({"error": "Permission denied"}, status=403)
+            
+    if booking.status == 'COMPLETED':
+        return Response({"error": "Completed grooming appointments cannot be cancelled."}, status=400)
+    if booking.status == 'IN_PROGRESS':
+        return Response({"error": "Grooming appointments currently in progress cannot be cancelled."}, status=400)
+    if booking.status == 'CANCELLED':
+        return Response({"error": "This grooming booking is already cancelled."}, status=400)
+
     booking.status = 'CANCELLED'
     booking.save()
     threading.Thread(target=send_status_update_email, args=(booking.user, f"Pet Grooming Booking ({booking.appointment_datetime.date()})", "CANCELLED"), daemon=True).start()
     return Response({"success": True})
+
 
 # =====================================================
 # USER PROFILE & REVIEWS APIs
@@ -1852,16 +1876,28 @@ def api_profile(request):
         profile.address = request.data.get('address', profile.address)
         profile.city = request.data.get('city', profile.city)
         profile.postal_code = request.data.get('postal_code', profile.postal_code)
-
         # Secure Role Elevation Protection:
         # Ignore role modifications submitted by customers. Only superusers/admins can assign roles.
         if request.user.is_superuser:
             profile.role = request.data.get('role', profile.role)
 
         if 'profile_image' in request.FILES:
-            profile.profile_image = request.FILES['profile_image']
-        profile.save()
+            uploaded_file = request.FILES['profile_image']
+            
+            # 1. Enforce 5MB File Size Limit
+            if uploaded_file.size > 5 * 1024 * 1024:
+                return Response({"error": "Profile image size cannot exceed 5MB."}, status=400)
+                
+            # 2. Strict File Extension Validation
+            allowed_extensions = ['.png', '.jpg', '.jpeg', '.webp', '.gif']
+            import os
+            ext = os.path.splitext(uploaded_file.name)[1].lower()
+            if ext not in allowed_extensions:
+                return Response({"error": "Invalid file format. Only image formats (PNG, JPG, JPEG, WEBP, GIF) are allowed."}, status=400)
+                
+            profile.profile_image = uploaded_file
 
+        profile.save()
         return Response(UserProfileSerializer(profile, context={'request': request}).data)
 @api_view(['GET', 'POST'])
 def api_reviews(request):
