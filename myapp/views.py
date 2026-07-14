@@ -386,7 +386,7 @@ def download_invoice(request, order_id):
         order = get_object_or_404(Order, order_id=order_id, user=request.user)
 
     html_string = render_to_string('myapp/invoice.html', {'order': order})
-    pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf()
+    pdf_file = HTML(string=html_string, base_url=settings.STATIC_ROOT).write_pdf()
 
     response = HttpResponse(pdf_file, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="Invoice_{order.order_id}.pdf"'
