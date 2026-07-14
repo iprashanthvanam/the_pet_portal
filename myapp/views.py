@@ -1842,7 +1842,6 @@ def api_profile(request):
 
     if request.method == 'GET':
         return Response(UserProfileSerializer(profile, context={'request': request}).data)
-
     elif request.method in ['POST', 'PUT']:
         request.user.first_name = request.data.get('first_name', request.user.first_name)
         request.user.last_name = request.data.get('last_name', request.user.last_name)
@@ -1854,12 +1853,16 @@ def api_profile(request):
         profile.city = request.data.get('city', profile.city)
         profile.postal_code = request.data.get('postal_code', profile.postal_code)
 
+        # Secure Role Elevation Protection:
+        # Ignore role modifications submitted by customers. Only superusers/admins can assign roles.
+        if request.user.is_superuser:
+            profile.role = request.data.get('role', profile.role)
+
         if 'profile_image' in request.FILES:
             profile.profile_image = request.FILES['profile_image']
         profile.save()
 
         return Response(UserProfileSerializer(profile, context={'request': request}).data)
-
 @api_view(['GET', 'POST'])
 def api_reviews(request):
     if request.method == 'GET':
