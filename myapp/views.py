@@ -22,6 +22,13 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail, EmailMessage
 from weasyprint import HTML
 from google import genai
+import io
+from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, KeepTogether
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from reportlab.pdfgen import canvas
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -151,6 +158,262 @@ def send_status_update_email(user, item_name, new_status):
         [user.email],
         fail_silently=True
     )
+def generate_invoice_pdf_reportlab(order):
+    buffer = io.BytesIO()
+    
+    # Page setup
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=40,
+        leftMargin=40,
+        topMargin=40,
+        bottomMargin=40
+    )
+    
+    story = []
+    
+    # Styles
+    styles = getSampleStyleSheet()
+    
+    # Define primary theme colors (locked dark brand style)
+    primary_color = colors.HexColor("#1e293b")  # Slate 800
+    accent_color = colors.HexColor("#ec4899")   # Pink secondary
+    text_color = colors.HexColor("#334155")     # Slate 700
+    light_bg = colors.HexColor("#f8fafc")       # Slate 50
+    border_color = colors.HexColor("#e2e8f0")   # Slate 200
+    
+    # Custom styles
+    brand_style = ParagraphStyle(
+        'BrandName',
+        parent=styles['Normal'],
+        fontName='Helvetica-Bold',
+        fontSize=24,
+        textColor=primary_color,
+        spaceAfter=0
+    )
+    
+    title_style = ParagraphStyle(
+        'InvoiceTitle',
+        parent=styles['Normal'],
+        fontName='Helvetica-Bold',
+        fontSize=28,
+        textColor=colors.HexColor("#94a3b8"),
+        alignment=2, # Right aligned
+        spaceAfter=0
+    )
+    
+    section_heading = ParagraphStyle(
+        'SectionHeading',
+        parent=styles['Normal'],
+        fontName='Helvetica-Bold',
+        fontSize=11,
+        textColor=colors.HexColor("#64748b"),
+        spaceAfter=6,
+        textTransform='uppercase'
+    )
+    
+    meta_label = ParagraphStyle(
+        'MetaLabel',
+        parent=styles['Normal'],
+        fontName='Helvetica-Bold',
+        fontSize=9,
+        textColor=text_color,
+        leading=13
+    )
+    
+    meta_val = ParagraphStyle(
+        'MetaVal',
+        parent=styles['Normal'],
+        fontName='Helvetica',
+        fontSize=9,
+        textColor=text_color,
+        leading=13
+    )
+    
+    table_header = ParagraphStyle(
+        'TableHeader',
+        parent=styles['Normal'],
+        fontName='Helvetica-Bold',
+        fontSize=10,
+        textColor=colors.HexColor("#475569"),
+        spaceAfter=0
+    )
+    
+    table_body = ParagraphStyle(
+        'TableBody',
+        parent=styles['Normal'],
+        fontName='Helvetica',
+        fontSize=9,
+        textColor=text_color,
+        leading=12
+    )
+    
+    table_body_bold = ParagraphStyle(
+        'TableBodyBold',
+        parent=styles['Normal'],
+        fontName='Helvetica-Bold',
+        fontSize=9,
+        textColor=text_color,
+        leading=12
+    )
+    
+    grand_total_label = ParagraphStyle(
+        'GrandTotalLabel',
+        parent=styles['Normal'],
+        fontName='Helvetica-Bold',
+        fontSize=12,
+        textColor=colors.HexColor("#475569"),
+        alignment=2
+    )
+    
+    grand_total_val = ParagraphStyle(
+        'GrandTotalVal',
+        parent=styles['Normal'],
+        fontName='Helvetica-Bold',
+        fontSize=20,
+        textColor=colors.HexColor("#6366f1"),
+        alignment=2
+    )
+    
+    disclaimer_style = ParagraphStyle(
+        'Disclaimer',
+        parent=styles['Normal'],
+        fontName='Helvetica',
+        fontSize=8,
+        textColor=colors.HexColor("#94a3b8"),
+        alignment=1, # Centered
+        leading=11
+    )
+    
+    # 1. Header Grid (Brand Logo left, "INVOICE" title right)
+    header_data = [
+        [
+            Paragraph('The Pet Portal<font color="#ec4899">.</font>', brand_style),
+            Paragraph('INVOICE', title_style)
+        ]
+    ]
+    header_table = Table(header_data, colWidths=[250, 265])
+    header_table.setStyle(TableStyle([
+        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 15),
+        ('LINEBELOW', (0,0), (-1,-1), 1.5, border_color),
+    ]))
+    story.append(header_table)
+    story.append(Spacer(1, 20))
+    
+    # 2. Billing & Order Info Grid
+    # Left Column: Billed To info
+    billed_to_content = [
+        Paragraph('Billed To', section_heading),
+        Paragraph(f'<b>{order.full_name}</b>', meta_val),
+        Paragraph(f'{order.address}', meta_val),
+        Paragraph(f'{order.city} - {order.postal_code}', meta_val),
+        Spacer(1, 8),
+        Paragraph(f'Ph: {order.mobile_number}', meta_val),
+        Paragraph(f'Email: {order.email}', meta_val),
+    ]
+    
+    # Right Column: Order Details
+    status_label = order.status
+    if order.status == "CANCELLED":
+        status_label = "CANCELLED"
+    elif order.payment_status == "PAID":
+        status_label = "PAID"
+    elif order.payment_status == "REFUNDED":
+        status_label = "REFUNDED"
+        
+    details_rows = [
+        [Paragraph('Order ID:', meta_label), Paragraph(f'#{order.order_id}', meta_val)],
+        [Paragraph('Date:', meta_label), Paragraph(order.created_at.strftime('%b %d, %Y'), meta_val)],
+        [Paragraph('Payment Method:', meta_label), Paragraph(order.payment_method, meta_val)],
+    ]
+    
+    if order.razorpay_payment_id:
+        details_rows.append([Paragraph('Payment ID:', meta_label), Paragraph(order.razorpay_payment_id, meta_val)])
+    if order.razorpay_refund_id:
+        details_rows.append([Paragraph('Refund ID:', meta_label), Paragraph(order.razorpay_refund_id, meta_val)])
+        
+    details_rows.append([Paragraph('Status:', meta_label), Paragraph(f'<b>{status_label}</b>', meta_val)])
+    
+    details_table = Table(details_rows, colWidths=[100, 155])
+    details_table.setStyle(TableStyle([
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 4),
+    ]))
+    
+    info_data = [
+        [billed_to_content, [Paragraph('Order Details', section_heading), details_table]]
+    ]
+    info_table = Table(info_data, colWidths=[250, 265])
+    info_table.setStyle(TableStyle([
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+    ]))
+    story.append(info_table)
+    story.append(Spacer(1, 30))
+    
+    # 3. Itemized Table
+    items_data = [
+        [
+            Paragraph('Product / Description', table_header),
+            Paragraph('Price', table_header),
+            Paragraph('Qty', table_header),
+            Paragraph('Total', table_header)
+        ]
+    ]
+    
+    for item in order.items.all():
+        items_data.append([
+            Paragraph(f'<b>{item.product_name}</b>', table_body),
+            Paragraph(f'INR {item.price}', table_body),
+            Paragraph(str(item.quantity), table_body),
+            Paragraph(f'INR {item.get_cost()}', table_body_bold)
+        ])
+        
+    items_table = Table(items_data, colWidths=[260, 95, 60, 100])
+    table_styles = [
+        ('BACKGROUND', (0,0), (-1,0), light_bg),
+        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+        ('TOPPADDING', (0,0), (-1,-1), 10),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 10),
+        ('LINEBELOW', (0,0), (-1,0), 1, border_color),
+    ]
+    # Add light border between item rows
+    for r in range(1, len(items_data)):
+        table_styles.append(('LINEBELOW', (0, r), (-1, r), 0.5, border_color))
+        
+    items_table.setStyle(TableStyle(table_styles))
+    story.append(items_table)
+    story.append(Spacer(1, 20))
+    
+    # 4. Grand Total Section
+    total_data = [
+        [
+            "",
+            Paragraph('Grand Total:', grand_total_label),
+            Paragraph(f'INR {order.total_cost}', grand_total_val)
+        ]
+    ]
+    total_table = Table(total_data, colWidths=[260, 100, 155])
+    total_table.setStyle(TableStyle([
+        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+        ('BACKGROUND', (1,0), (-1,-1), light_bg),
+        ('TOPPADDING', (1,0), (-1,-1), 15),
+        ('BOTTOMPADDING', (1,0), (-1,-1), 15),
+        ('BOX', (1,0), (-1,-1), 1, border_color),
+    ]))
+    story.append(total_table)
+    story.append(Spacer(1, 50))
+    
+    # 5. Footer Notes
+    story.append(Paragraph('<b>Thank you for choosing The Pet Portal!</b>', ParagraphStyle('FootBold', parent=disclaimer_style, fontName='Helvetica-Bold', textColor=colors.HexColor("#64748b"))))
+    story.append(Spacer(1, 4))
+    story.append(Paragraph('This is a computer-generated invoice and does not require a physical signature.', disclaimer_style))
+    
+    # Build Document
+    doc.build(story)
+    buffer.seek(0)
+    return buffer.getvalue()
 
 def send_invoice_email(order):
     subject = f"Digital Invoice for Order {order.order_id}"
@@ -171,11 +434,9 @@ Pet Portal Team"""
 
     pdf_file = None
     try:
-        html_string = render_to_string('myapp/invoice.html', {'order': order})
-        # Add basic base_url configuration in case stylesheet files need to resolve
-        pdf_file = HTML(string=html_string, base_url=settings.STATIC_ROOT).write_pdf()
+        pdf_file = generate_invoice_pdf_reportlab(order)
     except Exception as e:
-        print("Error generating invoice PDF for email:", e)
+        print("Error generating invoice PDF for email using ReportLab:", e)
 
     try:
         email = EmailMessage(
@@ -190,6 +451,7 @@ Pet Portal Team"""
         print(f"Successfully sent invoice email for order {order.order_id} to {order.email}")
     except Exception as e:
         print("Failed to send invoice email:", e)
+
 
 def get_dashboard_redirect_url(role):
     redirects = {
@@ -385,8 +647,7 @@ def download_invoice(request, order_id):
     else:
         order = get_object_or_404(Order, order_id=order_id, user=request.user)
 
-    html_string = render_to_string('myapp/invoice.html', {'order': order})
-    pdf_file = HTML(string=html_string, base_url=settings.STATIC_ROOT).write_pdf()
+    pdf_file = generate_invoice_pdf_reportlab(order)
 
     response = HttpResponse(pdf_file, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="Invoice_{order.order_id}.pdf"'
