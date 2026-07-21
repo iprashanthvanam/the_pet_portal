@@ -146,13 +146,18 @@ def save_session_cart_to_db(request):
 def send_otp_email(email, otp):
     subject = "Verify your Email - Pet Portal"
     message = f"Your verification code (OTP) is: {otp}. It is valid for 10 minutes."
-    send_mail(
-        subject,
-        message,
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-        fail_silently=True
-    )
+    try:
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False
+        )
+    except Exception as e:
+        import logging
+        logging.getLogger('django').error(f"OTP Email delivery failed to {email}: {e}")
+        raise e
 
 def send_booking_email(user, service_name, date_val, time_val, price):
     subject = f"Booking Confirmed: {service_name}"
