@@ -64,7 +64,8 @@ rich==13.7.1
 setuptools==68.1.2
 six==1.16.0
 structlog==25.5.0
-# systemd-python==235 (Ubuntu systemd wrapper, commented out)
+gunicorn==21.2.0
+psycopg2-binary==2.9.9
 typing_extensions==4.10.0
 # ubuntu-drivers-common==0.0.0 (Commented out)
 # ubuntu-pro-client==8001 (Commented out)
