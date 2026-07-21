@@ -19,12 +19,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-fallback-secret-key-328b462bb")
 DEBUG = True
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'petmarketplace.pythonanywhere.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'petmarketplace.pythonanywhere.com', '.onrender.com']
 
 CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8000",
     "http://localhost:8000",
     "https://petmarketplace.pythonanywhere.com",
+    "https://the-pet-portal-ph4r.onrender.com",
 ]
 
 # ==========================
